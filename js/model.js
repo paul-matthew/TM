@@ -19,7 +19,7 @@ function init() {
   test.initialize();
 
   const gltfLoader = new GLTFLoader();
-  gltfLoader.load('./public/carnival/scene.gltf', (gltfScene) => {
+  gltfLoader.load('./js/carnival/scene.gltf', (gltfScene) => {
     loadedModel = gltfScene;
 
     if (window.innerWidth > 768) {
