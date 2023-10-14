@@ -242,22 +242,26 @@ function openModal(modalId) {
 	  //LOADER SCREEN
 
 	  document.addEventListener('DOMContentLoaded', function () {
-		// Get references to the loading screen and the loader (logo)
-		const loadingScreen = document.querySelector('.loading-screen');
-		const loader = document.querySelector('.loader');
-	
-		// Create an animation that fades in the loader
-		setTimeout(function () {
+		// Check if you are on the homepage (index.html)
+		if (window.location.pathname === '/') {
+		  // Get references to the loading screen and the loader (logo)
+		  const loadingScreen = document.querySelector('.loading-screen');
+		  const loader = document.querySelector('.loader');
+	  
+		  // Create an animation that fades in the loader
+		  setTimeout(function () {
 			loader.style.opacity = 1;
-		}, 00); // Adjust the delay to control when the loader appears
-	
-		// When the loader animation is complete (after 3 seconds), hide the loading screen
-		setTimeout(function () {
+		  }, 1000); // Adjust the delay to control when the loader appears
+	  
+		  // When the loader animation is complete (after 3 seconds), hide the loading screen
+		  setTimeout(function () {
 			loadingScreen.style.opacity = 0;
 			setTimeout(function () {
-				loadingScreen.style.display = 'none';
+			  loadingScreen.style.display = 'none';
 			}, 2000); // Adjust the delay to control when the loading screen disappears
-		}, 2000); // Adjust the duration to match your desired 3-second loading animation
-	});
+		  }, 2000); // Adjust the duration to match your desired 3-second loading animation
+		}
+	  });
+	  
 	
 	
