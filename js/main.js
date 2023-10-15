@@ -241,27 +241,28 @@ function openModal(modalId) {
 
 	  //LOADER SCREEN
 
-	  document.addEventListener('DOMContentLoaded', function () {
-		// Check if the current page is the index.html
-		if (window.location.pathname.endsWith('index.html')) {
-		  // Get references to the loading screen and the loader (logo)
-		  const loadingScreen = document.querySelector('.loading-screen');
-		  const loader = document.querySelector('.loader');
-		  
-		  // Create an animation that fades in the loader
-		  setTimeout(function () {
-			loader.style.opacity = 1;
-		  }, 1000); // Adjust the delay to control when the loader appears
-		  
-		  // When the loader animation is complete (after 3 seconds), hide the loading screen
-		  setTimeout(function () {
-			loadingScreen.style.opacity = 0;
-			setTimeout(function () {
-			  loadingScreen.style.display = 'none';
-			}, 2000); // Adjust the delay to control when the loading screen disappears
-		  }, 2000); // Adjust the duration to match your desired 3-second loading animation
-		}
-	  });
-	  
+document.addEventListener('DOMContentLoaded', function () {
+  // Check if the current page is the index.html or /TM/
+  const currentPage = window.location.pathname;
+  if (currentPage.endsWith('index.html') || currentPage.endsWith('/')) {
+    // Get references to the loading screen and the loader (logo)
+    const loadingScreen = document.querySelector('.loading-screen');
+    const loader = document.querySelector('.loader');
+    
+    // Create an animation that fades in the loader
+    setTimeout(function () {
+      loader.style.opacity = 1;
+    }, 1000); // Adjust the delay to control when the loader appears
+    
+    // When the loader animation is complete (after 3 seconds), hide the loading screen
+    setTimeout(function () {
+      loadingScreen.style.opacity = 0;
+      setTimeout(function () {
+        loadingScreen.style.display = 'none';
+      }, 2000); // Adjust the delay to control when the loading screen disappears
+    }, 2000); // Adjust the duration to match your desired 3-second loading animation
+  }
+});
+
 	
 	
