@@ -8906,6 +8906,7 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5,
               color: #4f86f9; }
     .hero-wrap .slider-text .bread {
       font-weight: 400;
+      font-family: IGLight;
       color: #fff;
       font-size: 70px; }
 
@@ -9245,7 +9246,7 @@ textarea.form-control {
       font-weight: 500;
       margin-bottom: 15px; }
   .services:hover, .services.active, .services.active-2 {
-    background: #333333; /*UPDATED BASED ON CLIENT COLOURS; original: #4f86f9*/
+    background: #D091DE; /*UPDATED BASED ON CLIENT COLOURS; ACTIVE ; original: #4f86f9*/
     -webkit-box-shadow: 0px 5px 25px -2px rgba(0, 0, 0, 0.18);
     -moz-box-shadow: 0px 5px 25px -2px rgba(0, 0, 0, 0.18);
     box-shadow: 0px 5px 25px -2px rgba(0, 0, 0, 0.18); }
@@ -9802,7 +9803,7 @@ textarea.form-control {
       border-radius: 4px;
       position: relative;
       background: rgba(255, 255, 255, 0.2);
-      background: #4f86f9; }
+      background: #D091DE; }
       .ftco-footer-social li a span {
         position: absolute;
         font-size: 17px;
@@ -9913,14 +9914,14 @@ textarea.form-control {
   .testimony-section .tns-outer [aria-controls], .testimony-section .tns-outer [data-action] {
     cursor: pointer; }
   .testimony-section .tns-nav > .tns-nav-active {
-    background: #4f86f9; }
+    background: #D091DE; }
   .testimony-section .tns-item:not(.tns-slide-active) + .tns-slide-active + .tns-slide-active .testimony-wrap {
-    background: #4f86f9;
+    background: #D091DE;
     color: rgba(255, 255, 255, 0.9); }
     .testimony-section .tns-item:not(.tns-slide-active) + .tns-slide-active + .tns-slide-active .testimony-wrap .icon {
       background: #f9faff; }
       .testimony-section .tns-item:not(.tns-slide-active) + .tns-slide-active + .tns-slide-active .testimony-wrap .icon span {
-        color: #4f86f9; }
+        color: #D091DE; }
     .testimony-section .tns-item:not(.tns-slide-active) + .tns-slide-active + .tns-slide-active .testimony-wrap .name, .testimony-section .tns-item:not(.tns-slide-active) + .tns-slide-active + .tns-slide-active .testimony-wrap .position {
       color: #fff; }
 
@@ -9940,7 +9941,7 @@ textarea.form-control {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #4f86f9; }
+    background: #D091DE; }
     .testimony-wrap .icon span {
       color: #fff; }
   .testimony-wrap .user-img {
@@ -9952,7 +9953,7 @@ textarea.form-control {
     font-weight: 500;
     font-size: 20px;
     margin-bottom: 0;
-    color: #4f86f9; }
+    color: #D091DE; }
   .testimony-wrap .position {
     font-size: 16px;
     color: #4d4d4d; }
@@ -10067,7 +10068,7 @@ textarea.form-control {
       -ms-transition: all 0.3s ease;
       transition: all 0.3s ease; }
     .staff .text .position {
-      color: #4f86f9;
+      color: #D091DE;
       display: block;
       font-weight: 500;
       text-transform: uppercase;
@@ -10087,11 +10088,11 @@ textarea.form-control {
     .staff .ftco-social li a {
       width: 34px;
       height: 34px;
-      background: #4f86f9;
+      background: #D091DE;
       color: #fff;
       border-radius: 50%; }
   .staff:hover .text, .staff:focus .text {
-    background: #4f86f9;
+    background: #D091DE; /*Staff hover;Original season: 4f86f9*/
     color: rgba(255, 255, 255, 0.8); }
     .staff:hover .text h3, .staff:hover .text .h3, .staff:focus .text h3, .staff:focus .text .h3 {
       color: #fff; }
@@ -10136,9 +10137,9 @@ textarea.form-control {
       margin-bottom: 0;
       font-weight: 500; }
       .blog-entry .text .heading a {
-        color: #000000; }
+        color: black; }
         .blog-entry .text .heading a:hover, .blog-entry .text .heading a:focus, .blog-entry .text .heading a:active {
-          color: #4f86f9; }
+          color: #D091DE; }
     .blog-entry .text .btn-custom {
       position: absolute;
       bottom: 0;
@@ -10160,7 +10161,7 @@ textarea.form-control {
     .blog-entry .meta span {
       margin-right: 10px; }
       .blog-entry .meta span i {
-        color: #4f86f9; }
+        color: #D091DE; }
   .blog-entry .btn-custom {
     text-transform: uppercase;
     color: #000000;
@@ -10191,7 +10192,7 @@ textarea.form-control {
       border: 1px solid #e6e6e6;
       background: trasparent; }
     .block-27 ul li.active a, .block-27 ul li.active span, .block-27 ul li:hover a, .block-27 ul li:hover span {
-      background: #4f86f9;
+      background: #D091DE;
       color: #fff;
       border: 1px solid transparent; }
 
@@ -10201,7 +10202,7 @@ textarea.form-control {
     font-size: 20px;
     font-weight: 400; }
   .wrapper .social-media p a {
-    color: #4f86f9;
+    color: #D091DE;
     text-transform: uppercase;
     font-size: 13px;
     font-weight: 600;
@@ -10404,7 +10405,7 @@ textarea.form-control {
   -webkit-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
-  color: #4f86f9; }
+  color: #D091DE; }
 
 .sidebar-box {
   margin-bottom: 30px;
