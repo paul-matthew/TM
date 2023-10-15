@@ -69,17 +69,13 @@ function init() {
     controls.maxDistance = 100;
 
 // Increase the intensity of the ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 20.0); // Higher intensity
+const ambientLight = new THREE.AmbientLight(0xffffff, 200.0); // Higher intensity
 test.scene.add(ambientLight);
 
 // Increase the intensity of the directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 20.0); // Higher intensity
+const directionalLight = new THREE.DirectionalLight(0xffffff, 10.0); // Higher intensity
 directionalLight.position.set(10, 100, 10); // Adjust position as needed
 test.scene.add(directionalLight);
-
-
-
-
 
 
   });
