@@ -44,7 +44,7 @@ export default class SceneInit {
       antialias: true,
     });
     if (window.innerWidth > 768) {
-      const scaleFactor = 1.2; // For non-mobile screens
+      const scaleFactor = 1.7; // For non-mobile screens
       const newWidth = window.innerWidth / scaleFactor;
       const newHeight = window.innerHeight / scaleFactor;
       this.renderer.setSize(newWidth, newHeight);
@@ -56,7 +56,7 @@ export default class SceneInit {
       document.body.appendChild(this.renderer.domElement);
 
     } else {
-      const scaleFactor = 1.0; // For mobile screens
+      const scaleFactor = 1.5; // For mobile screens
       const newWidth = window.innerWidth / scaleFactor;
       const newHeight = window.innerHeight / scaleFactor;
       this.renderer.setSize(newWidth, newHeight);

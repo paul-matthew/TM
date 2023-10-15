@@ -27,7 +27,7 @@
 
 
   </head>
-  <body style="background-image: url(./images/sky7.jpg);height:100%;background-size: cover;">
+  <body>
     <div class="loading-screen">
       <div class="loader"></div>
     </div>
@@ -52,19 +52,18 @@
 		  </div>
 		</nav>
 
-    <section style="min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;">
-      <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 50vh;">
+    <section style="min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;"id="bg-container">
+      <span id="intro">WELCOME TROPICAL MISFIT</span>
+      <div id='model-container'style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <canvas id="myThreeJsCanvas" style="z-index: 1; border: none red;"></canvas>
       </div>
-      <div class="shopbtn-container"style="z-index: 4; width: 100%; height: 30vh;">
-        <a href="#shop" style="background-color: #9aeb5c !important; border: solid black !important; z-index: 2; width:300px !important; height:50px !important; font-size:xx-large !important;" class="btn btn-white pb-5 px-4">Explore Shop<span class="ion-ios-arrow-round-down"></span></a>
-      </div>
+      <div id="shopbtn-container" style="border: none green; z-index: 4; width: 100%; display: flex; align-items: center; justify-content: center;">
+        <!-- <span id="intro2">WELCOME TROPICAL MISFIT</span> -->
+        <a href="#shop" style="background-color: #C08BD2 !important; border: solid black !important; z-index: 2; width: 300px !important; height: 50px !important; font-size: xx-large !important;" class="btn btn-white pb-5 px-4">Explore Shop<span class="ion-ios-arrow-round-down"></span></a>
+      </div>      
     </section>
 
-
-
-
-    <section id="shop" style="padding-top: 100px;">
+    <section id="shop" style="padding-top: 100px;  background: linear-gradient(to bottom,#ececf0, #f8f9fa);">
       <div class="container page-section">
           <div class="row text-center">
               <div class="icon-card col-lg-8 col-sm-12 mb-4 mb-lg-0 text-justify reduce">
@@ -74,7 +73,7 @@
       </div>
       <div class="row justify-content-center">
           <!-- Product Item 1 -->
-          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container"data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
+          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container">
             <a data-bs-toggle="modal" href="#productitem1">
               <div class="card">
                   <img src="images/product.jpg" class="card-img-top" alt="Service 1">
@@ -90,7 +89,7 @@
           </div>
   
           <!-- Product Item 2 -->
-          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container"data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
+          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container">
             <a data-bs-toggle="modal" href="#productitem2">
               <div class="card">
                   <img src="images/product.jpg" class="card-img-top" alt="Service 1">
@@ -106,7 +105,7 @@
           </div>
 
           <!-- Product Item 3 -->
-          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container"data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
+          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container">
             <a data-bs-toggle="modal" href="#productitem3">
               <div class="card">
                   <img src="images/product.jpg" class="card-img-top" alt="Service 1">
@@ -122,7 +121,7 @@
           </div>
 
           <!-- Product Item 4 -->
-          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container"data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
+          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container">
             <a data-bs-toggle="modal" href="#productitem4">
               <div class="card">
                   <img src="images/product.jpg" class="card-img-top" alt="Service 1">
@@ -138,7 +137,7 @@
           </div>
 
           <!-- Product Item 5 -->
-          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container"data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
+          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container">
             <a data-bs-toggle="modal" href="#productitem5">
               <div class="card">
                   <img src="images/product.jpg" class="card-img-top" alt="Service 1">
@@ -154,7 +153,7 @@
           </div>
 
           <!-- Products Item 6-->
-          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container"data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
+          <div class="col-lg-4 col-md-6 col-sm-12 p-5 card-container">
             <a data-bs-toggle="modal" href="#productitem6">
               <div class="card">
                   <img src="images/product.jpg" class="card-img-top" alt="Service 1">
@@ -172,8 +171,7 @@
 
 
       </div>
-  </section>
-  
+    </section>
   
 
   <!-- Service item 1 modal popup-->
@@ -216,123 +214,123 @@
       </div>
   </div>
 
-    <!-- Service item 2 modal popup-->
-    <div class="portfolio-modal modal fade" id="productitem2" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="close-modal p-2" data-bs-dismiss="modal"><img src="images/close-icon.svg" alt="Close modal" /></div>
-              <div class="container">
-                  <div class="row justify-content-center">
-                      <div class="col-lg-12">
-                          <div class="modal-body">
-                              <!-- Project details-->
-                              <h2 class="text-uppercase">The OxyGeneo Super Facial</h2>
-                              <img class="img-fluid d-block mx-auto" src="images/product.jpg" alt="..." />
-                              <p class="card-text">With advanced facial technology, the OxyGeneo Super 
-                                Facial is your 3-in-1 facial treatment that exfoliates while 
-                                oxygenating and infusing product into the skin for 
-                                maximum absorption of nutrients. This anti-aging facial 
-                                improves skin tone, evens texture and nourishes the 
-                                complexion, giving you a healthy glow after your first 
-                                treatment!</p>
-                                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                                  <input type="hidden" name="cmd" value="_cart">
-                                  <input type="hidden" name="add" value="1">
-                                  <input type="hidden" name="business" value="your_paypal_email@example.com"> <!-- Replace with your PayPal email -->
-                                  <input type="hidden" name="item_name" value="Product Name 2">
-                                  <input type="hidden" name="amount" value="34.99">
-                                  <input type="hidden" name="currency_code" value="CAD">
-                                  <input type="hidden" name="button_subtype" value="products">
-                                  <input type="hidden" name="no_note" value="0">
-                                  <input type="hidden" name="tax_rate" value="13.00">
-                                  <!-- <input type="hidden" name="shipping" value="10.00"> -->
-                                  <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
-                                  <button type="submit" class="btn btn-primary">Add to Cart</button>
-                              </form>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-      <!-- Service item 3 modal popup-->
-      <div class="portfolio-modal modal fade" id="productitem3" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="close-modal p-2" data-bs-dismiss="modal"><img src="images/close-icon.svg" alt="Close modal" /></div>
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-12">
-                            <div class="modal-body">
-                                <!-- Project details-->
-                                <h2 class="text-uppercase">Hot Stone Massage</h2>
-                                <img class="img-fluid d-block mx-auto" src="images/product.jpg" alt="..." />
-                                <p class="card-text">Adding heat to specific areas on the body will enhance 
-                                  the feeling of relaxation. Hot stone massage is 
-                                  recommended for anyone that is suffering from arthritis or 
-                                  other chronic pains. The heat from the stones relieve 
-                                  muscular tension and melt away stress.</p>
-                                  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                                    <input type="hidden" name="cmd" value="_cart">
-                                    <input type="hidden" name="add" value="1">
-                                    <input type="hidden" name="business" value="your_paypal_email@example.com"> <!-- Replace with your PayPal email -->
-                                    <input type="hidden" name="item_name" value="Product Name 3">
-                                    <input type="hidden" name="amount" value="39.99">
-                                    <input type="hidden" name="currency_code" value="CAD">
-                                    <input type="hidden" name="button_subtype" value="products">
-                                    <input type="hidden" name="no_note" value="0">
-                                    <input type="hidden" name="tax_rate" value="13.00">
-                                    <!-- <input type="hidden" name="shipping" value="10.00"> -->
-                                    <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
-                                    <button type="submit" class="btn btn-primary">Add to Cart</button>
-                                </form>
-                            </div>
+  <!-- Service item 2 modal popup-->
+  <div class="portfolio-modal modal fade" id="productitem2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="close-modal p-2" data-bs-dismiss="modal"><img src="images/close-icon.svg" alt="Close modal" /></div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12">
+                        <div class="modal-body">
+                            <!-- Project details-->
+                            <h2 class="text-uppercase">The OxyGeneo Super Facial</h2>
+                            <img class="img-fluid d-block mx-auto" src="images/product.jpg" alt="..." />
+                            <p class="card-text">With advanced facial technology, the OxyGeneo Super 
+                              Facial is your 3-in-1 facial treatment that exfoliates while 
+                              oxygenating and infusing product into the skin for 
+                              maximum absorption of nutrients. This anti-aging facial 
+                              improves skin tone, evens texture and nourishes the 
+                              complexion, giving you a healthy glow after your first 
+                              treatment!</p>
+                              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                <input type="hidden" name="cmd" value="_cart">
+                                <input type="hidden" name="add" value="1">
+                                <input type="hidden" name="business" value="your_paypal_email@example.com"> <!-- Replace with your PayPal email -->
+                                <input type="hidden" name="item_name" value="Product Name 2">
+                                <input type="hidden" name="amount" value="34.99">
+                                <input type="hidden" name="currency_code" value="CAD">
+                                <input type="hidden" name="button_subtype" value="products">
+                                <input type="hidden" name="no_note" value="0">
+                                <input type="hidden" name="tax_rate" value="13.00">
+                                <!-- <input type="hidden" name="shipping" value="10.00"> -->
+                                <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+  </div>
 
-    <!-- Service item 4 modal popup-->
-    <div class="portfolio-modal modal fade" id="productitem4" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="close-modal p-2" data-bs-dismiss="modal"><img src="images/close-icon.svg" alt="Close modal" /></div>
-              <div class="container">
-                  <div class="row justify-content-center">
-                      <div class="col-lg-12">
-                          <div class="modal-body">
-                              <!-- Project details-->
-                              <h2 class="text-uppercase">Celluma for Anti aging: Add to any treatments</h2>
-                              <img class="img-fluid d-block mx-auto" src="images/product.jpg" alt="..." />
-                              <p class="card-text">In just minutes a day, you can reduce the appearance of 
-                                fine lines and wrinkles, experiencing an improvement in 
-                                skin texture, quality and smoothness. Using wavelengths 
-                                that are scientifically proven to stimulate fibroblasts to 
-                                increase collagen and elastin.</p>
-                                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                                  <input type="hidden" name="cmd" value="_cart">
-                                  <input type="hidden" name="add" value="1">
-                                  <input type="hidden" name="business" value="your_paypal_email@example.com"> <!-- Replace with your PayPal email -->
-                                  <input type="hidden" name="item_name" value="Product Name 4">
-                                  <input type="hidden" name="amount" value="14.99">
-                                  <input type="hidden" name="currency_code" value="CAD">
-                                  <input type="hidden" name="button_subtype" value="products">
-                                  <input type="hidden" name="no_note" value="0">
-                                  <input type="hidden" name="tax_rate" value="13.00">
-                                  <!-- <input type="hidden" name="shipping" value="10.00"> -->
-                                  <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
-                                  <button type="submit" class="btn btn-primary">Add to Cart</button>
-                              </form>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+  <!-- Service item 3 modal popup-->
+  <div class="portfolio-modal modal fade" id="productitem3" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="close-modal p-2" data-bs-dismiss="modal"><img src="images/close-icon.svg" alt="Close modal" /></div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12">
+                        <div class="modal-body">
+                            <!-- Project details-->
+                            <h2 class="text-uppercase">Hot Stone Massage</h2>
+                            <img class="img-fluid d-block mx-auto" src="images/product.jpg" alt="..." />
+                            <p class="card-text">Adding heat to specific areas on the body will enhance 
+                              the feeling of relaxation. Hot stone massage is 
+                              recommended for anyone that is suffering from arthritis or 
+                              other chronic pains. The heat from the stones relieve 
+                              muscular tension and melt away stress.</p>
+                              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                <input type="hidden" name="cmd" value="_cart">
+                                <input type="hidden" name="add" value="1">
+                                <input type="hidden" name="business" value="your_paypal_email@example.com"> <!-- Replace with your PayPal email -->
+                                <input type="hidden" name="item_name" value="Product Name 3">
+                                <input type="hidden" name="amount" value="39.99">
+                                <input type="hidden" name="currency_code" value="CAD">
+                                <input type="hidden" name="button_subtype" value="products">
+                                <input type="hidden" name="no_note" value="0">
+                                <input type="hidden" name="tax_rate" value="13.00">
+                                <!-- <input type="hidden" name="shipping" value="10.00"> -->
+                                <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Service item 4 modal popup-->
+  <div class="portfolio-modal modal fade" id="productitem4" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="close-modal p-2" data-bs-dismiss="modal"><img src="images/close-icon.svg" alt="Close modal" /></div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12">
+                        <div class="modal-body">
+                            <!-- Project details-->
+                            <h2 class="text-uppercase">Celluma for Anti aging: Add to any treatments</h2>
+                            <img class="img-fluid d-block mx-auto" src="images/product.jpg" alt="..." />
+                            <p class="card-text">In just minutes a day, you can reduce the appearance of 
+                              fine lines and wrinkles, experiencing an improvement in 
+                              skin texture, quality and smoothness. Using wavelengths 
+                              that are scientifically proven to stimulate fibroblasts to 
+                              increase collagen and elastin.</p>
+                              <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                                <input type="hidden" name="cmd" value="_cart">
+                                <input type="hidden" name="add" value="1">
+                                <input type="hidden" name="business" value="your_paypal_email@example.com"> <!-- Replace with your PayPal email -->
+                                <input type="hidden" name="item_name" value="Product Name 4">
+                                <input type="hidden" name="amount" value="14.99">
+                                <input type="hidden" name="currency_code" value="CAD">
+                                <input type="hidden" name="button_subtype" value="products">
+                                <input type="hidden" name="no_note" value="0">
+                                <input type="hidden" name="tax_rate" value="13.00">
+                                <!-- <input type="hidden" name="shipping" value="10.00"> -->
+                                <input type="hidden" name="bn" value="PP-ShopCartBF:btn_cart_LG.gif:NonHosted">
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
 
   <!-- Service item 5 modal popup-->
@@ -372,7 +370,7 @@
             </div>
         </div>
     </div>
-</div>
+  </div>
 
   <!-- Service item 6 modal popup-->
   <div class="portfolio-modal modal fade" id="productitem6" tabindex="-1" role="dialog" aria-hidden="true">
@@ -407,9 +405,9 @@
             </div>
         </div>
     </div>
-</div>
+  </div>
     
-    <section class="ftco-section testimony-section bg-light">
+    <section class="ftco-section testimony-section"style='background: linear-gradient(to bottom,#f8f9fa, #ececf0);'>
       <div class="container-xl">
         <div class="row justify-content-center pb-4">
           <div class="col-lg-7 text-center heading-section" data-aos="fade-up" data-aos-duration="1000">
@@ -495,24 +493,7 @@
 
 
 
-    <section class="ftco-intro-2 img" style="background-image: url(images/queens.jpg);">
-      <div class=""></div>
-      <div class="container-xl">
-        <div class="row justify-content-center">
-          <div class="col-lg-10 col-xl-10">
-            <div class="row" data-aos="fade-up" data-aos-duration="1000">
-              <div class="col-md-4 d-flex align-items-center">
-                <div>
-                  <!-- <span class="subheading" style="color:blue">Tropical Misfit</span> -->
-                  <!-- <h1 class="mb-md-0 mb-4 py-2" style="color: white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">Carnival & Fete Inspired Clothing</h1> -->
-                </div>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-    </section>
+
 
     <footer class="ftco-footer img" style="background-image: url(images/mascostume.jpg);">
       <div class="overlay"></div>
@@ -535,11 +516,11 @@
           </div>
         </div>
       </div>
-      <div class="container-fluid px-0 py-5 bg-darken">
+      <div class="container-fluid px-0 py-5 bg-black">
       	<div class="container-xl">
       		<div class="row">
 	          <div class="col-md-12 text-center">
-	            <p class="mb-0" style="font-size: 14px;">Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Tropical Misfit | <a href="http://www.pmdaybreak.com">PM Daybreak Designs</a> | <a href="https://colorlib.com/">Colorlib</a></p>
+	            <p class="mb-0" style="font-size: 14px;">Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Tropical Misfit | <a href="http://www.pmdaybreak.com">PM Daybreak Designs</a> | <a href="https://colorlib.com/" style="color:white">Colorlib</a></p>
 	          </div>
 	        </div>
       	</div>

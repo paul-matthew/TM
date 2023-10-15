@@ -9699,8 +9699,16 @@ textarea.form-control {
     right: 0;
     bottom: 0;
     opacity: .8;
-    background: #000000;
+    background: grey;
     z-index: -1; }
+  @media(min-width:1100px){
+    .ftco-footer .logo a {
+    bottom:60px;}
+  }
+  @media(min-width:1267px){
+    .ftco-footer .logo a {
+    bottom:120px;}
+  }
   .ftco-footer .logo a {
     position: relative;
     text-decoration: none;
@@ -10503,25 +10511,78 @@ textarea.form-control {
   }
 }
 
+
+/*HERO Container*/
+#bg-container {
+  height: 100vh;
+  background-size: cover;
+  background: linear-gradient(to bottom, #f8f9fa, #ececf0);
+}
+
+
+/* @media (max-width: 767px) {
+  #bg-container{
+    background: linear-gradient(to right, #F5F5F5, #C0C0C0); 
+  }
+}
+
+@media (min-width: 768px) {
+  #bg-container{
+    background: linear-gradient(to right, #F5F5F5, #C0C0C0); 
+  }
+} */
+
+#shop{
+  height:100%;
+  background-size: cover;
+}
+
+/* @media (max-width: 767px) {
+  #shop{
+  background-image: url(../images/sky4a.jpg);
+  background-color: #F5F5F5;
+  }
+}
+
+@media (min-width: 768px) {
+  #shop{
+  background-image: url(../images/sky4a.jpg);
+  background-color: #F5F5F5;
+  }
+} */
+
+
+
 /* Default style for desktop */
-.shopbtn-container{
+#shopbtn-container{
   margin-bottom:10vh;
   display: flex; 
   flex-direction: column; 
   justify-content: end; 
   align-items: center;
+  height: 30vh;
 }
 
+#model-container{
+  height: 70vh;
+}
 
 @media (max-width: 767px) {
-  .shopbtn-container {
+  #shopbtn-container {
     justify-content: start;
-    margin-bottom:-5vh;
-
+    margin-bottom:10vh;
+    height: 50vh;
+  }
+  #model-container{
+    height: 50vh;
   }
 }
 
-
+@media(max-width:767px){
+#myThreeJsCanvas{
+  margin-top: 60px;
+}
+}
 
 
 /* Style the loading screen */
@@ -10562,3 +10623,68 @@ textarea.form-control {
   font-weight: normal; 
   font-style: normal;
 }
+
+/*ROBOTO FONT*/
+
+@font-face {
+  font-family: 'ROB'; /* The name you'll use to reference the font */
+  src: url('./Roboto-Black.ttf') format('truetype'); 
+  font-weight: normal; 
+  font-style: normal;
+}
+
+/*BEBAS FONT*/
+
+@font-face {
+  font-family: 'BEBAS'; /* The name you'll use to reference the font */
+  src: url('./BebasNeue-Regular.ttf') format('truetype'); 
+  font-weight: normal; 
+  font-style: normal;
+}
+
+/* Common styles for both media queries */
+#intro, #intro2 {
+  font-family: BEBAS;
+  color: white;
+  width:100vw;
+  text-align: center;
+  background: linear-gradient(to right, #D091DE, #C08BD2);/* Background color for the text box */
+}
+
+@media (min-width: 767px) {
+  #intro {
+    font-size: 6vh;
+    margin-top:150px;
+    margin-bottom: 60px;
+    /* -webkit-text-stroke: 1.5px black; */
+    /* box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.5); */
+    padding: 0px 10px; /* Add padding to the text box */
+  }
+}
+
+@media (max-width: 767px) {
+  #intro {
+  /* display:none; */
+  font-size: 5vh;
+  margin-top: 80px;
+  margin-bottom: 50px;
+  padding: 10px;
+  border-radius: 5px; 
+  }
+}
+
+/* @media (min-width: 767px) {
+  #intro2 {
+  display:none;
+  }
+}
+
+@media (max-width: 767px) {
+  #intro2 {
+    font-size: 5vh;
+    margin-top: -60px;
+    margin-bottom: 50px;
+    padding: 10px;
+    border-radius: 5px; 
+  }
+} */
