@@ -8782,7 +8782,7 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5,
         padding-top: 0;
         color: #fff; } }
     .ftco-navbar-light .navbar-nav > .nav-item > .nav-link.active {
-      color: black;
+      color: #D091DE;
       position: relative;
       z-index: 0; }
       @media (max-width: 991.98px) {
