@@ -35,7 +35,7 @@ export default class SceneInit {
     } else {
       this.camera.position.z = 4.0; // For mobile screens
     }
-
+  
     // NOTE: Specify a canvas which is already created in the HTML.
     const canvas = document.getElementById(this.canvasId);
     this.renderer = new THREE.WebGLRenderer({
@@ -43,6 +43,7 @@ export default class SceneInit {
       // NOTE: Anti-aliasing smooths out the edges.
       antialias: true,
     });
+  
     if (window.innerWidth > 768) {
       const scaleFactor = 1.7; // For non-mobile screens
       const newWidth = window.innerWidth / scaleFactor;
@@ -54,7 +55,6 @@ export default class SceneInit {
       canvas.style.top = `${(window.innerHeight - newHeight) / 2}px`;
       // this.renderer.shadowMap.enabled = true;
       document.body.appendChild(this.renderer.domElement);
-
     } else {
       const scaleFactor = 1.5; // For mobile screens
       const newWidth = window.innerWidth / scaleFactor;
@@ -67,31 +67,28 @@ export default class SceneInit {
       // this.renderer.shadowMap.enabled = true;
       document.body.appendChild(this.renderer.domElement);
     }
-
-
-    
-
+  
     this.clock = new THREE.Clock();
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-
+  
     // ambient light which is for the whole scene
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     this.ambientLight.castShadow = true;
     this.scene.add(this.ambientLight);
-
+  
     // directional light - parallel sun rays
     this.directionalLight = new THREE.DirectionalLight(0xffffff, 2);
     // this.directionalLight.castShadow = true;
     this.directionalLight.position.set(0, 32, 64);
     this.scene.add(this.directionalLight);
-
-    // if window resizes
-    window.addEventListener('resize', () => this.onWindowResize(), false);
-
+  
+    // Remove the resize event listener after initial setup
+    window.removeEventListener('resize', () => this.onWindowResize());
+  
     // NOTE: Load space background.
     // this.loader = new THREE.TextureLoader();
     // this.scene.background = this.loader.load('./pics/space.jpeg');
-
+  
     // NOTE: Declare uniforms to pass into glsl shaders.
     // this.uniforms = {
     //   u_time: { type: 'f', value: 1.0 },
@@ -99,6 +96,7 @@ export default class SceneInit {
     //   colorA: { type: 'vec3', value: new THREE.Color(0xffffff) },
     // };
   }
+  
 
   animate() {
     // NOTE: Window is implied.
