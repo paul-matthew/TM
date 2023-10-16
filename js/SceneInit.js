@@ -43,30 +43,30 @@ export default class SceneInit {
       // NOTE: Anti-aliasing smooths out the edges.
       antialias: true,
     });
-    if (window.innerWidth > 768) {
-      const scaleFactor = 1.7; // For non-mobile screens
-      const newWidth = window.innerWidth / scaleFactor;
-      const newHeight = window.innerHeight / scaleFactor;
-      this.renderer.setSize(newWidth, newHeight);
-      // Center the canvas by adjusting its position
-      canvas.style.position = 'absolute';
-      canvas.style.left = `${(window.innerWidth - newWidth) / 2}px`;
-      canvas.style.top = `${(window.innerHeight - newHeight) / 2}px`;
-      // this.renderer.shadowMap.enabled = true;
-      document.body.appendChild(this.renderer.domElement);
+    // if (window.innerWidth > 768) {
+    //   const scaleFactor = 1.7; // For non-mobile screens
+    //   const newWidth = window.innerWidth / scaleFactor;
+    //   const newHeight = window.innerHeight / scaleFactor;
+    //   this.renderer.setSize(newWidth, newHeight);
+    //   // Center the canvas by adjusting its position
+    //   canvas.style.position = 'absolute';
+    //   canvas.style.left = `${(window.innerWidth - newWidth) / 2}px`;
+    //   canvas.style.top = `${(window.innerHeight - newHeight) / 2}px`;
+    //   // this.renderer.shadowMap.enabled = true;
+    //   document.body.appendChild(this.renderer.domElement);
 
-    } else {
-      const scaleFactor = 1.5; // For mobile screens
-      const newWidth = window.innerWidth / scaleFactor;
-      const newHeight = window.innerHeight / scaleFactor;
-      this.renderer.setSize(newWidth, newHeight);
-      // Center the canvas by adjusting its position
-      canvas.style.position = 'absolute';
-      canvas.style.left = `${(window.innerWidth - newWidth) / 2}px`;
-      canvas.style.top = `${(window.innerHeight - newHeight) / 2}px`;
-      // this.renderer.shadowMap.enabled = true;
-      document.body.appendChild(this.renderer.domElement);
-    }
+    // } else {
+    //   const scaleFactor = 1.5; // For mobile screens
+    //   const newWidth = window.innerWidth / scaleFactor;
+    //   const newHeight = window.innerHeight / scaleFactor;
+    //   this.renderer.setSize(newWidth, newHeight);
+    //   // Center the canvas by adjusting its position
+    //   canvas.style.position = 'absolute';
+    //   canvas.style.left = `${(window.innerWidth - newWidth) / 2}px`;
+    //   canvas.style.top = `${(window.innerHeight - newHeight) / 2}px`;
+    //   // this.renderer.shadowMap.enabled = true;
+    //   document.body.appendChild(this.renderer.domElement);
+    // }
 
 
     
