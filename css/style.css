@@ -10552,32 +10552,30 @@ textarea.form-control {
 } */
 
 
-/* Default style for desktop */
-#shopbtn-container{
-  margin-bottom:10vh;
-  display: flex; 
-  flex-direction: column; 
-  justify-content: end; 
-  align-items: center;
-  height: 30vh;
-}
+
 @media(min-width:767px){
   #model-container{
   height: 70vh;
   }
+  #shopbtn-container{
+    margin-bottom:10vh;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: end; 
+    align-items: center;
+    height: 30vh;
+  }
 }
 
 @media (max-width: 767px) {
-  #shopbtn-container {
-    justify-content: start;
-    margin-bottom:0vh;
-    height: 35vh;
-  }
   #model-container{
-    height: 10vh;
+    height: 200px;
   }
   #myThreeJsCanvas{
-    margin-top: 100px;
+    margin-top: 80px;
+  }
+  #shopbtn-container {
+    height: 300px;
   }
 }
 
