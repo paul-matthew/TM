@@ -252,14 +252,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Create an animation that fades in the loader
     setTimeout(function () {
       loader.style.opacity = 1;
-    }, 1000); // Adjust the delay to control when the loader appears
+    }, 10); // Adjust the delay to control when the loader appears
     
     // When the loader animation is complete (after 3 seconds), hide the loading screen
     setTimeout(function () {
       loadingScreen.style.opacity = 0;
       setTimeout(function () {
         loadingScreen.style.display = 'none';
-      }, 2000); // Adjust the delay to control when the loading screen disappears
+      }, 1000); // Adjust the delay to control when the loading screen disappears
     }, 2000); // Adjust the duration to match your desired 3-second loading animation
   }
 });

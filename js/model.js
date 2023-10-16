@@ -9,7 +9,7 @@ const ROTATION_SPEED = 0.003; // Adjust the value as needed
 let loadedModel = null;
 
 function init() {
-  let modelRotation = 12;
+  let modelRotation = 12.4;
   const test = new SceneInit('myThreeJsCanvas');
   const renderer = new THREE.WebGLRenderer({
     canvas: document.getElementById('myThreeJsCanvas'),
@@ -69,11 +69,11 @@ function init() {
     controls.maxDistance = 100;
 
 // Increase the intensity of the ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 200.0); // Higher intensity
+const ambientLight = new THREE.AmbientLight('#D091DE', 400.0); // Higher intensity
 test.scene.add(ambientLight);
 
 // Increase the intensity of the directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 200.0); // Higher intensity
+const directionalLight = new THREE.DirectionalLight('#D091DE', 10.0); // Higher intensity
 directionalLight.position.set(10, 100, 10); // Adjust position as needed
 test.scene.add(directionalLight);
 
