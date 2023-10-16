@@ -10552,7 +10552,6 @@ textarea.form-control {
 } */
 
 
-
 /* Default style for desktop */
 #shopbtn-container{
   margin-bottom:10vh;
@@ -10575,15 +10574,13 @@ textarea.form-control {
     height: 50vh;
   }
   #model-container{
-    height: 50vh;
+    height: 10vh;
+  }
+  #myThreeJsCanvas{
+    margin-top: 100px;
   }
 }
 
-@media(max-width:767px){
-#myThreeJsCanvas{
-  margin-top: 100px;
-}
-}
 
 
 /* Style the loading screen */
