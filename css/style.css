@@ -10562,15 +10562,16 @@ textarea.form-control {
   align-items: center;
   height: 30vh;
 }
-
-#model-container{
+@media(min-width:767px){
+  #model-container{
   height: 70vh;
+  }
 }
 
 @media (max-width: 767px) {
   #shopbtn-container {
     justify-content: start;
-    margin-bottom:10vh;
+    margin-bottom:0vh;
     height: 50vh;
   }
   #model-container{
