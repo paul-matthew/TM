@@ -10558,7 +10558,7 @@ textarea.form-control {
 
 #myThreeJsCanvas {
   border: solid red;
-  max-height: 100%; /* Set the canvas height to 100% of available space */
+  max-height: 80%; /* Set the canvas height to 100% of available space */
   max-width: 100%; /* Set the canvas width to 100% of available space */
 }
 
@@ -10572,7 +10572,14 @@ textarea.form-control {
   max-height: 60px; /* Limit the height to 60px */
   margin: 10px; /* Add a margin at the top for spacing */
 }
-
+@media(max-height:400px){
+  #intro {
+    display: none !important;
+  }
+  #myThreeJsCanvas {
+    margin-top: 100px !important;
+  }
+}
 
 /* Style the loading screen */
 .loading-screen {
