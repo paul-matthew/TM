@@ -10505,9 +10505,12 @@ textarea.form-control {
 
 /*HERO Container*/
 #bg-container {
-  height: 100vh;
-  background-size: cover;
-  background: linear-gradient(to bottom, #f8f9fa, #ececf0);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Changed to 'flex-start' to align content at the top */
+  height: 100vh; /* Ensure the container takes up the full viewport height */
+  margin-bottom: 60px; /* Set the margin at the bottom to accommodate the button */
+  overflow: hidden; /* Hide overflow content beyond viewport */
 }
 
 
@@ -10544,33 +10547,31 @@ textarea.form-control {
 
 
 
-@media(min-width:767px){
-  #model-container{
-  height: 70vh;
-  }
-  #shopbtn-container{
-    margin-bottom:10vh;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: end; 
-    align-items: center;
-    height: 30vh;
-  }
+#model-container {
+  flex: 1; /* Allow the model container to grow and take available space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: solid blue;
+  overflow: hidden; /* Hide overflow content */
 }
 
-@media (max-width: 767px) {
-  #model-container{
-    height: 200px;
-  }
-  #myThreeJsCanvas{
-    margin-top: 80px;
-  }
-  #shopbtn-container {
-    height: 300px;
-  }
+#myThreeJsCanvas {
+  border: solid red;
+  max-height: 100%; /* Set the canvas height to 100% of available space */
+  max-width: 100%; /* Set the canvas width to 100% of available space */
 }
 
-
+#shopbtn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none green;
+  z-index: 4;
+  width: 100%;
+  max-height: 60px; /* Limit the height to 60px */
+  margin: 10px; /* Add a margin at the top for spacing */
+}
 
 
 /* Style the loading screen */
