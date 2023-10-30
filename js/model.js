@@ -46,8 +46,13 @@ function init() {
 
     if (window.innerWidth > 768) {
       gltfScene.scene.position.set(0, -0.5, 0); // For non-mobile screens
+      test.camera.position.z = 4;
+    } else if(window.innerWidth>500 && window.innerHeight<500) {
+      gltfScene.scene.position.set(0, -0.05, 0); // For mobile screens
+      test.camera.position.z = 3;
     } else {
-      gltfScene.scene.position.set(0, -0.25, 0); // For mobile screens
+      gltfScene.scene.position.set(0, -0.35, 0); // For mobile screens
+      test.camera.position.z = 5;
     }
 
     test.scene.add(gltfScene.scene);
@@ -86,7 +91,7 @@ function init() {
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = false; // Set to false for more intuitive panning
     controls.minDistance = 1;
-    controls.maxDistance = 100;
+    controls.maxDistance = 20;
 
     // Increase the intensity of the ambient light
     const ambientLight = new THREE.AmbientLight('#D091DE', 400.0); // Higher intensity

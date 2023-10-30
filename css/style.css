@@ -10511,6 +10511,7 @@ textarea.form-control {
   height: 100vh; /* Ensure the container takes up the full viewport height */
   margin-bottom: 60px; /* Set the margin at the bottom to accommodate the button */
   overflow: hidden; /* Hide overflow content beyond viewport */
+  /* border:solid pink; */
 }
 
 
@@ -10554,11 +10555,12 @@ textarea.form-control {
   justify-content: center;
   border: solid blue;
   overflow: hidden; /* Hide overflow content */
+  min-height:100vh;
 }
 
 #myThreeJsCanvas {
   border: solid red;
-  max-height: 80%; /* Set the canvas height to 100% of available space */
+  max-height: 100%; /* Set the canvas height to 100% of available space */
   max-width: 100%; /* Set the canvas width to 100% of available space */
 }
 
@@ -10566,11 +10568,13 @@ textarea.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none green;
   z-index: 4;
   width: 100%;
   max-height: 60px; /* Limit the height to 60px */
-  margin-bottom: 100px; /* Add a margin at the top for spacing */
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 @media(max-height:400px){
   #intro {
@@ -10645,6 +10649,8 @@ textarea.form-control {
   width:100vw;
   text-align: center;
   background: linear-gradient(to right, #D091DE, #C08BD2);/* Background color for the text box */
+  position:absolute;
+  z-index:2;
 }
 
 @media (min-width: 767px) {
