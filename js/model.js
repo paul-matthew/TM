@@ -33,7 +33,7 @@ function init() {
     antialias: true,
     alpha: true, // Set alpha to true for a transparent background
   });
-  renderer.setPixelRatio(window.devicePixelRatio)
+  renderer.setPixelRatio(window.devicePixelRatio * 2);
   test.initialize();
 
   renderer.render(test.scene, test.camera);
