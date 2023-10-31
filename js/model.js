@@ -3,16 +3,18 @@ import SceneInit from './SceneInit.js';
 import { OrbitControls } from "./OrbitControls.js";
 import { GLTFLoader } from './GLTFLoader.js';
 
+let loadedModel = null;
 const CONFETTI_COUNT = 200; // Number of confetti particles
 const CONFETTI_RADIUS = 0.5; // Confetti particle radius
 const ROTATION_SPEED = 0.003; // Adjust the value as needed
 
-let loadedModel = null;
 
 function addConfetti(scene) {
   const confettiGroup = new THREE.Group();
   const confettiGeometry = new THREE.SphereGeometry(CONFETTI_RADIUS, 24, 24);
-  const confettiColors = [0x00ff00, 0x000000, 0xff00ff, 0x00ffff]; // Define your own confetti colors
+  const confettiColors = [0xFFFFFF, 0xFFFFDD, 0xF0FFFF, 0xFFFFF0]; // Define your own starry confetti colors
+  // const confettiColors = [0x00ff00, 0x000000, 0xff00ff, 0x00ffff];
+
 
   for (let i = 0; i < CONFETTI_COUNT; i++) {
     const confettiMaterial = new THREE.MeshStandardMaterial({ color: confettiColors[i % confettiColors.length] });
@@ -38,7 +40,8 @@ function init() {
 
   renderer.render(test.scene, test.camera);
 
-  addConfetti(test.scene); // Add colorful confetti particles to the scene
+  // Add colorful confetti particles to the scene
+  // addConfetti(test.scene); 
 
   const gltfLoader = new GLTFLoader();
   gltfLoader.load('./js/carnival/scene.gltf', (gltfScene) => {

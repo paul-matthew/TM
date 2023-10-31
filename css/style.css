@@ -10651,6 +10651,8 @@ textarea.form-control {
   background: linear-gradient(to right, #D091DE, #C08BD2);/* Background color for the text box */
   position:absolute;
   z-index:2;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Dark black box shadow */
+
 }
 
 @media (min-width: 767px) {
@@ -10690,3 +10692,8 @@ textarea.form-control {
     border-radius: 5px; 
   }
 } */
+
+.cloud-section{
+  height: 100vh;
+  position:absolute;
+}
