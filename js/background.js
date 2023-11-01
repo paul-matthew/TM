@@ -35,7 +35,7 @@ function init() {
   cloudSection.appendChild(renderer.domElement);
 
   let loader = new THREE.TextureLoader();
-  loader.load("../images/smoke.png", function (texture) {
+  loader.load("./images/smoke.png", function (texture) {
     const cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
     const cloudMaterial = new THREE.MeshLambertMaterial({
       map: texture,
@@ -57,7 +57,7 @@ function init() {
       scene.add(cloud);
     }
   });
-  loader.load("../images/stars.jpg", function(texture){
+  loader.load("./images/stars.jpg", function(texture){
 
     const textureEffect = new POSTPROCESSING.TextureEffect({
       blendFunction: POSTPROCESSING.BlendFunction.COLOR_DODGE,
