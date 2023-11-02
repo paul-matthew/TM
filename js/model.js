@@ -3,42 +3,44 @@ import SceneInit from './SceneInit.js';
 import { OrbitControls } from "./OrbitControls.js";
 import { GLTFLoader } from './GLTFLoader.js';
 
+
+// const CONFETTI_COUNT = 200; // Number of confetti particles
+// const CONFETTI_RADIUS = 0.5; // Confetti particle radius
+
+
+// function addConfetti(scene) {
+//   const confettiGroup = new THREE.Group();
+//   const confettiGeometry = new THREE.SphereGeometry(CONFETTI_RADIUS, 24, 24);
+//   const confettiColors = [0xFFFFFF, 0xFFFFDD, 0xF0FFFF, 0xFFFFF0]; // Define your own starry confetti colors
+//   // const confettiColors = [0x00ff00, 0x000000, 0xff00ff, 0x00ffff];
+
+
+//   for (let i = 0; i < CONFETTI_COUNT; i++) {
+//     const confettiMaterial = new THREE.MeshStandardMaterial({ color: confettiColors[i % confettiColors.length] });
+//     const confetti = new THREE.Mesh(confettiGeometry, confettiMaterial);
+//     const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
+//     confetti.position.set(x, y, z);
+//     confettiGroup.add(confetti);
+//   }
+
+//   scene.add(confettiGroup);
+// }
+
 let loadedModel = null;
-const CONFETTI_COUNT = 200; // Number of confetti particles
-const CONFETTI_RADIUS = 0.5; // Confetti particle radius
 const ROTATION_SPEED = 0.003; // Adjust the value as needed
-
-
-function addConfetti(scene) {
-  const confettiGroup = new THREE.Group();
-  const confettiGeometry = new THREE.SphereGeometry(CONFETTI_RADIUS, 24, 24);
-  const confettiColors = [0xFFFFFF, 0xFFFFDD, 0xF0FFFF, 0xFFFFF0]; // Define your own starry confetti colors
-  // const confettiColors = [0x00ff00, 0x000000, 0xff00ff, 0x00ffff];
-
-
-  for (let i = 0; i < CONFETTI_COUNT; i++) {
-    const confettiMaterial = new THREE.MeshStandardMaterial({ color: confettiColors[i % confettiColors.length] });
-    const confetti = new THREE.Mesh(confettiGeometry, confettiMaterial);
-    const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
-    confetti.position.set(x, y, z);
-    confettiGroup.add(confetti);
-  }
-
-  scene.add(confettiGroup);
-}
 
 function init() {
   let sceneRotation = -0.25; // Initialize scene rotation
   const test = new SceneInit('myThreeJsCanvas');
-  const renderer = new THREE.WebGLRenderer({
+  const modelRenderer = new THREE.WebGLRenderer({
     canvas: document.getElementById('myThreeJsCanvas'),
     antialias: true,
     alpha: true, // Set alpha to true for a transparent background
   });
-  renderer.setPixelRatio(window.devicePixelRatio * 2);
+  modelRenderer.setPixelRatio(window.devicePixelRatio * 2);
   test.initialize();
 
-  renderer.render(test.scene, test.camera);
+  modelRenderer.render(test.scene, test.camera);
 
   // Add colorful confetti particles to the scene
   // addConfetti(test.scene); 
@@ -82,14 +84,14 @@ function init() {
       sceneRotation += ROTATION_SPEED;
       test.scene.rotation.y = sceneRotation;
 
-      renderer.render(test.scene, test.camera);
+      modelRenderer.render(test.scene, test.camera);
     };
 
     // Start the animation loop
     animate();
 
     // Add OrbitControls
-    const controls = new OrbitControls(test.camera, renderer.domElement);
+    const controls = new OrbitControls(test.camera, modelRenderer.domElement);
     controls.enableDamping = true; // Add damping for smooth camera movement
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = false; // Set to false for more intuitive panning

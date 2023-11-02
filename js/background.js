@@ -1,4 +1,6 @@
-let scene, camera, cloudParticles = [], composer, renderer;
+let scene, camera, cloudParticles = [], composer, backgroundRenderer;
+let lastRender = 0;
+const renderThrottle = 1000 / 30; // Throttle to approximately 30 FPS
 
 function init() {
   scene = new THREE.Scene();
@@ -27,12 +29,11 @@ function init() {
   blueLight.position.set(300, 300, 200);
   scene.add(blueLight);
   
-
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  backgroundRenderer = new THREE.WebGLRenderer();
+  backgroundRenderer.setSize(window.innerWidth, window.innerHeight);
   scene.fog = new THREE.FogExp2(0x03544e, 0.001);
-  renderer.setClearColor(scene.fog.color);
-  cloudSection.appendChild(renderer.domElement);
+  backgroundRenderer.setClearColor(scene.fog.color);
+  cloudSection.appendChild(backgroundRenderer.domElement);
 
   let loader = new THREE.TextureLoader();
   loader.load("./images/smoke.png", function (texture) {
@@ -42,7 +43,7 @@ function init() {
       transparent: true,
     });
 
-    for (let p = 0; p < 50; p++) {
+    for (let p = 0; p < 20; p++) {
       let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
       cloud.position.set(
         Math.random() * 800 - 400,
@@ -66,12 +67,12 @@ function init() {
     textureEffect.blendMode.opacity.value = 0.2;
 
     const bloomEffect = new POSTPROCESSING.BloomEffect({
-          blendFunction: POSTPROCESSING.BlendFunction.COLOR_DODGE,
-          kernelSize: POSTPROCESSING.KernelSize.SMALL,
-          useLuminanceFilter: true,
-          luminanceThreshold: 0.3,
-          luminanceSmoothing: 0.75
-        });
+      blendFunction: POSTPROCESSING.BlendFunction.COLOR_DODGE,
+      kernelSize: POSTPROCESSING.KernelSize.SMALL,
+      useLuminanceFilter: true,
+      luminanceThreshold: 0.3,
+      luminanceSmoothing: 0.75
+    });
     bloomEffect.blendMode.opacity.value = 1.5;
 
     let effectPass = new POSTPROCESSING.EffectPass(
@@ -81,12 +82,12 @@ function init() {
     );
     effectPass.renderToScreen = true;
 
-    composer = new POSTPROCESSING.EffectComposer(renderer);
+    composer = new POSTPROCESSING.EffectComposer(backgroundRenderer);
     composer.addPass(new POSTPROCESSING.RenderPass(scene, camera));
     composer.addPass(effectPass);
-    
+
     window.addEventListener("resize", onWindowResize, false);
-    composerInitialized = true; 
+    composerInitialized = true;
     render();
   });
   window.addEventListener("resize", onWindowResize, false);
@@ -96,18 +97,22 @@ function init() {
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  backgroundRenderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 let composerInitialized = false;
 
-function render() {
-  if (composerInitialized) {
-    cloudParticles.forEach(p => {
-      p.rotation.z -= 0.001;
-    });
-    composer.render(0.1);
+function render(timestamp) {
+  if (timestamp - lastRender >= renderThrottle) {
+    if (composerInitialized) {
+      cloudParticles.forEach(p => {
+        p.rotation.z -= 0.011;
+      });
+      composer.render(0.1);
+    }
+    lastRender = timestamp;
   }
+
   requestAnimationFrame(render);
 }
 

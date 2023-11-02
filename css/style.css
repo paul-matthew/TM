@@ -10644,7 +10644,8 @@ textarea.form-control {
 
 /* Common styles for both media queries */
 #intro, #intro2 {
-  font-family: BEBAS;
+  /* font-family: BEBAS; */
+  font-family: IGLight;
   color: white;
   width:100vw;
   text-align: center;
@@ -10669,7 +10670,7 @@ textarea.form-control {
 @media (max-width: 767px) {
   #intro {
   /* display:none; */
-  font-size: 5vh;
+  font-size: 4vh;
   margin-top: 80px;
   margin-bottom: 50px;
   padding: 10px;
@@ -10696,4 +10697,8 @@ textarea.form-control {
 .cloud-section{
   height: 100vh;
   position:absolute;
+}
+
+iframe {
+  width: 1px; min-width: 100%;
 }
