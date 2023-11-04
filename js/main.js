@@ -264,5 +264,157 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
+  //PRODUCT SEARCHBAR
+
+  document.addEventListener("DOMContentLoaded", function() {
+	if (window.location.pathname.endsWith("/shop.html")) {
+		const products = [
+			"Product #1",
+			"Product #2",
+			"Product #3",
+		  ];
+		  
+	  const productSearchInput = document.getElementById("productSearch");
+	  const suggestionListpro = document.getElementById("suggestionListpro");
+	  const allProductCards = document.querySelectorAll(".card-container");
+  
+	  document.addEventListener("click", function(event) {
+		if (event.target !== productSearchInput) {
+		  suggestionListpro.style.display = "none";
+		}
+	  });
+  
+	  document.addEventListener("keydown", function(event) {
+		if (event.key === "Escape") {
+		  suggestionListpro.style.display = "none";
+		}
+	  });
+  
+	  productSearchInput.addEventListener("input", function() {
+		const inputValuepro = productSearchInput.value.toLowerCase();
+		suggestionListpro.innerHTML = "";
+  
+		const matchingProducts = products.filter(product =>
+		  product.toLowerCase().includes(inputValuepro)
+		);
+  
+		allProductCards.forEach(card => {
+		  const cardTitleElement = card.querySelector(".card-title2");
+		  if (cardTitleElement !== null) {
+			const cardTitle = cardTitleElement.textContent.toLowerCase();
+			if (
+			  inputValuepro === "" ||
+			  matchingProducts.some(product =>
+				cardTitle.includes(product.toLowerCase())
+			  )
+			) {
+			  card.style.display = "block";
+			} else {
+			  card.style.display = "none";
+			}
+		  } else {
+			console.error("Card title element not found");
+		  }
+		});
+  
+		matchingProducts.forEach(product => {
+		  const listItempro = document.createElement("li");
+		  listItempro.textContent = product;
+		  listItempro.addEventListener("click", function() {
+			productSearchInput.value = product;
+			showProductCard(product);
+		  });
+		  suggestionListpro.appendChild(listItempro);
+		});
+  
+		suggestionListpro.style.display = matchingProducts.length > 0 ? "block" : "none";
+	  });
+  
+	  function showProductCard(productName) {
+		const productCardContainer = document.getElementById("productCardContainer");
+		productCardContainer.innerHTML = ""; // Clear existing content
+  
+		allProductCards.forEach(card => {
+		  const cardTitleElement = card.querySelector(".card-title2");
+		  if (cardTitleElement !== null) {
+			const cardTitle = cardTitleElement.textContent.toLowerCase();
+			if (cardTitle.includes(productName.toLowerCase())) {
+			  card.style.display = "block";
+			  productCardContainer.appendChild(card); // Show the selected product card
+			  productCardContainer.style.display = "block";
+			  card.classList.add("center-horizontal"); 
+			} else {
+			  card.style.display = "none";
+			}
+		  } else {
+			console.error("Card title element not found");
+		  }
+		});
+	  }
+	}
+  });
 	
-	
+//PRINTIFY API
+
+// Fetch Printify products and display on the page
+function fetchAndDisplayProducts() {
+    const printifyToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6Ijg1Njk0MWYwYWRiNzRmZWYwNTk3MWQ1NDZmYTMyODBlYWQ2YzdmMjBlMWZmYzFiZWZkOTBjNjAyMmZiYTk2Y2ViMWQ3OTQ2ZDA0NTNkNTA3IiwiaWF0IjoxNjk5MDUzNTE4Ljk3NTkyOCwibmJmIjoxNjk5MDUzNTE4Ljk3NTkzLCJleHAiOjE3MzA2NzU5MTguOTY4MTk2LCJzdWIiOiIxNTMxMDg4OCIsInNjb3BlcyI6WyJzaG9wcy5tYW5hZ2UiLCJzaG9wcy5yZWFkIiwiY2F0YWxvZy5yZWFkIiwib3JkZXJzLnJlYWQiLCJvcmRlcnMud3JpdGUiLCJwcm9kdWN0cy5yZWFkIiwicHJvZHVjdHMud3JpdGUiLCJ3ZWJob29rcy5yZWFkIiwid2ViaG9va3Mud3JpdGUiLCJ1cGxvYWRzLnJlYWQiLCJ1cGxvYWRzLndyaXRlIiwicHJpbnRfcHJvdmlkZXJzLnJlYWQiXX0.AnouG1li_lIaGjFDcP45lyFGpL5a4bpeI1CYEOte8dleYodgcqyXmYW70nKgFjmgF2sjzDf6CQ_NT-cKwTg'; // Replace with your actual Printify API token
+    const shopID = '11876498'; // Replace with your Printify Shop ID
+    const url = `https://api.printify.com/v1/shops/${shopID}/products.json`;
+
+    fetch(url, {
+        headers: {
+            'Authorization': `Bearer ${printifyToken}`,
+            'User-Agent': 'YourAppOrClientName'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const products = data.data; // Assuming the product details are in the data property
+
+        const productsContainer = document.getElementById('products-container');
+
+        products.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.classList.add('product-card');
+
+            const productTitle = document.createElement('h2');
+            productTitle.textContent = product.title;
+            productCard.appendChild(productTitle);
+
+            // Check if images property exists and has length greater than zero
+            if (product.images && product.images.length > 0) {
+                product.images.forEach(image => {
+                    const productImage = document.createElement('img');
+                    productImage.src = image.url;
+                    productImage.alt = product.title; // Set alt text for accessibility
+                    productCard.appendChild(productImage);
+                });
+            }
+
+            const productDescription = document.createElement('p');
+            productDescription.textContent = product.description;
+            productCard.appendChild(productDescription);
+
+            const productPrice = document.createElement('span');
+            productPrice.textContent = `Price: $${product.price}`; // Assuming the price is available in the product object
+            productCard.appendChild(productPrice);
+
+            productsContainer.appendChild(productCard);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching Printify products:', error);
+        // You might want to display an error message to the user here
+    });
+}
+
+// Call the function to fetch and display Printify products
+fetchAndDisplayProducts();
+
+
