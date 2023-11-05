@@ -542,11 +542,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   
-  
-  
-  
-
-
 
 //Blog Full Post
 
@@ -588,7 +583,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			blogEntry.innerHTML = `
 			  <h2 class="mb-3">${selectedBlog.blogTitle}</h2>
 			  <h3 class="mb-3" style="font-size:15px; color:red">${selectedBlog.dateField}</h3>
-			  <img src="${selectedBlog.blogImage.url}" class="img-fluid">
+			  <img src="${selectedBlog.blogImage.url}" class="img-fluid mb-3">
 			  <p style="color: #333; font-size: 14px; line-height: 1.6em;">${selectedBlog.blogDescription}</p>
 			`;
   
