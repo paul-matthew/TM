@@ -42,14 +42,14 @@
 		      <ul class="navbar-nav mb-2 mb-lg-0">
 		        <li class="nav-item"><a class="nav-link active" href="./shop.html">SHOP</a></li>
 		        <li class="nav-item"><a class="nav-link" href="./about.html">ABOUT</a></li> 
-            <li class="nav-item"><a class="nav-link" href="./blog.html">BLOG</a></li>
+            <li class="nav-item"><a class="nav-link" href="./blog.html?index=1">BLOG</a></li>
 		        <li class="nav-item"><a class="nav-link" href="./contact.html">CONTACT</a></li>
 		      </ul>
 		    </div>
 		  </div>
 		</nav>
 
-    <section class="hero-wrap hero-wrap-2" style="background-image: url('images/shirt-man.jpg');">
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('images/shirt-man.jpg'); max-height:250px;">
       <div class="overlay"></div>
       <div class="container">
         <div class="row no-gutters slider-text align-items-start justify-content-center">
@@ -61,16 +61,16 @@
       </div>
     </section>
 
-    <section class="ftco-section" id="about-us-brief">
+    <!-- <section class="ftco-section" id="about-us-brief" style="height:100vh">
       <div class="container-xl">
         <div class="row justify-content-center"data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
 
           <div class="col-lg-12">
             <div class="search-container">
-            <input type="text" id="productSearch" placeholder="Search for products...">
-            <ul id="suggestionListpro" class="suggestion-list"></ul>
-            </div>
+              <input type="text" id="productSearch" placeholder="Search for products...">
+              <ul id="suggestionListpro" class="suggestion-list"></ul>
           </div>
+          </div> -->
   
         <!-- Product Item 1 -->
         <!-- <div class="col-lg-3 col-md-6 col-sm-6 p-2 card-container" >
@@ -121,10 +121,9 @@
         </div> -->
 
     
-        </div>
-        <div id="productCardContainer" class="product-card-container"></div>
-      </div>
-    </section>
+        <!-- </div>
+        <div id="products-container" class="row justify-content-center" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000"></div>      </div>
+    </section> -->
 
       <!-- Product item 1 modal popup-->
       <!-- <div class="portfolio-modal modal fade" id="productitem1" tabindex="-1" role="dialog" aria-hidden="true">
@@ -195,15 +194,34 @@
       </div>
       </div> -->
 
-      <section id="shop" style="padding-top: 0px; ">
-        <div class="container page-section">        
+      <section id="shop" style="padding-top: 0;">
+        <div class="container page-section">
           <div style="max-width: 1040px; margin: 0 auto;">
             <div>
-            <a class="anchor" id="fitPrintAnchor" style="padding-top: 0px; margin-top: 0px;"></a>
-            <br>
-            <iframe id="fitPrintIframe" frameborder="0" scrolling="no" src="https://shop.fitprint.io/v2.html?shop=173b7424-3017-427b-b50a-9e9c9fdd9f65" width="100%" onload="initializeIFrameResizer()"></iframe>        </div>
+              <a class="anchor" id="fitPrintAnchor" style="padding-top: 0px; margin-top: 0px;"></a>              
+              <br>
+              <iframe id="fitPrintIframe" frameborder="0" scrolling="no" src="https://shop.fitprint.io/v2.html?shop=173b7424-3017-427b-b50a-9e9c9fdd9f65" width="100%" onload="iFrameResize({ 
+                log: false, checkOrigin: false, heightCalculationMethod: 'grow', autoResize: false, 
+                onMessage: function(messageData) {
+                    var jsonData = JSON.parse(messageData.message);
+                    if (jsonData.action == 'navigateTo') {
+                        window.onbeforeunload = null;
+                        window.parent.location.href = jsonData.data;
+                    }
+                },
+                onInit: function(iframe) {
+                    window.addEventListener('scroll', function (e) {
+                        e.preventDefault(); // Prevent scrolling behavior
+                    });
+                }
+            }, '#fitPrintIframe');">
+            </iframe>
+                       
+              </div>
+          </div>
         </div>
       </section>
+      
 
     <footer class="ftco-footer img" style="background-image: url(images/mascostume.jpg);">
       <div class="overlay"></div>
@@ -246,43 +264,7 @@
   <script src="js/main.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>  <script>
-    function initializeIFrameResizer() {
-        iFrameResize({
-            log: false,
-            checkOrigin: false,
-            heightCalculationMethod: 'grow',
-            autoResize: false,
-            // onMessage: function(messageData) {
-            //     var jsonData = JSON.parse(messageData.message);
-            //     if (jsonData.action == 'navigateTo') {
-            //         window.onbeforeunload = null;
-            //         window.parent.location.href = jsonData.data;
-            //     }
-            //     if (jsonData.action == 'scrollTo') {
-            //         setTimeout(function() {
-            //             document.getElementById('fitPrintAnchor').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            //         }, 200);
-            //     }
-            // },
-            onInit: function(iframe) {
-                $(document).ready(function() {
-                    $(window).on('scroll', () => {
-                        const scrollFromTop = $(document).scrollTop();
-                        var fitPrintIframe = $("#fitPrintIframe");
-                        var offset = fitPrintIframe.offset();
-                        if (scrollFromTop > offset.top + 10) {
-                            iframe.iFrameResizer.sendMessage(scrollFromTop - (offset.top - 10));
-                        }
-                        if (scrollFromTop == 0) {
-                            iframe.iFrameResizer.sendMessage(scrollFromTop);
-                        }
-                    });
-                });
-            }
-        }, '#fitPrintIframe');
-    }
-  </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     
   </body>
 </html>

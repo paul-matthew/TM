@@ -266,93 +266,93 @@ document.addEventListener('DOMContentLoaded', function () {
 
   //PRODUCT SEARCHBAR
 
-  document.addEventListener("DOMContentLoaded", function() {
-	if (window.location.pathname.endsWith("/shop.html")) {
-		const products = [
-			"Product #1",
-			"Product #2",
-			"Product #3",
-		  ];
+//   document.addEventListener("DOMContentLoaded", function() {
+// 	if (window.location.pathname.endsWith("/shop.html")) {
+// 		const products = [
+// 			"Product #1",
+// 			"Product #2",
+// 			"Product #3",
+// 		  ];
 		  
-	  const productSearchInput = document.getElementById("productSearch");
-	  const suggestionListpro = document.getElementById("suggestionListpro");
-	  const allProductCards = document.querySelectorAll(".card-container");
+// 	  const productSearchInput = document.getElementById("productSearch");
+// 	  const suggestionListpro = document.getElementById("suggestionListpro");
+// 	  const allProductCards = document.querySelectorAll(".card-container");
   
-	  document.addEventListener("click", function(event) {
-		if (event.target !== productSearchInput) {
-		  suggestionListpro.style.display = "none";
-		}
-	  });
+// 	  document.addEventListener("click", function(event) {
+// 		if (event.target !== productSearchInput) {
+// 		  suggestionListpro.style.display = "none";
+// 		}
+// 	  });
   
-	  document.addEventListener("keydown", function(event) {
-		if (event.key === "Escape") {
-		  suggestionListpro.style.display = "none";
-		}
-	  });
+// 	  document.addEventListener("keydown", function(event) {
+// 		if (event.key === "Escape") {
+// 		  suggestionListpro.style.display = "none";
+// 		}
+// 	  });
   
-	  productSearchInput.addEventListener("input", function() {
-		const inputValuepro = productSearchInput.value.toLowerCase();
-		suggestionListpro.innerHTML = "";
+// 	  productSearchInput.addEventListener("input", function() {
+// 		const inputValuepro = productSearchInput.value.toLowerCase();
+// 		suggestionListpro.innerHTML = "";
   
-		const matchingProducts = products.filter(product =>
-		  product.toLowerCase().includes(inputValuepro)
-		);
+// 		const matchingProducts = products.filter(product =>
+// 		  product.toLowerCase().includes(inputValuepro)
+// 		);
   
-		allProductCards.forEach(card => {
-		  const cardTitleElement = card.querySelector(".card-title2");
-		  if (cardTitleElement !== null) {
-			const cardTitle = cardTitleElement.textContent.toLowerCase();
-			if (
-			  inputValuepro === "" ||
-			  matchingProducts.some(product =>
-				cardTitle.includes(product.toLowerCase())
-			  )
-			) {
-			  card.style.display = "block";
-			} else {
-			  card.style.display = "none";
-			}
-		  } else {
-			console.error("Card title element not found");
-		  }
-		});
+// 		allProductCards.forEach(card => {
+// 		  const cardTitleElement = card.querySelector(".card-title2");
+// 		  if (cardTitleElement !== null) {
+// 			const cardTitle = cardTitleElement.textContent.toLowerCase();
+// 			if (
+// 			  inputValuepro === "" ||
+// 			  matchingProducts.some(product =>
+// 				cardTitle.includes(product.toLowerCase())
+// 			  )
+// 			) {
+// 			  card.style.display = "block";
+// 			} else {
+// 			  card.style.display = "none";
+// 			}
+// 		  } else {
+// 			console.error("Card title element not found");
+// 		  }
+// 		});
   
-		matchingProducts.forEach(product => {
-		  const listItempro = document.createElement("li");
-		  listItempro.textContent = product;
-		  listItempro.addEventListener("click", function() {
-			productSearchInput.value = product;
-			showProductCard(product);
-		  });
-		  suggestionListpro.appendChild(listItempro);
-		});
+// 		matchingProducts.forEach(product => {
+// 		  const listItempro = document.createElement("li");
+// 		  listItempro.textContent = product;
+// 		  listItempro.addEventListener("click", function() {
+// 			productSearchInput.value = product;
+// 			showProductCard(product);
+// 		  });
+// 		  suggestionListpro.appendChild(listItempro);
+// 		});
   
-		suggestionListpro.style.display = matchingProducts.length > 0 ? "block" : "none";
-	  });
+// 		suggestionListpro.style.display = matchingProducts.length > 0 ? "block" : "none";
+// 	  });
   
-	  function showProductCard(productName) {
-		const productCardContainer = document.getElementById("productCardContainer");
-		productCardContainer.innerHTML = ""; // Clear existing content
+// 	  function showProductCard(productName) {
+// 		const productCardContainer = document.getElementById("productCardContainer");
+// 		productCardContainer.innerHTML = ""; // Clear existing content
   
-		allProductCards.forEach(card => {
-		  const cardTitleElement = card.querySelector(".card-title2");
-		  if (cardTitleElement !== null) {
-			const cardTitle = cardTitleElement.textContent.toLowerCase();
-			if (cardTitle.includes(productName.toLowerCase())) {
-			  card.style.display = "block";
-			  productCardContainer.appendChild(card); // Show the selected product card
-			  productCardContainer.style.display = "block";
-			  card.classList.add("center-horizontal"); 
-			} else {
-			  card.style.display = "none";
-			}
-		  } else {
-			console.error("Card title element not found");
-		  }
-		});
-	  }
-	}
-  });
+// 		allProductCards.forEach(card => {
+// 		  const cardTitleElement = card.querySelector(".card-title2");
+// 		  if (cardTitleElement !== null) {
+// 			const cardTitle = cardTitleElement.textContent.toLowerCase();
+// 			if (cardTitle.includes(productName.toLowerCase())) {
+// 			  card.style.display = "block";
+// 			  productCardContainer.appendChild(card); // Show the selected product card
+// 			  productCardContainer.style.display = "block";
+// 			  card.classList.add("center-horizontal"); 
+// 			} else {
+// 			  card.style.display = "none";
+// 			}
+// 		  } else {
+// 			console.error("Card title element not found");
+// 		  }
+// 		});
+// 	  }
+// 	}
+//   });
 	
 //PRINTIFY API
 
@@ -415,6 +415,191 @@ function fetchAndDisplayProducts() {
 }
 
 // Call the function to fetch and display Printify products
-fetchAndDisplayProducts();
+// document.addEventListener('DOMContentLoaded', () => {
+//     fetchAndDisplayProducts();
+// });
+
+//FITPRINT EMBED CODE
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     iFrameResize({
+//         log: false,
+//         checkOrigin: false,
+//         heightCalculationMethod: 'grow',
+//         autoResize: false,
+//         onMessage: function(messageData) {
+//             var jsonData = JSON.parse(messageData.message);
+//             if (jsonData.action == 'navigateTo') {
+//                 window.onbeforeunload = null;
+//                 window.parent.location.href = jsonData.data;
+//             }
+//             if (jsonData.action == 'scrollTo') {
+//                 setTimeout(function() {
+//                     document.getElementById('fitPrintAnchor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+//                 }, 200);
+//             }
+//         },
+//         onInit: function(iframe) {
+//             window.addEventListener('scroll', function() {
+//                 const scrollFromTop = window.scrollY;
+//                 var fitPrintIframe = document.getElementById('fitPrintIframe');
+//                 var offset = fitPrintIframe.getBoundingClientRect();
+//                 if (scrollFromTop > offset.top + 10) {
+//                     iframe.iFrameResizer.sendMessage(scrollFromTop - (offset.top - 10));
+//                 }
+//             });
+//         }
+//     }, '#fitPrintIframe');
+// });
 
 
+//BLOG HEADLESS CMS
+
+document.addEventListener('DOMContentLoaded', function() {
+	if (location.pathname.endsWith('blog.html')) {
+	  // Assuming you want 10 post per page
+	  const postsPerPage = 10;
+  
+	  const urlParams = new URLSearchParams(window.location.search);
+	  const currentPageIndex = urlParams.get('index');
+	  const startIndex = (currentPageIndex - 1) * postsPerPage;
+	  const endIndex = startIndex + postsPerPage;
+  
+	  fetch('https://graphql.datocms.com/', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json',
+		  'Accept': 'application/json',
+		  'Authorization': 'Bearer bc4a449b76547409adcd6e3392bc6e',
+		},
+		body: JSON.stringify({
+		  query: `{
+			allBlogs {
+			  id
+			  blogTitle
+			  dateField
+			  blogDescription
+			  blogImage { url }
+			}
+		  }`
+		}),
+	  })
+		.then(response => response.json())
+		.then(data => {
+		  const allBlogs = data.data.allBlogs.slice(startIndex, endIndex);
+		  allBlogs.sort((a, b) => new Date(b.dateField) - new Date(a.dateField));
+		  const blogSection = document.getElementById('blogpost');
+	
+		  allBlogs.forEach(blog => {
+			console.log('Current Blog:', blog); 
+  
+			// Truncate the description to the first 15 words
+			const blogDescription = blog.blogDescription;
+			const isMobile = window.innerWidth <= 768; // Adjust the pixel value as needed for your mobile view
+			
+			const wordsCount = isMobile ? 8 : 15;
+			const truncatedDescription = blogDescription.split(' ').slice(0, wordsCount).join(' ');
+			const descriptionWithEllipsis = blogDescription.split(' ').length > wordsCount ? truncatedDescription + '...' : truncatedDescription;
+
+			const blogEntry = document.createElement('div');
+			blogEntry.className = 'col-md-12';
+			blogEntry.innerHTML = `
+			  <div class="blog-entry d-flex justify-content-end">
+				<a href="blog-single.html" class="block-20 img" style="background-image: url('${blog.blogImage.url}');">
+				</a>
+				<div class="text">
+				  <p class="meta"><span><i class="fa fa-calendar me-1"></i>${blog.dateField}</span> <span><a href="#"></a></span></p>
+				  <h3 class="heading mb-3"><a href="#">${blog.blogTitle}</a></h3>
+				  <p>${descriptionWithEllipsis}</p>
+				  <a href="blog-single.html?id=${blog.id}" style="background-color: #D091DE !important; border: solid black !important; z-index: 2; width:100px !important; height:30px !important; font-size:small !important;" class="btn btn-white pb-4 px-1">Read more</a>
+				</div>
+			  </div>
+			`;
+	
+			blogSection.appendChild(blogEntry);
+		  });
+		})
+		.catch(error => console.error('Error:', error));
+	  }
+  });
+  
+  
+
+//BlOG PAGE - SCROLL BUTTONS
+
+document.addEventListener('DOMContentLoaded', function() {
+	const urlParams = new URLSearchParams(window.location.search);
+	const index = urlParams.get('index');
+	
+	const paginationList = document.querySelectorAll('.blogpage li');
+  
+	paginationList.forEach(li => {
+	  const anchor = li.querySelector('a');
+	  if (anchor && anchor.getAttribute('href').includes(`index=${index}`)) {
+		li.classList.add('active');
+	  }
+	});
+  });
+  
+  
+  
+  
+  
+
+
+
+//Blog Full Post
+
+document.addEventListener('DOMContentLoaded', function() {
+	if (location.pathname.endsWith('blog-single.html')) {
+	  const urlParams = new URLSearchParams(window.location.search);
+	  const blogID = urlParams.get('id'); // Replace 'blogID' with the actual parameter name
+  
+	  fetch('https://graphql.datocms.com/', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json',
+		  'Accept': 'application/json',
+		  'Authorization': 'Bearer bc4a449b76547409adcd6e3392bc6e',
+		},
+		body: JSON.stringify({
+		  query: `{
+			allBlogs {
+			  id
+			  blogTitle
+			  dateField
+			  blogDescription
+			  blogImage { url }
+			}
+		  }`
+		}),
+	  })
+		.then(response => response.json())
+		.then(data => {
+		  const allBlogs = data.data.allBlogs;
+		  const selectedBlog = allBlogs.find(blog => blog.id === blogID);
+  
+		  const blogSection = document.getElementById('blogpost-full');
+  
+		  if (selectedBlog) {
+			console.log('Selected Blog:', selectedBlog);
+			const blogEntry = document.createElement('div');
+			blogEntry.className = 'col-md-12';
+			blogEntry.innerHTML = `
+			  <h2 class="mb-3">${selectedBlog.blogTitle}</h2>
+			  <h3 class="mb-3" style="font-size:15px; color:red">${selectedBlog.dateField}</h3>
+			  <img src="${selectedBlog.blogImage.url}" class="img-fluid">
+			  <p style="color: #333; font-size: 14px; line-height: 1.6em;">${selectedBlog.blogDescription}</p>
+			`;
+  
+			blogSection.appendChild(blogEntry);
+		  } else {
+			// If the blog with the specified ID is not found
+			blogSection.innerHTML = 'Blog post not found';
+		  }
+		})
+		.catch(error => console.error('Error:', error));
+	}
+  });
+  
+  

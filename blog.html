@@ -42,7 +42,7 @@
 		      <ul class="navbar-nav mb-2 mb-lg-0">
 		        <li class="nav-item"><a class="nav-link" href="./shop.html">SHOP</a></li>
 		        <li class="nav-item"><a class="nav-link" href="./about.html">ABOUT</a></li> 
-            <li class="nav-item"><a class="nav-link active" href="./blog.html">BLOG</a></li>
+            <li class="nav-item"><a class="nav-link active" href="./blog.html?index=1">BLOG</a></li>
 		        <li class="nav-item"><a class="nav-link" href="./contact.html">CONTACT</a></li>
 		      </ul>
 		    </div>
@@ -66,91 +66,48 @@
       <div class="container">
         <div class="row g-lg-5">
           <div class="col-lg-8">
-            <div class="row justify-content-center">
-              <div class="col-md-12">
+            <div class="row justify-content-center" id="blogpost" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
+              <!-- <div class="col-md-12">
                 <div class="blog-entry d-flex justify-content-end" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
                   <a href="blog-single.html" class="block-20 img" style="background-image: url('images/Circle1.jpg');">
                   </a>
                   <div class="text">
-                    <p class="meta"><span><i class="fa fa-user me-1"></i>Admin</span> <span><i class="fa fa-calendar me-1"></i>Jan. 27, 2023</span> <span><a href="#"></a></span></p>
+                    <p class="meta"><span><i class="fa fa-calendar me-1"></i>Jan. 27, 2023</span> <span><a href="#"></a></span></p>
                     <h3 class="heading mb-3"><a href="#">Incorporation is A Big Milestone for Your Business</a></h3>
                     <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-                    <a href="blog-single.html" style="background-color: #9aeb5c !important; border: solid black !important; z-index: 2; width:100px !important; height:30px !important; font-size:small !important;" class="btn btn-white pb-4 px-1">Read more</a>
+                    <a href="blog-single.html" style="background-color: #D091DE !important; border: solid black !important; z-index: 2; width:100px !important; height:30px !important; font-size:small !important;" class="btn btn-white pb-4 px-1">Read more</a>
                   </div>
                 </div>
-              </div>
-              <div class="col-md-12">
-                <div class="blog-entry d-flex justify-content-end" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
-                  <a href="blog-single.html" class="block-20 img" style="background-image: url('images/Trini1.jpg');">
-                  </a>
-                  <div class="text">
-                    <p class="meta"><span><i class="fa fa-user me-1"></i>Admin</span> <span><i class="fa fa-calendar me-1"></i>Jan. 27, 2023</span> <span><a href="#"></a></span></p>
-                    <h3 class="heading mb-3"><a href="#">Incorporation is A Big Milestone for Your Business</a></h3>
-                    <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-                    <a href="blog-single.html" style="background-color: #9aeb5c !important; border: solid black !important; z-index: 2; width:100px !important; height:30px !important; font-size:small !important;" class="btn btn-white pb-4 px-1">Read more</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="blog-entry d-flex justify-content-end" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
-                  <a href="blog-single.html" class="block-20 img" style="background-image: url('images/Logo1.jpg');">
-                  </a>
-                  <div class="text">
-                    <p class="meta"><span><i class="fa fa-user me-1"></i>Admin</span> <span><i class="fa fa-calendar me-1"></i>Jan. 27, 2023</span> <span><a href="#"></a></span></p>
-                    <h3 class="heading mb-3"><a href="#">Incorporation is A Big Milestone for Your Business</a></h3>
-                    <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-                    <a href="blog-single.html" style="background-color: #9aeb5c !important; border: solid black !important; z-index: 2; width:100px !important; height:30px !important; font-size:small !important;" class="btn btn-white pb-4 px-1">Read more</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="blog-entry d-flex justify-content-end" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
-                  <a href="blog-single.html" class="block-20 img" style="background-image: url('images/Circle2.jpg');">
-                  </a>
-                  <div class="text">
-                    <p class="meta"><span><i class="fa fa-user me-1"></i>Admin</span> <span><i class="fa fa-calendar me-1"></i>Jan. 27, 2023</span> <span><a href="#"></a></span></p>
-                    <h3 class="heading mb-3"><a href="#">Incorporation is A Big Milestone for Your Business</a></h3>
-                    <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-                    <a href="blog-single.html" style="background-color: #9aeb5c !important; border: solid black !important; z-index: 2; width:100px !important; height:30px !important; font-size:small !important;" class="btn btn-white pb-4 px-1">Read more</a>
-                  </div>
-                </div>
-              </div>
+              </div> -->
             </div>
             <div class="row mt-5 justify-content-center">
               <div class="col text-center">
                 <div class="block-27">
-                  <ul>
-                    <li><a href="#">&lt;</a></li>
-                    <li class="active"><span>1</span></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">&gt;</a></li>
+                  <ul id="pagination" class="blogpage">
+                    <!-- <li><a href="#">&lt;</a></li> -->
+                    <li><a href="blog.html?index=1">1</a></li>
+                    <li><a href="blog.html?index=2">2</a></li>
+                    <li><a href="blog.html?index=3">3</a></li>
+                    <li><a href="blog.html?index=4">4</a></li>
+                    <li><a href="blog.html?index=5">5</a></li>
+                    <!-- <li><a href="#">&gt;</a></li> -->
                   </ul>
                 </div>
               </div>
             </div>
-          </div> <!-- .col-md-8 -->
+            
+            
+          </div>
           <div class="col-lg-4 sidebar pl-md-4">
-            <div class="sidebar-box bg-light rounded">
-              <form action="#" class="search-form">
-                <div class="form-group">
-                  <span class="icon fa fa-search"></span>
-                  <input type="text" class="form-control" placeholder="Search...">
-                </div>
-              </form>
-            </div>
-
             <div class="sidebar-box">
               <h3>Misfit Blog</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus itaque, autem necessitatibus voluptate quod mollitia delectus aut, sunt placeat nam vero culpa sapiente consectetur similique, inventore eos fugit cupiditate numquam!</p>
+              <p>Explore the vibrant world of carnival with our Tropical Misfit blog, your ultimate destination for everything carnival! Delve into the carnival spirit, learn about the diverse culture, and discover exciting insights, tips, and stories while browsing our exquisite carnival-inspired merchandise.</p>
             </div>
           </div>
 
         </div>
       </div>
-    </section> <!-- .section --> 
+    </section> 
 
 
     <footer class="ftco-footer img" style="background-image: url(images/mascostume.jpg);">
