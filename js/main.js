@@ -597,4 +597,62 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
   });
   
-  
+  //PRINTIFY API
+
+// Fetch products from Printify API
+fetch('https://api.printify.com/v1/shops/11876498/products.json', {
+    method: 'GET',
+    headers: {
+        Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k',
+        'Content-Type': 'application/json'
+    }
+})
+.then(response => response.json())
+.then(data => {
+    const productsContainer = document.getElementById('products-container');
+
+    // Generate product cards and modals dynamically
+    data.products.forEach((product, index) => {
+        // Create product card
+        const productCard = document.createElement('div');
+        productCard.classList.add('col-lg-3', 'col-md-6', 'col-sm-6', 'p-2', 'card-container');
+        productCard.innerHTML = `
+            <a data-bs-toggle="modal" href="#productitem${index + 1}">
+                <div class="card">
+                    <img src="${product.image}" class="card-img-top" alt="${product.title}">
+                    <div class="card-body">
+                        <div>
+                            <div class="service-info">
+                                <h5 class="card-title2">${product.title}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        `;
+        productsContainer.appendChild(productCard);
+
+        // Create product modal
+        const productModal = document.createElement('div');
+        productModal.classList.add('portfolio-modal', 'modal', 'fade');
+        productModal.id = `productitem${index + 1}`;
+        productModal.innerHTML = `
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">${product.title}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="${product.image}" class="img-fluid" alt="${product.title}">
+                        <p>${product.description}</p>
+                        <p>Price: $${product.price}</p>
+                        <!-- Add more product details as needed -->
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(productModal);
+    });
+})
+.catch(error => console.error(error));

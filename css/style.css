@@ -10530,7 +10530,7 @@ textarea.form-control {
 } */
 
 #shop{
-  min-height:100vh;
+  min-height:200vh; /*UPDATE BASED ON AMOUNT OF PRODUCTS*/
   background-size: cover;
   background-color: white !important;
   position: relative;
