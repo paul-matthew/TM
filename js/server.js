@@ -47,7 +47,7 @@ const apiProxy = createProxyMiddleware('/products', {
 });
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500','https://tropicalmisfit.netlify.app/shop');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500','https://tropicalmisfit.netlify.app','https://paul-matthew.github.io');
   res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
