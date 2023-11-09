@@ -3,7 +3,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const fetch = require('node-fetch'); // Ensure you've installed the 'node-fetch' package
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000; 
 
 // Replace this function with your own logic to publish a product using the received ID
 const publishProduct = async (productId) => {
@@ -82,7 +82,7 @@ app.get('/fetch-and-publish-products', async (req, res) => {
 app.use(apiProxy);
 
 app.listen(PORT, () => {
-  console.log(`Proxy server running on http://localhost:${PORT}`);
+  console.log(`Proxy server running on PORT ${PORT}`);
 });
 
 
