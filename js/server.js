@@ -47,11 +47,22 @@ const apiProxy = createProxyMiddleware('/products', {
 });
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500','https://tropicalmisfit.netlify.app','https://paul-matthew.github.io');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
+    let access = '';
+  
+    // Check the origin of the request
+    if (req.headers.origin === 'http://127.0.0.1:5500') {
+      access = 'http://127.0.0.1:5500';
+    } else if (req.headers.origin === 'https://paul-matthew.github.io') {
+      access = 'https://paul-matthew.github.io';
+    }
+    
+    // Set the appropriate Access-Control-Allow-Origin header
+    res.header('Access-Control-Allow-Origin', access);
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
+  
 
 app.get('/fetch-and-publish-products', async (req, res) => {
   try {
