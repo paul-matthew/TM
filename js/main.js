@@ -600,7 +600,14 @@ document.addEventListener('DOMContentLoaded', function() {
   //PRINTIFY API
 
 // Fetch products from Printify API
-fetch('http://localhost:5000/products')
+let fetchURL = '';
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    fetchURL = 'http://localhost:5000/products';
+} else {
+    fetchURL = 'https://tm-server-4a2a80557ba4.herokuapp.com/products';
+}
+
+fetch(fetchURL)
   .then(response => response.json())
   .then(data => {
     const productsContainer = document.getElementById('products-container');
