@@ -123,8 +123,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		.catch(error => console.error('Error:', error));
 	}
   });
-  
-  //PRINTIFY API
+ 
+// Initialize a global array to store all selected SKUs
+let selectedSKUs = [];
+let itemCount = 0; // Total item count for all products
 
 // Fetch products from Printify API
 let fetchURL = '';
@@ -133,7 +135,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 } else {
     fetchURL = 'https://tm-server-4a2a80557ba4.herokuapp.com/products';
 }
-const productsContainer = document.getElementById('productsContainer');
+const productsContainer = document.getElementById('products-container');
 fetch(fetchURL)
   .then(response => response.json())
   .then(data => {
@@ -163,108 +165,181 @@ fetch(fetchURL)
         const productModal = document.createElement('div');
         productModal.classList.add('portfolio-modal', 'modal', 'fade');
         productModal.id = `productitem${index + 1}`;
- productModal.innerHTML = `
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div>
-          <h5 class="modal-title">${product.title}</h5>
-          <button class="add-to-cart-btn"><i class="fas ion-ios-cart"></i></button>
+        productModal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                <h5 class="modal-title">${product.title}</h5>
+                <button class="add-to-cart-btn"><i class="fas ion-ios-cart"></i></button>
+                <span class="item-count"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="product-images">
+                <div class="small-images">
+                    ${product.images.map((image, i) => `
+                    <img src="${image.src}" class="small-img" alt="${product.title}">
+                    `).join('')}
+                </div>
+                <div class="main-container">
+                    <img src="${product.images[0].src}" class="img-fluid main-img" alt="${product.title}">
+                </div>
+                </div>
+                <div class="color-options">
+                <h6>Color Options:</h6>
+                ${product.options.find(option => option.name === 'Colors')?.values.map((color, colorIndex) => `
+                <div class="color-option" style="background-color: ${color.colors[0]};"></div>
+            `).join('') || product.options.find(option => option.name === 'Frame Color')?.values.map((frameColor, colorIndex) => `
+                <div class="color-option" style="background-color: ${frameColor.colors[0]};"></div>
+            `).join('') || 'No color options available'}
+            
+                </div>
+                <div class="size-options">
+                <h6>Size Options:</h6>
+                <select class="size-dropdown">
+                    ${product.options.find(option => option.name === 'Sizes')?.values.map(size => `
+                    <option value="${size.id}">${size.title}</option>
+                    `).join('')}
+                </select>
+                </div>
+                <p>${product.description}</p>
+                <p class='modal-price'>Price: $${product.variants[0]?.price}</p>
+            </div>
+            </div>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="product-images">
-          <div class="small-images">
-            ${product.images.map((image, i) => `
-              <img src="${image.src}" class="small-img" alt="${product.title}">
-            `).join('')}
-          </div>
-          <div class="main-container">
-            <img src="${product.images[0].src}" class="img-fluid main-img" alt="${product.title}">
-          </div>
-        </div>
-        <div class="color-options">
-          <h6>Color Options:</h6>
-          ${product.options.find(option => option.name === 'Colors')?.values.map(color => `
-            <div class="color-option" style="background-color: ${color.colors[0]};"></div>
-          `).join('') || 'No color options available'}
-        </div>
-        <div class="size-options">
-          <h6>Size Options:</h6>
-          <select class="size-dropdown">
-            ${product.options.find(option => option.name === 'Sizes')?.values.map(size => `
-              <option value="${size.id}">${size.title}</option>
-            `).join('')}
-          </select>
-        </div>
-        <p>${product.description}</p>
-        <p class='modal-price'>Price: $${product.variants[0]?.price}</p>
-      </div>
-    </div>
-  </div>
-`;
-
-// JavaScript to handle color selection
-const colorOptions = productModal.querySelectorAll('.color-option');
-colorOptions.forEach((colorOption, index) => {
-  colorOption.addEventListener('click', () => {
-    const selectedColor = product.options.find(option => option.name === 'Colors')?.values[index];
-    if (selectedColor) {
-      // Implement logic to handle the selected color
-      // For instance, change the main product image or perform other actions
-    }
-  });
-});
-
-// JavaScript to handle size selection dropdown
-const sizeDropdown = productModal.querySelector('.size-dropdown');
-sizeDropdown.addEventListener('change', (event) => {
-  const selectedSizeId = event.target.value;
-  // Implement logic to handle the selected size
-});
-
+        `;
 
         document.body.appendChild(productModal);
+
+        // JavaScript to handle color selection
+        const colorOptions = productModal.querySelectorAll('.color-option');
+        colorOptions.forEach((colorOption, colorIndex) => {
+            colorOption.addEventListener('click', () => {
+                const selectedColor = product.options.find(option => option.name === 'Colors')?.values[colorIndex] ||
+                                     product.options.find(option => option.name === 'Frame Color')?.values[colorIndex];
+        
+                if (selectedColor) {
+                    // Remove 'selected' class from all color options
+                    colorOptions.forEach(option => {
+                        option.classList.remove('selected');
+                    });
+        
+                    // Add 'selected' class to the clicked color option
+                    colorOption.classList.add('selected');
+                }
+            });
+        });
+        
+
+        // JavaScript to handle size selection dropdown
+        const sizeDropdown = productModal.querySelector('.size-dropdown');
+        sizeDropdown.addEventListener('change', (event) => {
+            const selectedSizeId = event.target.value;
+            // Implement logic to handle the selected size
+        });
 
         productCard.addEventListener('click', () => {
             const smallImages = document.querySelectorAll(`#productitem${index + 1} .small-images .small-img`);
             const mainImage = document.querySelector(`#productitem${index + 1} .main-img`);
-          
+
             // Switch main image on click of small images
             smallImages.forEach((img, idx) => {
-              img.addEventListener('click', () => {
-                // Remove 'selected' class from all images
-                smallImages.forEach((img) => {
-                  img.classList.remove('selected');
+                img.addEventListener('click', () => {
+                    // Remove 'selected' class from all images
+                    smallImages.forEach((img) => {
+                        img.classList.remove('selected');
+                    });
+
+                    // Add 'selected' class to the clicked image
+                    img.classList.add('selected');
+
+                    // Apply a smooth transition
+                    mainImage.style.opacity = '0';
+                    mainImage.onload = function() {
+                        mainImage.style.opacity = '1';
+                    };
+                    mainImage.src = product.images[idx].src;
                 });
-          
-                // Add 'selected' class to the clicked image
-                img.classList.add('selected');
-          
-                // Apply a smooth transition
-                mainImage.style.opacity = '0';
-                mainImage.onload = function() {
-                  mainImage.style.opacity = '1';
-                };
-                mainImage.src = product.images[idx].src;
-              });
             });
-            //XXX
-          });
-          
-        const addToCartButton = productModal.querySelector(`#productitem${index + 1} .add-to-cart-btn`);
-        addToCartButton.addEventListener('click', () => {
-        // Add to cart logic goes here
-        // This might involve making an API request to handle the cart functionality
-        // using Printify API or your custom backend
-        // The exact implementation may vary based on the API structure and authentication requirements
         });
 
-      });
-    } else {
-      console.log("Products data is missing or undefined.");
-    }
-  })
-  .catch(error => console.error(error));
+        const addToCartButton = productModal.querySelector(`#productitem${index + 1} .add-to-cart-btn`);
+        const itemCountSpan = productModal.querySelector('.item-count');
+        
+        addToCartButton.addEventListener('click', () => {
+            // Get the selected color, size, and variant
+            const selectedColorIndex = Array.from(colorOptions).findIndex(option => option.classList.contains('selected'));
+            const selectedColor = product.options.find(option => option.name === 'Colors')?.values[selectedColorIndex] ||
+                product.options.find(option => option.name === 'Frame Color')?.values[selectedColorIndex];
+            const selectedSizeId = sizeDropdown.value;
+        
+            console.log('Selected Color:', selectedColor);
+            console.log('Selected Size ID:', selectedSizeId);
+        
+            // Log the entire product data for debugging
+            console.log('Product Data:', product);
+        
+            // Find the selected variant based on color and size
+            let selectedVariant;
 
+            // Attempt with the first set of conditions
+            selectedVariant = product.variants.find(variant => {
+                const colorMatchIndex = variant.options[0] === selectedColor?.id;
+                const sizeMatchIndex = variant.options[1]?.toString() === selectedSizeId.toString();
+                return colorMatchIndex && sizeMatchIndex;
+            });
+            
+            // If the first attempt failed, try the second set of conditions
+            if (!selectedVariant) {
+                selectedVariant = product.variants.find(variant => {
+                    const colorMatchIndex = variant.options[2] === selectedColor?.id;
+                    const sizeMatchIndex = variant.options[0]?.toString() === selectedSizeId.toString();
+                    return colorMatchIndex && sizeMatchIndex;
+                });
+            }
+            
+            // Now you can use the selectedVariant variable as needed
+            
+        
+            if (!selectedColor && (product.options.find(option => option.name === 'Colors')?.values.length > 0 || product.options.find(option => option.name === 'Frame Color')?.values.length > 0)) {
+                // Show an error message to the user (you can customize this based on your UI)
+                alert("Please select a Colour Option");
+                return; // Stop execution if no color is selected
+            }
+        
+            // Log the selected variant for debugging
+            console.log('Selected Variant:', selectedVariant);
+        
+            // Check if a variant was found
+            if (selectedVariant) {
+                const selectedVariantSKU = selectedVariant.sku;
+        
+                // Add the selected SKU to the global array
+                selectedSKUs.push(selectedVariantSKU);
+        
+                // Update total item count
+                itemCount = selectedSKUs.length;
+        
+                // Now you can use the selectedVariantSKU in your cart logic
+                console.log("Selected Variant SKU:", selectedVariantSKU);
+        
+                // Also, you can log or use the entire selectedSKUs array
+                console.log("All Selected SKUs:", selectedSKUs);
+        
+                // Update the item count display in all modals
+                document.querySelectorAll('.item-count').forEach(span => {
+                    span.textContent = itemCount;
+                });
+            } else {
+                console.error('No matching variant found for the selected color and size.');
+            }
+        });
+        
+    });
+} else {
+    console.log("Products data is missing or undefined.");
+}
+})
+.catch(error => console.error(error));

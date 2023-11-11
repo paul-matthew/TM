@@ -10815,3 +10815,12 @@ text-align: center;
   margin-right: 5px;
   cursor: pointer;
 }
+
+.color-option:hover {
+  transform: scale(1.2);
+}
+
+.color-option.selected {
+  border: 2px solid #D091DE;
+}
+
