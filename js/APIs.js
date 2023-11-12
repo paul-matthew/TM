@@ -193,6 +193,8 @@ fetch(fetchURL)
                 <div class="color-option" style="background-color: ${color.colors[0]};"></div>
             `).join('') || product.options.find(option => option.name === 'Frame Color')?.values.map((frameColor, colorIndex) => `
                 <div class="color-option" style="background-color: ${frameColor.colors[0]};"></div>
+            `).join('') || product.options.find(option => option.name === 'Color')?.values.map((color, colorIndex) => `
+            <div class="color-option" style="background-color: ${color.colors[0]};"></div>
             `).join('') || 'No color options available'}
             
                 </div>
@@ -200,6 +202,8 @@ fetch(fetchURL)
                 <h6>Size Options:</h6>
                 <select class="size-dropdown">
                     ${product.options.find(option => option.name === 'Sizes')?.values.map(size => `
+                    <option value="${size.id}">${size.title}</option>
+                    `).join('') || product.options.find(option => option.name === 'Size')?.values.map(size => `
                     <option value="${size.id}">${size.title}</option>
                     `).join('')}
                 </select>
@@ -218,8 +222,8 @@ fetch(fetchURL)
         colorOptions.forEach((colorOption, colorIndex) => {
             colorOption.addEventListener('click', () => {
                 const selectedColor = product.options.find(option => option.name === 'Colors')?.values[colorIndex] ||
-                                     product.options.find(option => option.name === 'Frame Color')?.values[colorIndex];
-        
+                                     product.options.find(option => option.name === 'Frame Color')?.values[colorIndex]||
+                                     product.options.find(option => option.name === 'Color')?.values[colorIndex];;
                 if (selectedColor) {
                     // Remove 'selected' class from all color options
                     colorOptions.forEach(option => {
@@ -272,7 +276,8 @@ fetch(fetchURL)
             // Get the selected color, size, and variant
             const selectedColorIndex = Array.from(colorOptions).findIndex(option => option.classList.contains('selected'));
             const selectedColor = product.options.find(option => option.name === 'Colors')?.values[selectedColorIndex] ||
-                product.options.find(option => option.name === 'Frame Color')?.values[selectedColorIndex];
+                product.options.find(option => option.name === 'Frame Color')?.values[selectedColorIndex] ||
+                product.options.find(option => option.name === 'Color')?.values[selectedColorIndex];;
             const selectedSizeId = sizeDropdown.value;
         
             console.log('Selected Color:', selectedColor);
@@ -299,11 +304,21 @@ fetch(fetchURL)
                     return colorMatchIndex && sizeMatchIndex;
                 });
             }
+
+            // If the second attempt failed, try the second set of conditions
+            if (!selectedVariant) {
+                selectedVariant = product.variants.find(variant => {
+                    const colorMatchIndex = variant.options[1] === selectedColor?.id;
+                    const sizeMatchIndex = variant.options[0]?.toString() === selectedSizeId.toString();
+                    console.log("ah yo",variant.options[1])
+                    return colorMatchIndex && sizeMatchIndex;
+                });
+            }
             
             // Now you can use the selectedVariant variable as needed
             
         
-            if (!selectedColor && (product.options.find(option => option.name === 'Colors')?.values.length > 0 || product.options.find(option => option.name === 'Frame Color')?.values.length > 0)) {
+            if (!selectedColor && (product.options.find(option => option.name === 'Colors')?.values.length > 0 || product.options.find(option => option.name === 'Color')?.values.length > 0 || product.options.find(option => option.name === 'Frame Color')?.values.length > 0)) {
                 // Show an error message to the user (you can customize this based on your UI)
                 alert("Please select a Colour Option");
                 return; // Stop execution if no color is selected
