@@ -126,8 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
  
 // Initialize a global array to store all selected SKUs
 let selectedSKUs = [];
-
-
 let itemCount = 0; // Total item count for all products
 
 // Fetch products from Printify API
@@ -193,22 +191,37 @@ fetch(fetchURL)
                 </div>
                 <div class="color-options">
                 <h6>Color Options:</h6>
-                ${product.options.find(option => option.name === 'Colors')?.values.map((color, colorIndex) => `
-                <div class="color-option" style="background-color: ${color.colors[0]};"></div>
-            `).join('') || product.options.find(option => option.name === 'Frame Color')?.values.map((frameColor, colorIndex) => `
+                ${(product.options.find(option => option.name === 'Colors')?.values || [])
+                .filter(color => {
+                    const variant = product.variants.find(variant => variant.options.includes(color.id));
+                    return variant && variant.is_enabled;
+                })
+                .map((color) => `
+                    <div class="color-option" style="background-color: ${color.colors[0]};"></div>
+                `).join('') || product.options.find(option => option.name === 'Frame Color')?.values.map((frameColor) => `
                 <div class="color-option" style="background-color: ${frameColor.colors[0]};"></div>
-            `).join('') || product.options.find(option => option.name === 'Color')?.values.map((color, colorIndex) => `
+            `).join('') || product.options.find(option => option.name === 'Color')?.values.map((color) => `
             <div class="color-option" style="background-color: ${color.colors[0]};"></div>
             `).join('') || 'No color options available'}
                 </div>
                 <div class="size-options">
                 <h6>Size Options:</h6>
                 <select class="size-dropdown">
-                    ${product.options.find(option => option.name === 'Sizes')?.values.map(size => `
+                ${product.options.find(option => option.name === 'Sizes')?.values
+                .filter(size => {
+                    const variant = product.variants.find(variant => variant.options.includes(size.id));
+                    return variant && variant.is_available && variant.is_enabled;
+                })
+                .map(size => `
                     <option value="${size.id}">${size.title}</option>
-                    `).join('') || product.options.find(option => option.name === 'Size')?.values.map(size => `
+                `).join('') || product.options.find(option => option.name === 'Size')?.values
+                .filter(size => {
+                    const variant = product.variants.find(variant => variant.options.includes(size.id));
+                    return variant && variant.is_available && variant.is_enabled;
+                })
+                .map(size => `
                     <option value="${size.id}">${size.title}</option>
-                    `).join('')}
+                `).join('') }            
                 </select>
                 </div>
                 <p>${product.description}</p>
@@ -362,6 +375,7 @@ fetch(fetchURL)
                 // To RETRIEVE and log the stored SKUs locally
                 const storedSKUs = localStorage.getItem('selectedSKUs');
                 const retrievedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
+                
                 console.log("Stored SKUs:", retrievedSKUs);
             } else {
                 console.error('No matching variant found for the selected color and size.');
@@ -400,43 +414,88 @@ fetch(fetchURL)
             data.data.forEach(product => {
                 // Check if the product has at least one variant with a matching SKU
                 if (product.variants.some(variant => selectedSKUs.includes(variant.sku))) {
-                    const cartItem = document.createElement('div');
-                    cartItem.classList.add('cart-item', 'row', 'mb-3');
-
-                    // Product image
-                    const productImage = document.createElement('img');
-                    productImage.src = product.images[0].src; // Use the appropriate image source
-                    productImage.alt = product.title;
-                    productImage.classList.add('col-2', 'img-fluid');
-
-                    // Product details
-                    const productDetails = document.createElement('div');
-                    productDetails.classList.add('col-8');
-                    productDetails.innerHTML = `
-                        <h5 style='font-family:IGLight'>${product.title}</h5>
-                        <p style="margin: 0;"><span style="font-weight: bold;">Color:</span> ${product.options.find(option => option.name === 'Colors')?.values[0]?.title}</p>
-                        <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${product.variants[0]?.price}</p>
-                        <p style="margin: 0;"><span style="font-weight: bold;">Size:</span> ${product.options.find(option => option.name === 'Sizes')?.values[0]?.title}</p>
-                        <p style="margin: 0;"><span style="font-weight: bold;">Quantity:</span> ${product.variants[0]?.quantity}</p>
-                    `;
-
-                    // Remove item button
-                    const removeItemButton = document.createElement('button');
-                    removeItemButton.innerText = 'Remove';
-                    removeItemButton.classList.add('btn', 'btn-warning', 'col-2', 'remove-btn');
-                    removeItemButton.addEventListener('click', () => {
-                        // Implement logic to remove item from the cart
-                        console.log(`Remove item with SKU: ${product.variants[0]?.sku}`);
+                    console.log(product.variants);
+                
+                    selectedSKUs.forEach(selectedSKU => {
+                        const matchingVariant = product.variants.find(variant => variant.sku === selectedSKU);
+                        // console.log('issa match:',matchingVariant.id);
+                
+                        if (matchingVariant) {
+                            const matchingSKU = matchingVariant.sku;
+                            const existingCartItem = document.querySelector(`.cart-item[data-sku="${matchingSKU}"]`);
+                          
+                            if (existingCartItem) {
+                              // If the item with the same SKU already exists, update its quantity
+                              const quantityElement = existingCartItem.querySelector('.quantity');
+                              const currentQuantity = parseInt(quantityElement.innerText, 10);
+                              quantityElement.innerText = currentQuantity + 1;
+                            } else {
+                              // If it's a new item, create a new cart item
+                              const cartItem = document.createElement('div');
+                              cartItem.classList.add('cart-item', 'row', 'mb-3');
+                              cartItem.setAttribute('data-sku', matchingSKU);
+                          
+                              const matchingImage = product.images.find(image => image.variant_ids.includes(matchingVariant.id));
+                          
+                              // Product image
+                              const productImage = document.createElement('img');
+                              productImage.src = matchingImage ? matchingImage.src : '';
+                              console.log('ppp',product.images);
+                              productImage.alt = product.title;
+                              productImage.classList.add('col-2', 'img-fluid','productimg');
+                          
+                              // Product details
+                              const productDetails = document.createElement('div');
+                              productDetails.classList.add('col-8');
+                              productDetails.innerHTML = `
+                                <h5 style='font-family: IGLight;'>${product.title}</h5>
+                                <p style="margin: 0;"><span style="font-weight: bold;">Color & Size:</span> ${matchingVariant.title}</p>
+                                <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${matchingVariant.price}</p>
+                                <p style="margin: 0;"><span style="font-weight: bold;">Quantity:</span> <span class="quantity">1</span></p>
+                              `;
+                          
+                              // Remove item button
+                              const removeItemButton = document.createElement('button');
+                              removeItemButton.innerText = 'Remove';
+                              removeItemButton.classList.add('btn', 'btn-warning', 'col-2', 'remove-btn');
+                              removeItemButton.addEventListener('click', () => {
+                                // Find the index of the item with the matching SKU in the cart
+                                const matchingSKU = matchingVariant.sku;
+                                const quantityElement = cartItem.querySelector('.quantity');
+                                const currentQuantity = parseInt(quantityElement.innerText, 10);
+                          
+                                if (currentQuantity > 1) {
+                                  // If the quantity is more than 1, decrease it
+                                  quantityElement.innerText = currentQuantity - 1;
+                                } else {
+                                  // If the quantity is 1, remove the entire cart item
+                                  cartItem.parentNode.removeChild(cartItem);
+                                    const updatedSelectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
+                                    selectedSKUs.length = 0;
+                                    selectedSKUs.push(...updatedSelectedSKUs);
+                                  console.log(`did it work?`, selectedSKUs);
+                                }
+                          
+                                // Update selectedSKUs with the filtered array
+                            //    selectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
+                          
+                                console.log(`Remove item with SKU: ${matchingSKU}`);
+                              });
+                          
+                              // Append elements to the cart item
+                              cartItem.appendChild(productImage);
+                              cartItem.appendChild(productDetails);
+                              cartItem.appendChild(removeItemButton);
+                          
+                              // Append cart item to the cart container
+                              document.getElementById('cart-container').appendChild(cartItem);
+                            }
+                          }
+                          
                     });
-
-                    // Append elements to the cart item
-                    cartItem.appendChild(productImage);
-                    cartItem.appendChild(productDetails);
-                    cartItem.appendChild(removeItemButton);
-
-                    // Append cart item to the cart container
-                    document.getElementById('cart-container').appendChild(cartItem);
                 }
+                
+                
             });
         } else {
             console.log("Product data is missing or undefined.");
