@@ -381,62 +381,70 @@ fetch(fetchURL)
 //SHOPPING CART
 
 if (window.location.pathname.includes('cart.html')) {
-document.addEventListener('DOMContentLoaded', () => {
-    // Retrieve selectedSKUs from local storage
-    const storedSKUs = localStorage.getItem('selectedSKUs');
-    const selectedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
-    console.log("local stored SKU",storedSKUs);
-    console.log("selected SKU storage",selectedSKUs);
+    document.addEventListener('DOMContentLoaded', () => {
+        // Retrieve selectedSKUs from local storage
+        const storedSKUs = localStorage.getItem('selectedSKUs');
+        const selectedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
+        console.log("local stored SKU", storedSKUs);
+        console.log("selected SKU storage", selectedSKUs);
 
+        // Fetch product data based on SKUs
+        const cartContainer = document.getElementById('cart-container');
 
-    // Fetch product data based on SKUs
-    const cartContainer = document.getElementById('cart-container');
-
-    // Fetch product data based on SKUs
-    fetch(fetchURL)
+// Fetch product data based on SKUs
+fetch(fetchURL)
     .then(response => response.json())
     .then(data => {
         if (data && data.data) {
             // Iterate over the fetched product data and create elements
             data.data.forEach(product => {
-                const cartItem = document.createElement('div');
-                cartItem.classList.add('cart-item', 'row', 'mb-3');
+                // Check if the product has at least one variant with a matching SKU
+                if (product.variants.some(variant => selectedSKUs.includes(variant.sku))) {
+                    const cartItem = document.createElement('div');
+                    cartItem.classList.add('cart-item', 'row', 'mb-3');
 
-                // Product image
-                const productImage = document.createElement('img');
-                productImage.src = product.images[0].src; // Use the appropriate image source
-                productImage.alt = product.title;
-                productImage.classList.add('col-2', 'img-fluid');
+                    // Product image
+                    const productImage = document.createElement('img');
+                    productImage.src = product.images[0].src; // Use the appropriate image source
+                    productImage.alt = product.title;
+                    productImage.classList.add('col-2', 'img-fluid');
 
-                // Product details
-                const productDetails = document.createElement('div');
-                productDetails.classList.add('col-8');
-                productDetails.innerHTML = `
-                    <h5>${product.title}</h5>
-                    <p class="text-muted">Price: $${product.variants[0]?.price}</p>
-                `;
+                    // Product details
+                    const productDetails = document.createElement('div');
+                    productDetails.classList.add('col-8');
+                    productDetails.innerHTML = `
+                        <h5 style='font-family:IGLight'>${product.title}</h5>
+                        <p style="margin: 0;"><span style="font-weight: bold;">Color:</span> ${product.options.find(option => option.name === 'Colors')?.values[0]?.title}</p>
+                        <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${product.variants[0]?.price}</p>
+                        <p style="margin: 0;"><span style="font-weight: bold;">Size:</span> ${product.options.find(option => option.name === 'Sizes')?.values[0]?.title}</p>
+                        <p style="margin: 0;"><span style="font-weight: bold;">Quantity:</span> ${product.variants[0]?.quantity}</p>
+                    `;
 
-                // Remove item button
-                const removeItemButton = document.createElement('button');
-                removeItemButton.innerText = 'Remove';
-                removeItemButton.classList.add('btn', 'btn-warning', 'col-2','remove-btn');
-                removeItemButton.addEventListener('click', () => {
-                    // Implement logic to remove item from the cart
-                    console.log(`Remove item with SKU: ${product.variants[0]?.sku}`);
-                });
+                    // Remove item button
+                    const removeItemButton = document.createElement('button');
+                    removeItemButton.innerText = 'Remove';
+                    removeItemButton.classList.add('btn', 'btn-warning', 'col-2', 'remove-btn');
+                    removeItemButton.addEventListener('click', () => {
+                        // Implement logic to remove item from the cart
+                        console.log(`Remove item with SKU: ${product.variants[0]?.sku}`);
+                    });
 
-                // Append elements to the cart item
-                cartItem.appendChild(productImage);
-                cartItem.appendChild(productDetails);
-                cartItem.appendChild(removeItemButton);
+                    // Append elements to the cart item
+                    cartItem.appendChild(productImage);
+                    cartItem.appendChild(productDetails);
+                    cartItem.appendChild(removeItemButton);
 
-                // Append cart item to the cart container
-                cartContainer.appendChild(cartItem);
+                    // Append cart item to the cart container
+                    document.getElementById('cart-container').appendChild(cartItem);
+                }
             });
         } else {
             console.log("Product data is missing or undefined.");
         }
     })
     .catch(error => console.error(error));
-});
+
+    });
 }
+
+
