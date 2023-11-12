@@ -126,6 +126,8 @@ document.addEventListener('DOMContentLoaded', function() {
  
 // Initialize a global array to store all selected SKUs
 let selectedSKUs = [];
+
+
 let itemCount = 0; // Total item count for all products
 
 // Fetch products from Printify API
@@ -135,6 +137,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 } else {
     fetchURL = 'https://tm-server-4a2a80557ba4.herokuapp.com/products';
 }
+if (window.location.pathname.includes('shop.html')) {
 const productsContainer = document.getElementById('products-container');
 fetch(fetchURL)
   .then(response => response.json())
@@ -174,6 +177,7 @@ fetch(fetchURL)
                 <button class="add-to-cart-btn"><i class="fas ion-ios-cart"></i></button>
                 <span class="item-count"></span>
                 </div>
+                <button type="button" class="btn btn-outline-primary view-cart-btn" style="font-family:inherit">View Cart </button>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -196,7 +200,6 @@ fetch(fetchURL)
             `).join('') || product.options.find(option => option.name === 'Color')?.values.map((color, colorIndex) => `
             <div class="color-option" style="background-color: ${color.colors[0]};"></div>
             `).join('') || 'No color options available'}
-            
                 </div>
                 <div class="size-options">
                 <h6>Size Options:</h6>
@@ -272,6 +275,13 @@ fetch(fetchURL)
         const addToCartButton = productModal.querySelector(`#productitem${index + 1} .add-to-cart-btn`);
         const itemCountSpan = productModal.querySelector('.item-count');
         
+        // Add an event listener to the "View Cart" button
+        const viewCartButton = productModal.querySelector('.view-cart-btn');
+        viewCartButton.addEventListener('click', () => {
+            // Redirect to cart.html or your desired cart page
+            window.location.href = 'cart.html';
+        });
+
         addToCartButton.addEventListener('click', () => {
             // Get the selected color, size, and variant
             const selectedColorIndex = Array.from(colorOptions).findIndex(option => option.classList.contains('selected'));
@@ -347,6 +357,12 @@ fetch(fetchURL)
                 document.querySelectorAll('.item-count').forEach(span => {
                     span.textContent = itemCount;
                 });
+                // To STORE the SKU locally
+                localStorage.setItem('selectedSKUs', JSON.stringify(selectedSKUs));
+                // To RETRIEVE and log the stored SKUs locally
+                const storedSKUs = localStorage.getItem('selectedSKUs');
+                const retrievedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
+                console.log("Stored SKUs:", retrievedSKUs);
             } else {
                 console.error('No matching variant found for the selected color and size.');
             }
@@ -358,3 +374,69 @@ fetch(fetchURL)
 }
 })
 .catch(error => console.error(error));
+}
+
+
+
+//SHOPPING CART
+
+if (window.location.pathname.includes('cart.html')) {
+document.addEventListener('DOMContentLoaded', () => {
+    // Retrieve selectedSKUs from local storage
+    const storedSKUs = localStorage.getItem('selectedSKUs');
+    const selectedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
+    console.log("local stored SKU",storedSKUs);
+    console.log("selected SKU storage",selectedSKUs);
+
+
+    // Fetch product data based on SKUs
+    const cartContainer = document.getElementById('cart-container');
+
+    // Fetch product data based on SKUs
+    fetch(fetchURL)
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.data) {
+            // Iterate over the fetched product data and create elements
+            data.data.forEach(product => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item', 'row', 'mb-3');
+
+                // Product image
+                const productImage = document.createElement('img');
+                productImage.src = product.images[0].src; // Use the appropriate image source
+                productImage.alt = product.title;
+                productImage.classList.add('col-2', 'img-fluid');
+
+                // Product details
+                const productDetails = document.createElement('div');
+                productDetails.classList.add('col-8');
+                productDetails.innerHTML = `
+                    <h5>${product.title}</h5>
+                    <p class="text-muted">Price: $${product.variants[0]?.price}</p>
+                `;
+
+                // Remove item button
+                const removeItemButton = document.createElement('button');
+                removeItemButton.innerText = 'Remove';
+                removeItemButton.classList.add('btn', 'btn-warning', 'col-2','remove-btn');
+                removeItemButton.addEventListener('click', () => {
+                    // Implement logic to remove item from the cart
+                    console.log(`Remove item with SKU: ${product.variants[0]?.sku}`);
+                });
+
+                // Append elements to the cart item
+                cartItem.appendChild(productImage);
+                cartItem.appendChild(productDetails);
+                cartItem.appendChild(removeItemButton);
+
+                // Append cart item to the cart container
+                cartContainer.appendChild(cartItem);
+            });
+        } else {
+            console.log("Product data is missing or undefined.");
+        }
+    })
+    .catch(error => console.error(error));
+});
+}
