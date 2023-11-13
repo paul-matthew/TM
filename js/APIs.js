@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			blogEntry.innerHTML = `
 			  <h2 class="mb-3">${selectedBlog.blogTitle}</h2>
 			  <h3 class="mb-3" style="font-size:15px; color:red">${selectedBlog.dateField}</h3>
-			  <img src="${selectedBlog.blogImage.url}" class="img-fluid mb-3">
+			  <img src="${selectedBlog.blogImage.url}" class="img-fluid mb-3"loading="lazy">
 			  <p style="color: #333; font-size: 14px; line-height: 1.6em;">${selectedBlog.blogDescription}</p>
 			`;
   
@@ -164,7 +164,7 @@ fetch(fetchURL)
         productCard.innerHTML = `
           <a data-bs-toggle="modal" href="#productitem${index + 1}">
             <div class="card">
-              <img src="${product.images[0].src}" class="card-img-top" alt="${product.title}">
+              <img src="${product.images[0].src}" class="card-img-top" alt="${product.title}"loading="lazy">
               <div class="card-body">
                 <div>
                   <div class="service-info">
@@ -197,11 +197,11 @@ fetch(fetchURL)
                 <div class="product-images">
                 <div class="small-images">
                     ${product.images.map((image, i) => `
-                    <img src="${image.src}" class="small-img" alt="${product.title}">
+                    <img src="${image.src}" class="small-img" alt="${product.title}"loading="lazy">
                     `).join('')}
                 </div>
                 <div class="main-container">
-                    <img src="${product.images[0].src}" class="img-fluid main-img" alt="${product.title}">
+                    <img src="${product.images[0].src}" class="img-fluid main-img" alt="${product.title}"loading="lazy">
                 </div>
                 </div>
                 <div class="color-options">
@@ -420,7 +420,7 @@ if (window.location.pathname.includes('cart.html')) {
             // Create an order button
     const orderButton = document.createElement('button');
     orderButton.id = 'orderButton';
-    orderButton.classList.add('btn', 'btn-primary', 'order-btn'); 
+    orderButton.classList.add('btn', 'btn-warning', 'order-btn'); 
     orderButton.innerText = 'Order Now';
 
     // Add a click event listener to the order button
@@ -465,16 +465,17 @@ if (window.location.pathname.includes('cart.html')) {
                                         productImage.src = matchingImage ? matchingImage.src : '';
                                         productImage.alt = product.title;
                                         productImage.classList.add('col-2', 'img-fluid', 'productimg');
+                                        productImage.loading = 'lazy';
 
                                         // Product details
                                         const productDetails = document.createElement('div');
                                         productDetails.classList.add('col-8');
                                         productDetails.innerHTML = `
-                                        <hr style="border-top: 5px solid black; margin: 1px 0;">
+                                        <hr style="border-top: 5px solid #D091DE; margin: 1px 0;">
     
                                         <h5 style='font-family: IGLight;'>${product.title}</h5>
                                             <p style="margin: 0;"><span style="font-weight: bold;">Color & Size:</span> ${matchingVariant.title}</p>
-                                            <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${matchingVariant.price}</p>
+                                            <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${matchingVariant.price/100}</p>
                                             <p style="margin: 0;"><span style="font-weight: bold;">Quantity:</span> <span class="quantity">1</span></p>
                                         `;
 

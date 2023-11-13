@@ -9080,13 +9080,13 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5,
     background: #fff !important;
     border: 3px solid #ccc !important; /* Light grey border */
     color: black !important;
-    border-radius: 30px; 
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Dark black box shadow */
+    border-radius: 10px; 
   } 
   .btn.btn-white:hover {
     background-color: #4f86f9 !important; /* Change background color on hover */
     color: #fff !important; /* Change text color on hover */
     transform: scale(1.1); /* Add a scaling effect on hover (optional) */
+    transition: 0.15s ease-in-out;
   }
   .btn.btn-white:hover span{
     color: white !important; }
@@ -10829,16 +10829,23 @@ text-align: center;
   font-size: 8px;
   min-width:10px;
   padding:3px;
+  background-color:#9AEB5C !important;
+  border-color:#9AEB5C !important;
+  color:black;
 }
 
 .remove-btn{
   width:80px;
-  height:60px;
+  height:40px;
+  background-color:#D091DE !important;
+  border-color:black !important;
+  border-radius: 10px; 
 }
 
-.remove-btn:hover{
-  transform: scale(1.2);
+.remove-btn:hover, .order-btn:hover, .view-cart-btn:hover{
+  transform: scale(1.1);
   transition: 0.15s ease-in-out;
+  color:white;
 }
 .clicked {
   transform: scale(0.9)!important;
@@ -10849,8 +10856,16 @@ text-align: center;
 }
 
 .order-btn {
-  position: fixed;
-  top: 110px; /* Adjust the top position as needed */
-  right: 10px; /* Adjust the right position as needed */
-  z-index: 1000; /* Adjust the z-index as needed to ensure it appears above other elements */
+  position: absolute;
+  top: 10px; /* Adjust the top position as needed */
+  right: 15px; /* Adjust the right position as needed */
+  background-color:#9AEB5C !important;
+  border-color:black !important;
+  border-radius: 10px; 
+}
+@media(max-width:767px){
+  .order-btn {
+    top: 10px; /* Adjust the top position as needed */
+    right: 15px; /* Adjust the right position as needed */
+  }
 }
