@@ -97,4 +97,12 @@ app.listen(PORT, () => {
   console.log(`Proxy server running on PORT ${PORT}`);
 });
 
+//Order
+app.post('/order', (req, res) => {
+  // Log the order details received in the request body
+  console.log('Received order:', req.body);
 
+  // Here you can add logic to handle the order, e.g., save it to a database
+
+  res.status(200).json({ message: 'Order received successfully' });
+});

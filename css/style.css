@@ -3656,6 +3656,7 @@ textarea.form-control-lg {
 
 .card {
   position: relative;
+  max-height:350px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -10831,8 +10832,8 @@ text-align: center;
 }
 
 .remove-btn{
-  min-width:80px;
-  min-height:60px;
+  width:80px;
+  height:60px;
 }
 
 .remove-btn:hover{
@@ -10845,4 +10846,11 @@ text-align: center;
 
 .productimg{
   min-width:80px;
+}
+
+.order-btn {
+  position: fixed;
+  top: 110px; /* Adjust the top position as needed */
+  right: 10px; /* Adjust the right position as needed */
+  z-index: 1000; /* Adjust the z-index as needed to ensure it appears above other elements */
 }

@@ -1,4 +1,4 @@
-//BLOG HEADLESS CMS
+//BLOG HEADLESS CMS-----------------------------------------
 
 document.addEventListener('DOMContentLoaded', function() {
 	if (location.pathname.endsWith('blog.html')) {
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
 
-//Blog Full Post
+//Blog Full Post-----------------------------------------------
 
 document.addEventListener('DOMContentLoaded', function() {
 	if (location.pathname.endsWith('blog-single.html')) {
@@ -124,11 +124,27 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
   });
  
+
+//PRINTIFY API------------------------------------------------------
+
+//General -----
 // Initialize a global array to store all selected SKUs
 let selectedSKUs = [];
 let itemCount = 0; // Total item count for all products
 
-// Fetch products from Printify API
+// To RETRIEVE and log the stored SKUs locally
+const initializeSelectedSKUs = () => {
+    const storedSKUs = localStorage.getItem('selectedSKUs');
+    selectedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
+};
+
+initializeSelectedSKUs();
+
+const updateSelectedSKUs = (updatedSKUs) => {
+    selectedSKUs = updatedSKUs;
+    localStorage.setItem('selectedSKUs', JSON.stringify(selectedSKUs));
+};
+// PRODUCTS-------
 let fetchURL = '';
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     fetchURL = 'http://localhost:5000/products';
@@ -136,7 +152,6 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
     fetchURL = 'https://tm-server-4a2a80557ba4.herokuapp.com/products';
 }
 if (window.location.pathname.includes('shop.html')) {
-const productsContainer = document.getElementById('products-container');
 fetch(fetchURL)
   .then(response => response.json())
   .then(data => {
@@ -153,7 +168,7 @@ fetch(fetchURL)
               <div class="card-body">
                 <div>
                   <div class="service-info">
-                    <h5 class="card-title2">${product.title}</h5>
+                    <h5 class="card-title2" style='font-size:25px'>${product.title}</h5>
                   </div>
                 </div>
               </div>
@@ -175,7 +190,7 @@ fetch(fetchURL)
                 <button class="add-to-cart-btn"><i class="fas ion-ios-cart"></i></button>
                 <span class="item-count"></span>
                 </div>
-                <button type="button" class="btn btn-outline-primary view-cart-btn" style="font-family:inherit">View Cart </button>
+                <button type="button" class="btn btn-outline-primary view-cart-btn" style="font-family:inherit;margin:10px">View Cart </button>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -210,11 +225,18 @@ fetch(fetchURL)
                 ${product.options.find(option => option.name === 'Sizes')?.values
                 .filter(size => {
                     const variant = product.variants.find(variant => variant.options.includes(size.id));
-                    return variant && variant.is_available && variant.is_enabled;
+                    return variant && variant.is_available;
                 })
                 .map(size => `
                     <option value="${size.id}">${size.title}</option>
                 `).join('') || product.options.find(option => option.name === 'Size')?.values
+                .filter(size => {
+                    const variant = product.variants.find(variant => variant.options.includes(size.id));
+                    return variant && variant.is_available && variant.is_enabled;
+                })
+                .map(size => `
+                    <option value="${size.id}">${size.title}</option>
+                `).join('') || product.options.find(option => option.name === 'Phone Models')?.values
                 .filter(size => {
                     const variant = product.variants.find(variant => variant.options.includes(size.id));
                     return variant && variant.is_available && variant.is_enabled;
@@ -286,7 +308,6 @@ fetch(fetchURL)
         });
 
         const addToCartButton = productModal.querySelector(`#productitem${index + 1} .add-to-cart-btn`);
-        const itemCountSpan = productModal.querySelector('.item-count');
         
         // Add an event listener to the "View Cart" button
         const viewCartButton = productModal.querySelector('.view-cart-btn');
@@ -392,118 +413,136 @@ fetch(fetchURL)
 
 
 
-//SHOPPING CART
+//SHOPPING CART------
 
 if (window.location.pathname.includes('cart.html')) {
     document.addEventListener('DOMContentLoaded', () => {
-        // Retrieve selectedSKUs from local storage
-        const storedSKUs = localStorage.getItem('selectedSKUs');
-        const selectedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
-        console.log("local stored SKU", storedSKUs);
-        console.log("selected SKU storage", selectedSKUs);
+            // Create an order button
+    const orderButton = document.createElement('button');
+    orderButton.id = 'orderButton';
+    orderButton.classList.add('btn', 'btn-primary', 'order-btn'); 
+    orderButton.innerText = 'Order Now';
 
+    // Add a click event listener to the order button
+    orderButton.addEventListener('click', handleOrderButtonClick);
+
+    // Insert the order button at the top of the cart container
+    const cartContainer = document.getElementById('cart-container');
+    cartContainer.parentNode.insertBefore(orderButton, cartContainer);
         // Fetch product data based on SKUs
-        const cartContainer = document.getElementById('cart-container');
+        fetch(fetchURL)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.data) {
+                    const productsContainer = document.getElementById('cart-container');
 
-// Fetch product data based on SKUs
-fetch(fetchURL)
-    .then(response => response.json())
-    .then(data => {
-        if (data && data.data) {
-            // Iterate over the fetched product data and create elements
-            data.data.forEach(product => {
-                // Check if the product has at least one variant with a matching SKU
-                if (product.variants.some(variant => selectedSKUs.includes(variant.sku))) {
-                    console.log(product.variants);
-                
-                    selectedSKUs.forEach(selectedSKU => {
-                        const matchingVariant = product.variants.find(variant => variant.sku === selectedSKU);
-                        // console.log('issa match:',matchingVariant.id);
-                
-                        if (matchingVariant) {
-                            const matchingSKU = matchingVariant.sku;
-                            const existingCartItem = document.querySelector(`.cart-item[data-sku="${matchingSKU}"]`);
-                          
-                            if (existingCartItem) {
-                              // If the item with the same SKU already exists, update its quantity
-                              const quantityElement = existingCartItem.querySelector('.quantity');
-                              const currentQuantity = parseInt(quantityElement.innerText, 10);
-                              quantityElement.innerText = currentQuantity + 1;
-                            } else {
-                              // If it's a new item, create a new cart item
-                              const cartItem = document.createElement('div');
-                              cartItem.classList.add('cart-item', 'row', 'mb-3');
-                              cartItem.setAttribute('data-sku', matchingSKU);
-                          
-                              const matchingImage = product.images.find(image => image.variant_ids.includes(matchingVariant.id));
-                          
-                              // Product image
-                              const productImage = document.createElement('img');
-                              productImage.src = matchingImage ? matchingImage.src : '';
-                              console.log('ppp',product.images);
-                              productImage.alt = product.title;
-                              productImage.classList.add('col-2', 'img-fluid','productimg');
-                          
-                              // Product details
-                              const productDetails = document.createElement('div');
-                              productDetails.classList.add('col-8');
-                              productDetails.innerHTML = `
-                                <h5 style='font-family: IGLight;'>${product.title}</h5>
-                                <p style="margin: 0;"><span style="font-weight: bold;">Color & Size:</span> ${matchingVariant.title}</p>
-                                <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${matchingVariant.price}</p>
-                                <p style="margin: 0;"><span style="font-weight: bold;">Quantity:</span> <span class="quantity">1</span></p>
-                              `;
-                          
-                              // Remove item button
-                              const removeItemButton = document.createElement('button');
-                              removeItemButton.innerText = 'Remove';
-                              removeItemButton.classList.add('btn', 'btn-warning', 'col-2', 'remove-btn');
-                              removeItemButton.addEventListener('click', () => {
-                                // Find the index of the item with the matching SKU in the cart
-                                const matchingSKU = matchingVariant.sku;
-                                const quantityElement = cartItem.querySelector('.quantity');
-                                const currentQuantity = parseInt(quantityElement.innerText, 10);
-                          
-                                if (currentQuantity > 1) {
-                                  // If the quantity is more than 1, decrease it
-                                  quantityElement.innerText = currentQuantity - 1;
-                                } else {
-                                  // If the quantity is 1, remove the entire cart item
-                                  cartItem.parentNode.removeChild(cartItem);
-                                    const updatedSelectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
-                                    selectedSKUs.length = 0;
-                                    selectedSKUs.push(...updatedSelectedSKUs);
-                                  console.log(`did it work?`, selectedSKUs);
+                    // Iterate over the fetched product data and create elements
+                    data.data.forEach(product => {
+                        // Check if the product has at least one variant with a matching SKU
+                        if (product.variants.some(variant => selectedSKUs.includes(variant.sku))) {
+                            selectedSKUs.forEach(selectedSKU => {
+                                const matchingVariant = product.variants.find(variant => variant.sku === selectedSKU);
+
+                                if (matchingVariant) {
+                                    const matchingSKU = matchingVariant.sku;
+                                    const existingCartItem = document.querySelector(`.cart-item[data-sku="${matchingSKU}"]`);
+
+                                    if (existingCartItem) {
+                                        // If the item with the same SKU already exists, update its quantity
+                                        const quantityElement = existingCartItem.querySelector('.quantity');
+                                        const currentQuantity = parseInt(quantityElement.innerText, 10);
+                                        quantityElement.innerText = currentQuantity + 1;
+                                    } else {
+                                        // Create and append the new cart item
+                                        const cartItem = document.createElement('div');
+                                        cartItem.classList.add('cart-item', 'row', 'mb-3');
+                                        cartItem.setAttribute('data-sku', matchingSKU);
+
+                                        const matchingImage = product.images.find(image => image.variant_ids.includes(matchingVariant.id));
+
+                                        // Product image
+                                        const productImage = document.createElement('img');
+                                        productImage.src = matchingImage ? matchingImage.src : '';
+                                        productImage.alt = product.title;
+                                        productImage.classList.add('col-2', 'img-fluid', 'productimg');
+
+                                        // Product details
+                                        const productDetails = document.createElement('div');
+                                        productDetails.classList.add('col-8');
+                                        productDetails.innerHTML = `
+                                        <hr style="border-top: 5px solid black; margin: 1px 0;">
+    
+                                        <h5 style='font-family: IGLight;'>${product.title}</h5>
+                                            <p style="margin: 0;"><span style="font-weight: bold;">Color & Size:</span> ${matchingVariant.title}</p>
+                                            <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${matchingVariant.price}</p>
+                                            <p style="margin: 0;"><span style="font-weight: bold;">Quantity:</span> <span class="quantity">1</span></p>
+                                        `;
+
+                                        // Remove item button
+                                        const removeItemButton = document.createElement('button');
+                                        removeItemButton.innerText = 'Remove';
+                                        removeItemButton.classList.add('btn', 'btn-warning', 'col-2', 'remove-btn');
+                                        removeItemButton.addEventListener('click', () => {
+                                            // Find the index of the item with the matching SKU in the cart
+                                            const matchingSKU = matchingVariant.sku;
+                                            const quantityElement = cartItem.querySelector('.quantity');
+                                            const currentQuantity = parseInt(quantityElement.innerText, 10);
+
+                                            if (currentQuantity > 1) {
+                                                // If the quantity is more than 1, decrease it
+                                                quantityElement.innerText = currentQuantity - 1;
+                                            } else {
+                                                // If the quantity is 1, remove the entire cart item
+                                                cartItem.parentNode.removeChild(cartItem);
+                                            }
+
+                                            // Update selectedSKUs with the filtered array
+                                            const updatedSelectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
+                                            updateSelectedSKUs(updatedSelectedSKUs);
+                                            console.log(`Remove item with SKU: ${matchingSKU}`);
+                                        });
+
+                                        // Append elements to the cart item
+                                        cartItem.appendChild(productImage);
+                                        cartItem.appendChild(productDetails);
+                                        cartItem.appendChild(removeItemButton);
+
+                                        // Append cart item to the cart container
+                                        productsContainer.appendChild(cartItem);
+                                    }
                                 }
-                          
-                                // Update selectedSKUs with the filtered array
-                            //    selectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
-                          
-                                console.log(`Remove item with SKU: ${matchingSKU}`);
-                              });
-                          
-                              // Append elements to the cart item
-                              cartItem.appendChild(productImage);
-                              cartItem.appendChild(productDetails);
-                              cartItem.appendChild(removeItemButton);
-                          
-                              // Append cart item to the cart container
-                              document.getElementById('cart-container').appendChild(cartItem);
-                            }
-                          }
-                          
+                            });
+                        }
                     });
-                }
-                
-                
-            });
-        } else {
-            console.log("Product data is missing or undefined.");
-        }
-    })
-    .catch(error => console.error(error));
 
+                } else {
+                    console.log("Product data is missing or undefined.");
+                }
+            })
+            .catch(error => console.error(error));
     });
 }
 
+//ORDER
+
+function handleOrderButtonClick() {
+    // Your logic to fetch product data and create cart items goes here
+    // ...
+
+    // After fetching and creating cart items, you can make the order API call here
+    // For example, you can use the fetch API to make a POST request to the Printify order API
+
+    // Replace 'YOUR_PRINTIFY_API_KEY' with your actual Printify API key
+
+    // Example: Making a POST request to the Printify order API
+    fetch(fetchURL)
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the order API
+            console.log('Order response:', data);
+        })
+        .catch(error => {
+            console.error('Error making order request:', error);
+        });
+}
 
