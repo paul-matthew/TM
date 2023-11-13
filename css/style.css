@@ -10781,16 +10781,14 @@ transform: scale(1.2);
   font-family: IGlight;
 }
 
-.add-to-cart-btn i{
-  color:#D091DE;
-}
-
 .add-to-cart-btn{
-border:solid gray;
-}
-
-.add-to-cart-btn:hover{
-  transform: scale(1.2);
+  font-family:inherit;
+  font-size: 13px;
+  min-width:30px;
+  padding:3px;
+  background-color:#D091DE !important;
+  border-color:#D091DE !important;
+  color:black !important;
 }
 
 .modal-header div{
@@ -10798,7 +10796,7 @@ border:solid gray;
   display:inline-block;
 }
 
-.modal-price{
+/* .modal-price{
 border:black solid;
 font-weight: bold;
 background-color:#D091DE;
@@ -10806,7 +10804,7 @@ max-width:120px;
 color:black;
 padding:5px;
 text-align: center;
-}
+} */
 
 .color-option {
   width: 30px;
@@ -10826,11 +10824,12 @@ text-align: center;
 }
 
 .view-cart-btn{
-  font-size: 8px;
-  min-width:10px;
+  font-size: 20px;
+  min-width:30px;
+  height:40px;
   padding:3px;
-  background-color:#9AEB5C !important;
-  border-color:#9AEB5C !important;
+  background-color:#D091DE !important;
+  border-color:#D091DE !important;
   color:black;
 }
 
@@ -10842,7 +10841,7 @@ text-align: center;
   border-radius: 10px; 
 }
 
-.remove-btn:hover, .order-btn:hover, .view-cart-btn:hover{
+.remove-btn:hover, .order-btn:hover, .view-cart-btn:hover, .add-to-cart-btn:hover{
   transform: scale(1.1);
   transition: 0.15s ease-in-out;
   color:white;

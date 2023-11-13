@@ -185,12 +185,8 @@ fetch(fetchURL)
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
             <div class="modal-header">
-                <div>
                 <h5 class="modal-title">${product.title}</h5>
-                <button class="add-to-cart-btn"><i class="fas ion-ios-cart"></i></button>
-                <span class="item-count"></span>
-                </div>
-                <button type="button" class="btn btn-outline-primary view-cart-btn" style="font-family:inherit;margin:10px">View Cart </button>
+                <button type="button" class="view-cart-btn" style="font-family:inherit;margin:10px"><i class="fas ion-ios-cart"></i></button>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -205,7 +201,7 @@ fetch(fetchURL)
                 </div>
                 </div>
                 <div class="color-options">
-                <h6>Color Options:</h6>
+                <h6></h6>
                 ${(product.options.find(option => option.name === 'Colors')?.values || [])
                 .filter(color => {
                     const variant = product.variants.find(variant => variant.options.includes(color.id));
@@ -217,10 +213,10 @@ fetch(fetchURL)
                 <div class="color-option" style="background-color: ${frameColor.colors[0]};"></div>
             `).join('') || product.options.find(option => option.name === 'Color')?.values.map((color) => `
             <div class="color-option" style="background-color: ${color.colors[0]};"></div>
-            `).join('') || 'No color options available'}
+            `).join('') || ''}
                 </div>
                 <div class="size-options">
-                <h6>Size Options:</h6>
+                <h6 style='font-weight:bold'>Size Options:</h6>
                 <select class="size-dropdown">
                 ${product.options.find(option => option.name === 'Sizes')?.values
                 .filter(size => {
@@ -246,8 +242,10 @@ fetch(fetchURL)
                 `).join('') }            
                 </select>
                 </div>
+                <p style='font-weight:bold'>Price: <span style='font-weight:normal'>$${product.variants[0]?.price/100}</span></p>
+                <button class="add-to-cart-btn"style='margin-right:10px'>Add to Cart</button>Items in Cart: <span class="item-count"></span>
+
                 <p>${product.description}</p>
-                <p class='modal-price'>Price: $${product.variants[0]?.price/100}</p>
             </div>
             </div>
         </div>
