@@ -247,7 +247,7 @@ fetch(fetchURL)
                 </select>
                 </div>
                 <p>${product.description}</p>
-                <p class='modal-price'>Price: $${product.variants[0]?.price}</p>
+                <p class='modal-price'>Price: $${product.variants[0]?.price/100}</p>
             </div>
             </div>
         </div>
