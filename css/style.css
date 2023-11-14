@@ -10650,8 +10650,8 @@ textarea.form-control {
 /* Common styles for both media queries */
 #intro, #intro2 {
   /* font-family: BEBAS; */
-  font-family: IGLight;
-  color: white;
+  font-family: Roboto;
+  color: black;
   width:100vw;
   text-align: center;
   background: linear-gradient(to right, #D091DE, #C08BD2);/* Background color for the text box */
@@ -10664,7 +10664,7 @@ textarea.form-control {
 @media (min-width: 767px) {
   #intro {
     font-size: 6vh;
-    margin-top:150px;
+    margin-top:100px;
     margin-bottom: 60px;
     /* -webkit-text-stroke: 1.5px black; */
     /* box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.5); */
@@ -10676,10 +10676,9 @@ textarea.form-control {
   #intro {
   /* display:none; */
   font-size: 4vh;
-  margin-top: 80px;
+  margin-top: 70px;
   margin-bottom: 50px;
   padding: 10px;
-  border-radius: 5px; 
   }
 }
 
@@ -10781,7 +10780,7 @@ transform: scale(1.2);
   font-family: IGlight;
 }
 
-.add-to-cart-btn{
+.add-to-cart-btn, .order-btn, .remove-btn, .clear-btn,.read-more{
   font-family:inherit;
   font-size: 13px;
   min-width:30px;
@@ -10789,6 +10788,7 @@ transform: scale(1.2);
   background-color:#D091DE !important;
   border-color:#D091DE !important;
   color:black !important;
+  border-radius:5px;
 }
 
 .modal-header div{
@@ -10831,20 +10831,18 @@ text-align: center;
   background-color:#D091DE !important;
   border-color:#D091DE !important;
   color:black;
+  border-radius:5px;
 }
 
 .remove-btn{
   width:80px;
   height:40px;
-  background-color:#D091DE !important;
-  border-color:black !important;
-  border-radius: 10px; 
 }
 
-.remove-btn:hover, .order-btn:hover, .view-cart-btn:hover, .add-to-cart-btn:hover{
+.remove-btn:hover, .order-btn:hover, .view-cart-btn:hover, .add-to-cart-btn:hover,.clear-btn:hover,.read-more:hover{
   transform: scale(1.1);
   transition: 0.15s ease-in-out;
-  color:white;
+  color:white !important;
 }
 .clicked {
   transform: scale(0.9)!important;
@@ -10858,9 +10856,6 @@ text-align: center;
   position: absolute;
   top: 10px; /* Adjust the top position as needed */
   right: 15px; /* Adjust the right position as needed */
-  background-color:#9AEB5C !important;
-  border-color:black !important;
-  border-radius: 10px; 
 }
 @media(max-width:767px){
   .order-btn {
@@ -10868,3 +10863,24 @@ text-align: center;
     right: 15px; /* Adjust the right position as needed */
   }
 }
+
+.clear-btn {
+  background-color: #9AEB5C !important;
+  border-color: #9AEB5C !important;
+  position: absolute;
+  top: 10px; /* Adjust the top position as needed */
+  left: 15px; /* Adjust the right position as needed */
+}
+@media(max-width:767px){
+  .clear-btn {
+    top: 10px; /* Adjust the top position as needed */
+    left: 15px; /* Adjust the right position as needed */
+  }
+}
+
+.read-more {
+  width:100px ;
+  height:30px; 
+  font-size:small ;
+}
+

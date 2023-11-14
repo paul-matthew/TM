@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				  <p class="meta"><span><i class="fa fa-calendar me-1"></i>${blog.dateField}</span> <span><a href="#"></a></span></p>
 				  <h3 class="heading mb-3"><a href="#">${blog.blogTitle}</a></h3>
 				  <p>${descriptionWithEllipsis}</p>
-				  <a href="blog-single.html?id=${blog.id}" style="background-color: #D091DE !important; border: solid black !important; z-index: 2; width:100px !important; height:30px !important; font-size:small !important;" class="btn btn-white pb-4 px-1">Read more</a>
+				  <a href="blog-single.html?id=${blog.id}" class="btn read-more pb-4 px-1">Read more</a>
 				</div>
 			  </div>
 			`;
@@ -183,73 +183,83 @@ fetch(fetchURL)
         productModal.id = `productitem${index + 1}`;
         productModal.innerHTML = `
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+          <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">${product.title}</h5>
-                <button type="button" class="view-cart-btn" style="font-family:inherit;margin:10px"><i class="fas ion-ios-cart"></i></button>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h5 class="modal-title">${product.title}</h5>
+              <button type="button" class="view-cart-btn" style="font-family:inherit;margin:10px"><i class="fas ion-ios-cart"></i></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="product-images">
+              <div class="product-images">
                 <div class="small-images">
-                    ${product.images.map((image, i) => `
-                    <img src="${image.src}" class="small-img" alt="${product.title}"loading="lazy">
-                    `).join('')}
+                  ${product.images.map((image, i) => `
+                    <img src="${image.src}" class="small-img" alt="${product.title}" loading="lazy">
+                  `).join('')}
                 </div>
                 <div class="main-container">
-                    <img src="${product.images[0].src}" class="img-fluid main-img" alt="${product.title}"loading="lazy">
+                  <img src="${product.images[0].src}" class="img-fluid main-img" alt="${product.title}" loading="lazy">
                 </div>
-                </div>
-                <div class="color-options">
+              </div>
+              <div class="color-options">
                 <h6></h6>
                 ${(product.options.find(option => option.name === 'Colors')?.values || [])
-                .filter(color => {
+                  .filter(color => {
                     const variant = product.variants.find(variant => variant.options.includes(color.id));
                     return variant && variant.is_enabled;
-                })
-                .map((color) => `
+                  })
+                  .map((color) => `
                     <div class="color-option" style="background-color: ${color.colors[0]};"></div>
-                `).join('') || product.options.find(option => option.name === 'Frame Color')?.values.map((frameColor) => `
-                <div class="color-option" style="background-color: ${frameColor.colors[0]};"></div>
-            `).join('') || product.options.find(option => option.name === 'Color')?.values.map((color) => `
-            <div class="color-option" style="background-color: ${color.colors[0]};"></div>
-            `).join('') || ''}
+                  `).join('') || product.options.find(option => option.name === 'Frame Color')?.values.map((frameColor) => `
+                    <div class="color-option" style="background-color: ${frameColor.colors[0]};"></div>
+                `).join('') || product.options.find(option => option.name === 'Color')?.values.map((color) => `
+                  <div class="color-option" style="background-color: ${color.colors[0]};"></div>
+                `).join('') || ''}
+              </div>
+              <div class="size-and-quantity-options" style="display: flex; align-items: center;">
+                <div class="size-options" style="margin-right: 20px;">
+                  <h6 style='font-weight:bold; display: inline;'>Size Options:</h6>
+                  <select class="size-dropdown">
+                    ${product.options.find(option => option.name === 'Sizes')?.values
+                      .filter(size => {
+                        const variant = product.variants.find(variant => variant.options.includes(size.id));
+                        if (size.title.length < 4) {
+                            return variant && variant.is_available ? `<option value="${size.id}">${size.title} (Available)</option>` : '';
+                        } else {
+                            return variant && variant.is_available && variant.is_enabled ? `<option value="${size.id}">${size.title}</option>` : '';
+                        }                      
+                        })
+                      .map(size => `
+                        <option value="${size.id}">${size.title}</option>
+                      `).join('') || product.options.find(option => option.name === 'Size')?.values
+                      .filter(size => {
+                        const variant = product.variants.find(variant => variant.options.includes(size.id));
+                        return variant && variant.is_available && variant.is_enabled;
+                      })
+                      .map(size => `
+                        <option value="${size.id}">${size.title}</option>
+                      `).join('') || product.options.find(option => option.name === 'Phone Models')?.values
+                      .filter(size => {
+                        const variant = product.variants.find(variant => variant.options.includes(size.id));
+                        return variant && variant.is_available && variant.is_enabled;
+                      })
+                      .map(size => `
+                        <option value="${size.id}">${size.title}</option>
+                      `).join('') }            
+                  </select>
                 </div>
-                <div class="size-options">
-                <h6 style='font-weight:bold'>Size Options:</h6>
-                <select class="size-dropdown">
-                ${product.options.find(option => option.name === 'Sizes')?.values
-                .filter(size => {
-                    const variant = product.variants.find(variant => variant.options.includes(size.id));
-                    return variant && variant.is_available;
-                })
-                .map(size => `
-                    <option value="${size.id}">${size.title}</option>
-                `).join('') || product.options.find(option => option.name === 'Size')?.values
-                .filter(size => {
-                    const variant = product.variants.find(variant => variant.options.includes(size.id));
-                    return variant && variant.is_available && variant.is_enabled;
-                })
-                .map(size => `
-                    <option value="${size.id}">${size.title}</option>
-                `).join('') || product.options.find(option => option.name === 'Phone Models')?.values
-                .filter(size => {
-                    const variant = product.variants.find(variant => variant.options.includes(size.id));
-                    return variant && variant.is_available && variant.is_enabled;
-                })
-                .map(size => `
-                    <option value="${size.id}">${size.title}</option>
-                `).join('') }            
-                </select>
-                </div>
-                <p style='font-weight:bold'>Price: <span style='font-weight:normal'>$${product.variants[0]?.price/100}</span></p>
-                <button class="add-to-cart-btn"style='margin-right:10px'>Add to Cart</button>Items in Cart: <span class="item-count"></span>
-
-                <p>${product.description}</p>
+                <div>
+                  <label for="product-qty" style="margin-top: 10px; font-weight: bold; display: inline;">Quantity:</label>
+                  <input type="number" class="product-qty" name="quantity" min="1" max="50" value="1" style="display: inline; width: 40px;">
+                  </div>
+              </div>
+              <p style='font-weight:bold'>Price: <span style='font-weight:normal'>$${product.variants[0]?.price/100}</span></p>
+              <button class="add-to-cart-btn" style='margin-right:10px'>Add to Cart</button>Items in Cart: <span class="item-count"></span>
+              <p>${product.description}</p>
             </div>
-            </div>
+          </div>
         </div>
-        `;
+      `;
+      
 
         document.body.appendChild(productModal);
 
@@ -275,10 +285,9 @@ fetch(fetchURL)
 
         // JavaScript to handle size selection dropdown
         const sizeDropdown = productModal.querySelector('.size-dropdown');
-        sizeDropdown.addEventListener('change', (event) => {
-            const selectedSizeId = event.target.value;
-            // Implement logic to handle the selected size
-        });
+        const Quantity = productModal.querySelector('.product-qty');
+
+
 
         productCard.addEventListener('click', () => {
             const smallImages = document.querySelectorAll(`#productitem${index + 1} .small-images .small-img`);
@@ -318,26 +327,28 @@ fetch(fetchURL)
             // Get the selected color, size, and variant
             const selectedColorIndex = Array.from(colorOptions).findIndex(option => option.classList.contains('selected'));
             const selectedColor = product.options.find(option => option.name === 'Colors')?.values[selectedColorIndex] ||
-                product.options.find(option => option.name === 'Frame Color')?.values[selectedColorIndex] ||
-                product.options.find(option => option.name === 'Color')?.values[selectedColorIndex];;
+            product.options.find(option => option.name === 'Frame Color')?.values[selectedColorIndex] ||
+            product.options.find(option => option.name === 'Color')?.values[selectedColorIndex];
             const selectedSizeId = sizeDropdown.value;
+            const selectedQuantity = Quantity.value;
         
             console.log('Selected Color:', selectedColor);
             console.log('Selected Size ID:', selectedSizeId);
+            console.log('Selected Quantity:', selectedQuantity);
         
             // Log the entire product data for debugging
             console.log('Product Data:', product);
         
             // Find the selected variant based on color and size
             let selectedVariant;
-
+        
             // Attempt with the first set of conditions
             selectedVariant = product.variants.find(variant => {
                 const colorMatchIndex = variant.options[0] === selectedColor?.id;
                 const sizeMatchIndex = variant.options[1]?.toString() === selectedSizeId.toString();
                 return colorMatchIndex && sizeMatchIndex;
             });
-            
+        
             // If the first attempt failed, try the second set of conditions
             if (!selectedVariant) {
                 selectedVariant = product.variants.find(variant => {
@@ -346,19 +357,18 @@ fetch(fetchURL)
                     return colorMatchIndex && sizeMatchIndex;
                 });
             }
-
+        
             // If the second attempt failed, try the second set of conditions
             if (!selectedVariant) {
                 selectedVariant = product.variants.find(variant => {
                     const colorMatchIndex = variant.options[1] === selectedColor?.id;
                     const sizeMatchIndex = variant.options[0]?.toString() === selectedSizeId.toString();
-                    console.log("ah yo",variant.options[1])
+                    console.log("ah yo", variant.options[1])
                     return colorMatchIndex && sizeMatchIndex;
                 });
             }
-            
+        
             // Now you can use the selectedVariant variable as needed
-            
         
             if (!selectedColor && (product.options.find(option => option.name === 'Colors')?.values.length > 0 || product.options.find(option => option.name === 'Color')?.values.length > 0 || product.options.find(option => option.name === 'Frame Color')?.values.length > 0)) {
                 // Show an error message to the user (you can customize this based on your UI)
@@ -373,8 +383,10 @@ fetch(fetchURL)
             if (selectedVariant) {
                 const selectedVariantSKU = selectedVariant.sku;
         
-                // Add the selected SKU to the global array
-                selectedSKUs.push(selectedVariantSKU);
+                // Add the selected SKU to the global array based on quantity
+                for (let i = 0; i < selectedQuantity; i++) {
+                    selectedSKUs.push(selectedVariantSKU);
+                }
         
                 // Update total item count
                 itemCount = selectedSKUs.length;
@@ -394,7 +406,7 @@ fetch(fetchURL)
                 // To RETRIEVE and log the stored SKUs locally
                 const storedSKUs = localStorage.getItem('selectedSKUs');
                 const retrievedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
-                
+        
                 console.log("Stored SKUs:", retrievedSKUs);
             } else {
                 console.error('No matching variant found for the selected color and size.');
@@ -415,22 +427,34 @@ fetch(fetchURL)
 
 if (window.location.pathname.includes('cart.html')) {
     document.addEventListener('DOMContentLoaded', () => {
-            // Create an order button
+    // Create an order button
     const orderButton = document.createElement('button');
     orderButton.id = 'orderButton';
-    orderButton.classList.add('btn', 'btn-warning', 'order-btn'); 
+    orderButton.classList.add('order-btn'); 
     orderButton.innerText = 'Order Now';
 
     // Add a click event listener to the order button
     orderButton.addEventListener('click', handleOrderButtonClick);
 
+    // Create an clear button
+    const clearButton = document.createElement('button');
+    clearButton.id = 'clearButton';
+    clearButton.classList.add('clear-btn'); 
+    clearButton.innerText = 'Clear';
+
+    // Add a click event listener to the order button
+    clearButton.addEventListener('click', handleClearButtonClick);
+
     // Insert the order button at the top of the cart container
     const cartContainer = document.getElementById('cart-container');
     cartContainer.parentNode.insertBefore(orderButton, cartContainer);
+    cartContainer.parentNode.insertBefore(clearButton, cartContainer);
+
         // Fetch product data based on SKUs
         fetch(fetchURL)
             .then(response => response.json())
             .then(data => {
+                
                 if (data && data.data) {
                     const productsContainer = document.getElementById('cart-container');
 
@@ -480,7 +504,7 @@ if (window.location.pathname.includes('cart.html')) {
                                         // Remove item button
                                         const removeItemButton = document.createElement('button');
                                         removeItemButton.innerText = 'Remove';
-                                        removeItemButton.classList.add('btn', 'btn-warning', 'col-2', 'remove-btn');
+                                        removeItemButton.classList.add('col-2', 'remove-btn');
                                         removeItemButton.addEventListener('click', () => {
                                             // Find the index of the item with the matching SKU in the cart
                                             const matchingSKU = matchingVariant.sku;
@@ -545,3 +569,31 @@ function handleOrderButtonClick() {
         });
 }
 
+//CLEAR
+
+function handleClearButtonClick() {
+    // Display a confirmation popup
+    const isConfirmed = window.confirm('Are you sure you want to clear all items from the cart?');
+
+    // Check if the user confirmed
+    if (isConfirmed) {
+        const cartItems = document.querySelectorAll('.cart-item');
+
+        // Iterate through each cart item and remove it
+        cartItems.forEach(cartItem => {
+            // Find the matching SKU for each cart item
+            const matchingSKU = cartItem.dataset.sku;
+
+            // Update selectedSKUs with the filtered array
+            const updatedSelectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
+            updateSelectedSKUs(updatedSelectedSKUs);
+
+            // Remove the cart item from the DOM
+            cartItem.parentNode.removeChild(cartItem);
+        });
+
+        console.log('All items cleared from the cart.');
+    } else {
+        console.log('Clear operation canceled by the user.');
+    }
+}
