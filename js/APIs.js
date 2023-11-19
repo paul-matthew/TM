@@ -550,46 +550,119 @@ if (window.location.pathname.includes('cart.html')) {
 //ORDER
 
 function handleOrderButtonClick() {
-  // Fetch the order details, such as selectedSKUs and any other relevant information
-  const orderDetails = {
-      "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
-      "label": "00012",
-      "line_items": selectedSKUs.map(sku => ({
-          "sku": sku,
-          "quantity": 1
-      })),
-      "shipping_method": 1,
-      "send_shipping_notification": false,
-      "address_to": {
-          "first_name": "John",
-          "last_name": "Smith",
-          "email": "example@msn.com",
-          "phone": "0574 69 21 90",
-          "country": "BE",
-          "region": "",
-          "address1": "ExampleBaan 121",
-          "address2": "45",
-          "city": "Retie",
-          "zip": "2470"
-      }
-  };
+  // Create a modal element
+  const orderModal = document.createElement('div');
+  orderModal.classList.add('modal', 'fade');
+  orderModal.id = 'orderModal';
+  orderModal.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Order Information</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <label for="firstNameInput">First Name:</label>
+                  <input type="text" id="firstNameInput" class="form-control" required>
+                  <label for="lastNameInput">Last Name:</label>
+                  <input type="text" id="lastNameInput" class="form-control" required>
+                  <label for="emailInput">Email:</label>
+                  <input type="email" id="emailInput" class="form-control" required>
+                  <label for="phoneInput">Phone:</label>
+                  <input type="phone" id="phoneInput" class="form-control" required>
+                  <label for="countryinput">Country:</label>
+                  <input type="country" id="countryInput" class="form-control" required>
+                  <label for="cityinput">City:</label>
+                  <input type="city" id="cityInput" class="form-control" required>
+                  <label for="addressinput">Address:</label>
+                  <input type="address" id="addressInput" class="form-control" required>
+                  <label for="zipinput">Postal Code/ZIP:</label>
+                  <input type="zip" id="zipInput" class="form-control" required>
 
-  // Make a POST request to Printify's order endpoint
-  fetch(fetchURL)
-  .then(response => response.json())
-  .then(data => {
-      // Handle the response from Printify
-      console.log('Printify order response:', data);
+                  <button id="submitOrderButton" class="submit-btn mt-3">Submit Order</button>
+              </div>
+          </div>
+      </div>
+  `;
 
-      // You can implement further actions based on Printify's response
-      // For example, show a success message, redirect to a thank-you page, etc.
-  })
-  .catch(error => {
-      // Handle any errors that occur during the fetch
-      console.error('Error placing order with Printify:', error);
-      // You can also show an error message to the user
+  // Append the modal to the body
+  document.body.appendChild(orderModal);
+
+  // Initialize the modal using Bootstrap's modal
+  const modal = new bootstrap.Modal(orderModal);
+
+  // Show the modal
+  modal.show();
+
+  // Handle submission when the user clicks the "Submit Order" button
+  const submitButton = document.getElementById('submitOrderButton');
+  submitButton.addEventListener('click', function () {
+      // Fetch user input from the modal
+      const firstName = document.getElementById('firstNameInput').value;
+      const lastName = document.getElementById('lastNameInput').value;
+      const email = document.getElementById('emailInput').value;
+      const phone = document.getElementById('phoneInput').value;
+      const country = document.getElementById('countryInput').value;
+      const city = document.getElementById('cityInput').value;
+      const address = document.getElementById('addressInput').value;
+      const zip = document.getElementById('zipInput').value;
+
+
+      // Retrieve other input fields as needed
+
+      // Construct the order details with the user input
+      const orderDetails = {
+          "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
+          "label": "00012",
+          "line_items": selectedSKUs.map(sku => ({
+              "sku": sku,
+              "quantity": 1
+          })),
+          "shipping_method": 1,
+          "send_shipping_notification": false,
+          "address_to": {
+              "first_name": firstName,
+              "last_name": lastName,
+              "email": email,
+              "phone":phone,
+              "country":country,
+              "city":city,
+              "address1":address,
+              "zip":zip,
+              // Include other user input in address_to
+          }
+      };
+
+      // Make a POST request to Printify's order endpoint
+      fetch(fetchURL, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderDetails),
+      })
+      .then(response => response.json())
+      .then(data => {
+          // Handle the response from Printify
+          console.log('Printify order response:', data);
+
+          // Implement further actions based on Printify's response
+          // For example, show a success message, redirect to a thank-you page, etc.
+
+          // Close the modal after processing
+          modal.hide();
+      })
+      .catch(error => {
+          // Handle any errors that occur during the fetch
+          console.error('Error placing order with Printify:', error);
+          // Show an error message to the user
+
+          // Close the modal on error
+          modal.hide();
+      });
   });
 }
+
 
 //Shipping
 

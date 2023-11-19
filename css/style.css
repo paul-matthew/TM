@@ -10793,7 +10793,7 @@ transform: scale(1.2);
 }
 
 
-.add-to-cart-btn, .order-btn, .remove-btn, .clear-btn,.read-more{
+.add-to-cart-btn, .order-btn, .remove-btn, .clear-btn,.read-more,.submit-btn{
   font-family:inherit;
   font-size: 13px;
   min-width:30px;
@@ -10852,7 +10852,7 @@ text-align: center;
   height:40px;
 }
 
-.remove-btn:hover, .order-btn:hover, .view-cart-btn:hover, .add-to-cart-btn:hover,.clear-btn:hover,.read-more:hover{
+.remove-btn:hover, .order-btn:hover, .view-cart-btn:hover, .add-to-cart-btn:hover,.clear-btn:hover,.read-more:hover,.submit-btn:hover{
   transform: scale(1.1);
   transition: 0.15s ease-in-out;
   color:white !important;
