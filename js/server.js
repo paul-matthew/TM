@@ -98,11 +98,19 @@ app.listen(PORT, () => {
 });
 
 //Order
-app.post('/order', (req, res) => {
-  // Log the order details received in the request body
-  console.log('Received order:', req.body);
+app.post('/order-processing', async (req, res) => {
+  try {
+      // Log the order details received in the request body
+      console.log('Received order details for processing:', req.body);
 
-  // Here you can add logic to handle the order, e.g., save it to a database
+      // Example: Process the order, e.g., save it to a database, place an order with Printify
+      // Replace this with your actual logic to process the order
 
-  res.status(200).json({ message: 'Order received successfully' });
+      // Send a response indicating the order processing was successful
+      res.status(200).json({ message: 'Order processing successful' });
+  } catch (error) {
+      // Handle any errors that occur during order processing
+      console.error('Error processing order:', error);
+      res.status(500).json({ error: 'Failed to process order' });
+  }
 });

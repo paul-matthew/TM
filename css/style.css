@@ -3654,6 +3654,12 @@ textarea.form-control-lg {
   max-height:30%;
 }
 
+@media (max-width:600px){
+  .card-container{
+  max-width:50%;
+  }
+}
+
 .card {
   position: relative;
   max-height:350px;
@@ -10776,9 +10782,16 @@ transform: scale(1.2);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Dark black box shadow */
 }
 
-.card-title2, .modal-title{
-  font-family: IGlight;
+.card-title2{
+  font-family: ROB;
+  font-size: medium !important;
 }
+
+.modal-title{
+  font-family: ROB;
+  font-size: x-large !important;
+}
+
 
 .add-to-cart-btn, .order-btn, .remove-btn, .clear-btn,.read-more{
   font-family:inherit;

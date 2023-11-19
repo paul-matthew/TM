@@ -170,6 +170,7 @@ fetch(fetchURL)
                   <div class="service-info">
                     <h5 class="card-title2" style='font-size:25px'>${product.title}</h5>
                   </div>
+                  <h5 style='font-size:12px;'>$${product.variants[0]?.price/100}</h5>
                 </div>
               </div>
             </div>
@@ -549,25 +550,92 @@ if (window.location.pathname.includes('cart.html')) {
 //ORDER
 
 function handleOrderButtonClick() {
-    // Your logic to fetch product data and create cart items goes here
-    // ...
+  // Fetch the order details, such as selectedSKUs and any other relevant information
+  const orderDetails = {
+      "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
+      "label": "00012",
+      "line_items": selectedSKUs.map(sku => ({
+          "sku": sku,
+          "quantity": 1
+      })),
+      "shipping_method": 1,
+      "send_shipping_notification": false,
+      "address_to": {
+          "first_name": "John",
+          "last_name": "Smith",
+          "email": "example@msn.com",
+          "phone": "0574 69 21 90",
+          "country": "BE",
+          "region": "",
+          "address1": "ExampleBaan 121",
+          "address2": "45",
+          "city": "Retie",
+          "zip": "2470"
+      }
+  };
 
-    // After fetching and creating cart items, you can make the order API call here
-    // For example, you can use the fetch API to make a POST request to the Printify order API
+  // Make a POST request to Printify's order endpoint
+  fetch(fetchURL)
+  .then(response => response.json())
+  .then(data => {
+      // Handle the response from Printify
+      console.log('Printify order response:', data);
 
-    // Replace 'YOUR_PRINTIFY_API_KEY' with your actual Printify API key
-
-    // Example: Making a POST request to the Printify order API
-    fetch(fetchURL)
-        .then(response => response.json())
-        .then(data => {
-            // Handle the response from the order API
-            console.log('Order response:', data);
-        })
-        .catch(error => {
-            console.error('Error making order request:', error);
-        });
+      // You can implement further actions based on Printify's response
+      // For example, show a success message, redirect to a thank-you page, etc.
+  })
+  .catch(error => {
+      // Handle any errors that occur during the fetch
+      console.error('Error placing order with Printify:', error);
+      // You can also show an error message to the user
+  });
 }
+
+//Shipping
+
+function calculateShippingCost() {
+  // Fetch the order details, such as selectedSKUs and any other relevant information
+  const orderDetails = {
+      "line_items": selectedSKUs.map(sku => ({
+          "sku": sku,
+          "quantity": 1
+      })),
+      "address_to": {
+          "first_name": "John",
+          "last_name": "Smith",
+          "email": "example@msn.com",
+          "phone": "0574 69 21 90",
+          "country": "BE",
+          "region": "",
+          "address1": "ExampleBaan 121",
+          "address2": "45",
+          "city": "Retie",
+          "zip": "2470"
+      }
+  };
+
+  // Make a POST request to Printify's shipping cost endpoint
+  fetch(fetchURL)
+  .then(response => response.json())
+  .then(data => {
+      // Handle the response from Printify
+      console.log('Printify shipping cost response:', data);
+
+      // You can extract and use the shipping cost options from the response
+      const standardShippingCost = data.standard || 0;
+      const expressShippingCost = data.express || 0;
+      const priorityShippingCost = data.priority || 0;
+      const printifyExpressShippingCost = data.printify_express || 0;
+
+      // You can use these shipping cost values as needed in your application
+  })
+  .catch(error => {
+      // Handle any errors that occur during the fetch
+      console.error('Error calculating shipping cost with Printify:', error);
+      // You can also show an error message to the user
+  });
+}
+
 
 //CLEAR
 
