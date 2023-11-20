@@ -11,7 +11,7 @@ const publishProduct = async (productId) => {
       const publishResponse = await fetch(`https://api.printify.com/v1/shops/11876498/products/${productId}/publish.json`, {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k', // Replace with your Printify access token
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k', 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -100,17 +100,72 @@ app.listen(PORT, () => {
 //Order
 app.post('/order-processing', async (req, res) => {
   try {
-      // Log the order details received in the request body
-      console.log('Received order details for processing:', req.body);
+    // Log the order details received in the request body
+    console.log('Received order details for processing:', req.body);
 
-      // Example: Process the order, e.g., save it to a database, place an order with Printify
-      // Replace this with your actual logic to process the order
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      country,
+      city,
+      address,
+      zip,
+      // Add other fields as needed
+    } = req.body;
 
-      // Send a response indicating the order processing was successful
-      res.status(200).json({ message: 'Order processing successful' });
+    // Assuming selectedSKUs is an array of SKU strings
+    const lineItems = selectedSKUs.map(sku => ({
+      product_id: 'YOUR_PRODUCT_ID', // Replace with the actual product ID
+      variant_id: 'YOUR_VARIANT_ID', // Replace with the actual variant ID
+      quantity: 1,
+      sku: sku, // Add the selected SKU to the line item
+    }));
+
+    const externalId = generateRandom6DigitNumber();
+    // Order an existing product with Printify
+    const orderResponse = await fetch('https://api.printify.com/v1/shops/11876498/orders.json', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        external_id: externalId.toString(),
+        label: 'YOUR_ORDER_LABEL',
+        line_items: lineItems,
+        shipping_method: 1,
+        is_printify_express: false,
+        send_shipping_notification: false,
+        address_to: {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          country,
+          city,
+          address1: address,
+          zip,
+          // Add other address fields as needed
+        },
+        // Add more order details as needed
+      }),
+    });
+
+    if (orderResponse.ok) {
+      console.log('Order placed successfully with Printify.');
+      // You can implement further actions based on Printify's response
+      // For example, show a success message, redirect to a thank-you page, etc.
+      res.status(200).json({ message: 'Order placed successfully with Printify' });
+    } else {
+      console.error('Failed to place order with Printify.');
+      res.status(500).json({ error: 'Failed to place order with Printify' });
+    }
   } catch (error) {
-      // Handle any errors that occur during order processing
-      console.error('Error processing order:', error);
-      res.status(500).json({ error: 'Failed to process order' });
+    // Handle any errors that occur during order processing
+    console.error('Error processing order:', error);
+    res.status(500).json({ error: 'Failed to process order' });
   }
 });
+

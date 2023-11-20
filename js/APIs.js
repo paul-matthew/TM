@@ -632,32 +632,24 @@ function handleOrderButtonClick() {
               // Include other user input in address_to
           }
       };
+      console.log("This is the order details:", orderDetails);
 
       // Make a POST request to Printify's order endpoint
-      fetch(fetchURL, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(orderDetails),
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        fetchURLorder = 'http://localhost:5000/order-processing';
+    } else {
+        fetchURLorder = 'https://tm-server-4a2a80557ba4.herokuapp.com/order-processing';
+    }
+      fetch(fetchURLorder, {
+        method: 'POST',
       })
       .then(response => response.json())
       .then(data => {
-          // Handle the response from Printify
           console.log('Printify order response:', data);
-
-          // Implement further actions based on Printify's response
-          // For example, show a success message, redirect to a thank-you page, etc.
-
-          // Close the modal after processing
           modal.hide();
       })
       .catch(error => {
-          // Handle any errors that occur during the fetch
           console.error('Error placing order with Printify:', error);
-          // Show an error message to the user
-
-          // Close the modal on error
           modal.hide();
       });
   });
