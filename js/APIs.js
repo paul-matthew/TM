@@ -176,7 +176,6 @@ fetch(fetchURL)
             </div>
           </a>
         `;
-
         productsContainer.appendChild(productCard);
 
         const productModal = document.createElement('div');
@@ -425,7 +424,8 @@ fetch(fetchURL)
 
 
 //SHOPPING CART------
-
+let subtotal = 0;
+let shipping = 0;
 if (window.location.pathname.includes('cart.html')) {
     document.addEventListener('DOMContentLoaded', () => {
     // Create an order button
@@ -469,6 +469,7 @@ if (window.location.pathname.includes('cart.html')) {
                                 if (matchingVariant) {
                                     const matchingSKU = matchingVariant.sku;
                                     const existingCartItem = document.querySelector(`.cart-item[data-sku="${matchingSKU}"]`);
+                                    subtotal += matchingVariant.price / 100;
 
                                     if (existingCartItem) {
                                         // If the item with the same SKU already exists, update its quantity
@@ -511,6 +512,7 @@ if (window.location.pathname.includes('cart.html')) {
                                             const matchingSKU = matchingVariant.sku;
                                             const quantityElement = cartItem.querySelector('.quantity');
                                             const currentQuantity = parseInt(quantityElement.innerText, 10);
+                                            subtotal -= matchingVariant.price  / 100;
 
                                             if (currentQuantity > 1) {
                                                 // If the quantity is more than 1, decrease it
@@ -549,41 +551,115 @@ if (window.location.pathname.includes('cart.html')) {
 
 //ORDER
 
+// Global variable to track the current stage
+let currentStage = 1;
+const inputValues = {
+  firstName:'',
+  lastName: '',
+  email: '',
+  phone: '',
+  country: '',
+  city: '',
+  address: '',
+  zip: ''
+};
+
+// Function to handle the order button click
 function handleOrderButtonClick() {
+
   // Create a modal element
   const orderModal = document.createElement('div');
   orderModal.classList.add('modal', 'fade');
   orderModal.id = 'orderModal';
-  orderModal.innerHTML = `
-      <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
+
+  // Function to construct the modal body based on the current stage
+  function constructModalBody() {
+    switch (currentStage) {
+      case 2:
+        return `
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
               <div class="modal-header">
-                  <h5 class="modal-title">Order Information</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Order Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                  <label for="firstNameInput">First Name:</label>
-                  <input type="text" id="firstNameInput" class="form-control" required>
-                  <label for="lastNameInput">Last Name:</label>
-                  <input type="text" id="lastNameInput" class="form-control" required>
-                  <label for="emailInput">Email:</label>
-                  <input type="email" id="emailInput" class="form-control" required>
-                  <label for="phoneInput">Phone:</label>
-                  <input type="phone" id="phoneInput" class="form-control" required>
-                  <label for="countryinput">Country:</label>
-                  <input type="country" id="countryInput" class="form-control" required>
-                  <label for="cityinput">City:</label>
-                  <input type="city" id="cityInput" class="form-control" required>
-                  <label for="addressinput">Address:</label>
-                  <input type="address" id="addressInput" class="form-control" required>
-                  <label for="zipinput">Postal Code/ZIP:</label>
-                  <input type="zip" id="zipInput" class="form-control" required>
-
-                  <button id="submitOrderButton" class="submit-btn mt-3">Submit Order</button>
-              </div>
+                <label for="firstNameInput">First Name:</label>
+                <input type="text" id="firstNameInput" class="form-control" required value="${inputValues.firstName}">
+                <label for="lastNameInput">Last Name:</label>
+                <input type="text" id="lastNameInput" class="form-control" required value="${inputValues.lastName}">
+                <label for="emailInput">Email:</label>
+                <input type="email" id="emailInput" class="form-control" required value="${inputValues.email}">
+                <label for="phoneInput">Phone:</label>
+                <input type="phone" id="phoneInput" class="form-control" required value="${inputValues.phone}">
+                <label for="countryinput">Country:</label>
+                <input type="country" id="countryInput" class="form-control" required value="${inputValues.country}">
+                <label for="cityinput">City:</label>
+                <input type="city" id="cityInput" class="form-control" required value="${inputValues.city}">
+                <label for="addressinput">Address:</label>
+                <input type="address" id="addressInput" class="form-control" required value="${inputValues.address}">
+                <label for="zipinput">Postal Code/ZIP:</label>
+                <input type="zip" id="zipInput" class="form-control" required value="${inputValues.zip}">
+                <button id="backButton" class="back-btn gen-btn mt-3">Back</button>
+                <button id="nextButton" class="proceed-btn gen-btn mt-3">Proceed to Payment</button>
+            </div>
           </div>
-      </div>
-  `;
+        `;
+      case 1:
+        return `
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Total Cost</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <!-- Display order summary and total cost here -->
+                <table style="border-collapse: collapse; width: 50%;">
+                <tr>
+                    <td style="border: none;">Subtotal:</td>
+                    <td style="border: none; text-align: left;">$${(subtotal).toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td style="border: none;">Tax:</td>
+                    <td style="border: none; text-align: left;">$${(subtotal * 0.13).toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td style="border: none;">Shipping:</td>
+                    <td style="border: none; text-align: left;">$${shipping}</td>
+                </tr>
+                <tr>
+                    <td style="border: none; font-weight: bold;">Total:</td>
+                    <td style="border: none; text-align: left; font-weight: bold;">$${(subtotal + (subtotal * 0.13) + shipping).toFixed(2)}</td>
+                </tr>
+            </table>
+                <button id="OrderDetailsButton" class="proceed-btn gen-btn mt-3">Order Details</button>
+              </div>
+            </div>
+          </div>
+        `;
+      case 3:
+        return `
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <!-- Display PayPal payment options here -->
+                <div id="paypal-button-container"></div>
+                <button id="backButton2" class="back-btn gen-btn mt-3">Back</button>
+                <button id="submitOrderButton" class="submit-btn gen-btn mt-3">Submit Order</button>
+              </div>
+            </div>
+          </div>
+        `;
+    }
+  }
+
+  // Set the modal content
+  orderModal.innerHTML = constructModalBody();
 
   // Append the modal to the body
   document.body.appendChild(orderModal);
@@ -591,13 +667,53 @@ function handleOrderButtonClick() {
   // Initialize the modal using Bootstrap's modal
   const modal = new bootstrap.Modal(orderModal);
 
+  orderModal.addEventListener('hidden.bs.modal', function () {
+    // Reset the currentStage to 1 when the modal is closed
+    currentStage = 1;
+    console.log(currentStage);
+  });
+
   // Show the modal
   modal.show();
 
+  document.body.addEventListener('click', function (event) {
+    const targetId = event.target.id;
+
+    switch (targetId) {
+      case 'nextButton':
+        saveInputValues();
+        currentStage=3;
+        console.log(currentStage);
+        orderModal.innerHTML = constructModalBody();
+        break;
+      case 'backButton':
+        saveInputValues();
+        currentStage=1;
+        console.log(currentStage);
+        orderModal.innerHTML = constructModalBody();
+        break;
+      case 'backButton2':
+        saveInputValues();
+        currentStage=2;
+        console.log(currentStage);
+        orderModal.innerHTML = constructModalBody();
+        break;
+      case 'OrderDetailsButton':
+        saveInputValues();
+        currentStage=2;
+        console.log(currentStage);
+        orderModal.innerHTML = constructModalBody();
+        break;
+      case 'submitOrderButton':
+        break;
+    }
+  });
+
+document.addEventListener('DOMContentLoaded', function () {
   // Handle submission when the user clicks the "Submit Order" button
-  const submitButton = document.getElementById('submitOrderButton');
-  submitButton.addEventListener('click', function () {
-      // Fetch user input from the modal
+  const submitOrderButton = document.getElementById('submitOrderButton');
+  if (submitOrderButton) {
+    submitOrderButton.addEventListener('click', function () {
       const firstName = document.getElementById('firstNameInput').value;
       const lastName = document.getElementById('lastNameInput').value;
       const email = document.getElementById('emailInput').value;
@@ -607,77 +723,98 @@ function handleOrderButtonClick() {
       const address = document.getElementById('addressInput').value;
       const zip = document.getElementById('zipInput').value;
 
+      // Additional input fields for other stages as needed
 
-      // Retrieve other input fields as needed
-
-      // Construct the order details with the user input
-      const orderDetails = {
-          "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
-          "label": "00012",
-          "line_items": selectedSKUs.map(sku => ({
+      // Construct the order details based on the current stage
+      let orderDetails;
+      switch (currentStage) {
+        case 1:
+          orderDetails = {
+            "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
+            "label": "00012",
+            "line_items": selectedSKUs.map(sku => ({
               "sku": sku,
               "quantity": 1
-          })),
-          "shipping_method": 1,
-          "send_shipping_notification": false,
-          "address_to": {
+            })),
+            "shipping_method": 1,
+            "send_shipping_notification": false,
+            "address_to": {
               "first_name": firstName,
               "last_name": lastName,
               "email": email,
-              "phone":phone,
-              "country":country,
-              "city":city,
-              "address1":address,
-              "zip":zip,
+              "phone": phone,
+              "country": country,
+              "city": city,
+              "address1": address,
+              "zip": zip,
               // Include other user input in address_to
-          }
-      };
-      console.log("This is the order details:", orderDetails);
+            }
+          };
+          break;
+        case 2:
+          // Construct order details for shipping costs
+          break;
+        case 3:
+          // Construct order details for PayPal payment
+          break;
+      }
 
       // Make a POST request to Printify's order endpoint
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         fetchURLorder = 'http://localhost:5000/order-processing';
-    } else {
+      } else {
         fetchURLorder = 'https://tm-server-4a2a80557ba4.herokuapp.com/order-processing';
-    }
+      }
       fetch(fetchURLorder, {
         method: 'POST',
+        body: JSON.stringify(orderDetails),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
-      .then(response => response.json())
-      .then(data => {
+        .then(response => response.json())
+        .then(data => {
           console.log('Printify order response:', data);
           modal.hide();
-      })
-      .catch(error => {
+        })
+        .catch(error => {
           console.error('Error placing order with Printify:', error);
           modal.hide();
-      });
-  });
+        });
+    });
+  }
+});
+
+function saveInputValues() {
+  const firstNameInput = document.getElementById('firstNameInput');
+  const lastNameInput = document.getElementById('lastNameInput');
+  const emailInput = document.getElementById('emailInput');
+  const phoneInput = document.getElementById('phoneInput');
+  const countryInput = document.getElementById('countryInput');
+  const cityInput = document.getElementById('cityInput');
+  const addressInput = document.getElementById('addressInput');
+  const zipInput = document.getElementById('zipInput');
+
+  if (firstNameInput) inputValues.firstName = firstNameInput.value;
+  if (lastNameInput) inputValues.lastName = lastNameInput.value;
+  if (emailInput) inputValues.email = emailInput.value;
+  if (phoneInput) inputValues.phone = phoneInput.value;
+  if (countryInput) inputValues.country = countryInput.value;
+  if (cityInput) inputValues.city = cityInput.value;
+  if (addressInput) inputValues.address = addressInput.value;
+  if (zipInput) inputValues.zip = zipInput.value;
 }
+
+}
+
+
 
 
 //Shipping
 
 function calculateShippingCost() {
   // Fetch the order details, such as selectedSKUs and any other relevant information
-  const orderDetails = {
-      "line_items": selectedSKUs.map(sku => ({
-          "sku": sku,
-          "quantity": 1
-      })),
-      "address_to": {
-          "first_name": "John",
-          "last_name": "Smith",
-          "email": "example@msn.com",
-          "phone": "0574 69 21 90",
-          "country": "BE",
-          "region": "",
-          "address1": "ExampleBaan 121",
-          "address2": "45",
-          "city": "Retie",
-          "zip": "2470"
-      }
-  };
+
 
   // Make a POST request to Printify's shipping cost endpoint
   fetch(fetchURL)
