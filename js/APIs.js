@@ -407,7 +407,7 @@ fetch(fetchURL)
                 const storedSKUs = localStorage.getItem('selectedSKUs');
                 const retrievedSKUs = storedSKUs ? JSON.parse(storedSKUs) : [];
         
-                console.log("Stored SKUs:", retrievedSKUs);
+                console.log("NEW Stored SKUs:", retrievedSKUs);
             } else {
                 console.error('No matching variant found for the selected color and size.');
             }
@@ -512,21 +512,36 @@ if (window.location.pathname.includes('cart.html')) {
                                             const matchingSKU = matchingVariant.sku;
                                             const quantityElement = cartItem.querySelector('.quantity');
                                             const currentQuantity = parseInt(quantityElement.innerText, 10);
-                                            subtotal -= matchingVariant.price  / 100;
-
+                                            console.log('Current Quantity:', currentQuantity); // Log current quantity for debugging
+                                            subtotal -= matchingVariant.price / 100;
+                                        
                                             if (currentQuantity > 1) {
                                                 // If the quantity is more than 1, decrease it
                                                 quantityElement.innerText = currentQuantity - 1;
+                                                const indexOfMatchingSKU = selectedSKUs.indexOf(matchingSKU);
+                                        
+                                                // Check if the SKU appears more than once in the array
+                                                if (indexOfMatchingSKU !== -1) {
+                                                    // Remove only the first occurrence of the SKU
+                                                    selectedSKUs.splice(indexOfMatchingSKU, 1);
+                                                }
+                                        
+                                                // Update selectedSKUs with the modified array
+                                                updateSelectedSKUs(selectedSKUs);
                                             } else {
                                                 // If the quantity is 1, remove the entire cart item
                                                 cartItem.parentNode.removeChild(cartItem);
+                                        
+                                                // Update selectedSKUs with the filtered array
+                                                const updatedSelectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
+                                                updateSelectedSKUs(updatedSelectedSKUs);
                                             }
-
-                                            // Update selectedSKUs with the filtered array
-                                            const updatedSelectedSKUs = selectedSKUs.filter(item => item !== matchingSKU);
-                                            updateSelectedSKUs(updatedSelectedSKUs);
-                                            console.log(`Remove item with SKU: ${matchingSKU}`);
+                                        
+                                            // Log the updated array
+                                            console.log('Updated SKUs:', selectedSKUs);
+                                            // console.log(`Remove item with SKU: ${matchingSKU}`);
                                         });
+                                        
 
                                         // Append elements to the cart item
                                         cartItem.appendChild(productImage);
