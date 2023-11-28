@@ -98,6 +98,7 @@ app.listen(PORT, () => {
 });
 
 //Order
+
 app.post('/order-processing', async (req, res) => {
   try {
     // Log the order details received in the request body
@@ -109,18 +110,17 @@ app.post('/order-processing', async (req, res) => {
       email,
       phone,
       country,
+      province,
       city,
       address,
       zip,
-      // Add other fields as needed
-    } = req.body;
+    } = req.body.address_to;
 
     // Assuming selectedSKUs is an array of SKU strings
-    const lineItems = selectedSKUs.map(sku => ({
-      product_id: 'YOUR_PRODUCT_ID', // Replace with the actual product ID
-      variant_id: 'YOUR_VARIANT_ID', // Replace with the actual variant ID
-      quantity: 1,
-      sku: sku, // Add the selected SKU to the line item
+    const lineItems = req.body.line_items.map(item => ({
+      product_id: item.product_id,
+      variant_id: item.variant_id,
+      quantity: item.quantity,
     }));
 
     const externalId = generateRandom6DigitNumber();
@@ -141,15 +141,14 @@ app.post('/order-processing', async (req, res) => {
         address_to: {
           first_name: firstName,
           last_name: lastName,
-          email,
-          phone,
-          country,
-          city,
+          email:email,
+          phone:phone,
+          country:country,
+          province:province,
+          city:city,
           address1: address,
-          zip,
-          // Add other address fields as needed
+          zip:zip,
         },
-        // Add more order details as needed
       }),
     });
 

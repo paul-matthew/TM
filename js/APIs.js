@@ -425,7 +425,9 @@ fetch(fetchURL)
 
 //SHOPPING CART------
 let subtotal = 0;
+let total = 0;
 let shipping = 0;
+const skuToProductIdMap = {};
 if (window.location.pathname.includes('cart.html')) {
     document.addEventListener('DOMContentLoaded', () => {
     // Create an order button
@@ -450,7 +452,7 @@ if (window.location.pathname.includes('cart.html')) {
     const cartContainer = document.getElementById('cart-container');
     cartContainer.parentNode.insertBefore(orderButton, cartContainer);
     cartContainer.parentNode.insertBefore(clearButton, cartContainer);
-
+    
         // Fetch product data based on SKUs
         fetch(fetchURL)
             .then(response => response.json())
@@ -465,12 +467,17 @@ if (window.location.pathname.includes('cart.html')) {
                         if (product.variants.some(variant => selectedSKUs.includes(variant.sku))) {
                             selectedSKUs.forEach(selectedSKU => {
                                 const matchingVariant = product.variants.find(variant => variant.sku === selectedSKU);
+                                if (matchingVariant) {
+                                  skuToProductIdMap[matchingVariant.sku] = product.id;
+                                  console.log('check it', skuToProductIdMap[matchingVariant.sku]);
+                              }
 
                                 if (matchingVariant) {
                                     const matchingSKU = matchingVariant.sku;
                                     const existingCartItem = document.querySelector(`.cart-item[data-sku="${matchingSKU}"]`);
                                     subtotal += matchingVariant.price / 100;
-
+                                    updateTotal();
+       
                                     if (existingCartItem) {
                                         // If the item with the same SKU already exists, update its quantity
                                         const quantityElement = existingCartItem.querySelector('.quantity');
@@ -514,6 +521,8 @@ if (window.location.pathname.includes('cart.html')) {
                                             const currentQuantity = parseInt(quantityElement.innerText, 10);
                                             console.log('Current Quantity:', currentQuantity); // Log current quantity for debugging
                                             subtotal -= matchingVariant.price / 100;
+                                            updateTotal();
+
                                         
                                             if (currentQuantity > 1) {
                                                 // If the quantity is more than 1, decrease it
@@ -550,18 +559,31 @@ if (window.location.pathname.includes('cart.html')) {
 
                                         // Append cart item to the cart container
                                         productsContainer.appendChild(cartItem);
-                                    }
+                                    } 
                                 }
                             });
                         }
                     });
-
+                  return total;
                 } else {
                     console.log("Product data is missing or undefined.");
                 }
             })
             .catch(error => console.error(error));
     });
+}
+function updateTotal() {
+  // Calculate the total based on your logic
+  total = (subtotal + (subtotal * 0.13) + shipping).toFixed(2);
+  // console.log('bread and tings', total);
+
+  // Dispatch a custom event to notify other parts of the application
+  const updateTotalEvent = new CustomEvent('updateTotalEvent', {
+    detail: { total: total },
+  });
+  document.dispatchEvent(updateTotalEvent);
+
+  return total;
 }
 
 //ORDER
@@ -574,6 +596,7 @@ const inputValues = {
   email: '',
   phone: '',
   country: '',
+  province:'',
   city: '',
   address: '',
   zip: ''
@@ -607,119 +630,84 @@ function handleOrderButtonClick() {
   // Show the modal
   modal.show();
 
-  // orderModal.addEventListener('click', function (event) {
-  //   const targetId = event.target.id;
-  //   switch (targetId) {
-  //     case 'OrderDetailsButton':
-  //       saveInputValues();
-  //       currentStage=2;
-  //       console.log(currentStage);
-  //       orderModal.innerHTML = constructModalBody();
-  //       break;
-  //     case 'proceedpayment':
-  //       saveInputValues();
-  //       currentStage=3;
-  //       console.log(currentStage);
-  //         console.log("worked");
-  //       orderModal.innerHTML = constructModalBody();
-  //       initializePayPal();
-  //       break;
-  //     case 'backButton':
-  //       saveInputValues();
-  //       currentStage=1;
-  //       console.log(currentStage);
-  //       orderModal.innerHTML = constructModalBody();
-  //       break;
-  //     case 'backButton2':
-  //       saveInputValues();
-  //       currentStage=2;
-  //       console.log(currentStage);
-  //       orderModal.innerHTML = constructModalBody();
-  //       break;
-  //     case 'submitOrderButton':
-  //       break;
-  //   }
-  // });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    // Handle submission when the user clicks the "Submit Order" button
-    const submitOrderButton = document.getElementById('submitOrderButton');
-    if (submitOrderButton) {
-      submitOrderButton.addEventListener('click', async function () {
-        const firstName = document.getElementById('firstNameInput').value;
-        const lastName = document.getElementById('lastNameInput').value;
-        const email = document.getElementById('emailInput').value;
-        const phone = document.getElementById('phoneInput').value;
-        const country = document.getElementById('countryInput').value;
-        const city = document.getElementById('cityInput').value;
-        const address = document.getElementById('addressInput').value;
-        const zip = document.getElementById('zipInput').value;
-  
-        // Additional input fields for other stages as needed
-  
-        // Construct the order details based on the current stage
-        let orderDetails;
-        switch (currentStage) {
-          case 1:
-            orderDetails = {
-              "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
-              "label": "00012",
-              "line_items": selectedSKUs.map(sku => ({
-                "sku": sku,
-                "quantity": 1
-              })),
-              "shipping_method": 1,
-              "send_shipping_notification": false,
-              "address_to": {
-                "first_name": firstName,
-                "last_name": lastName,
-                "email": email,
-                "phone": phone,
-                "country": country,
-                "city": city,
-                "address1": address,
-                "zip": zip,
-                // Include other user input in address_to
-              }
-            };
-            break;
-          case 2:
-            // Construct order details for shipping costs
-            break;
-          case 3:
-            // Construct order details for Stripe payment
-
-            break;
-        }
-  
-        // Make a POST request to Printify's order endpoint
-        const fetchURLorder =
-          window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:5000/order-processing'
-            : 'https://tm-server-4a2a80557ba4.herokuapp.com/order-processing';
-  
-        fetch(fetchURLorder, {
-          method: 'POST',
-          body: JSON.stringify(orderDetails),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Printify order response:', data);
-            modal.hide();
-          })
-          .catch(error => {
-            console.error('Error placing order with Printify:', error);
-            modal.hide();
-          });
-      });
-    }
-  });
-  
-
 }
+
+async function submitOrder() {
+  const firstName = document.getElementById('firstNameInput').value;
+  const lastName = document.getElementById('lastNameInput').value;
+  const email = document.getElementById('emailInput').value;
+  const phone = document.getElementById('phoneInput').value;
+  const country = document.getElementById('countryInput').value;
+  const province = document.getElementById('provinceInput').value;
+  const city = document.getElementById('cityInput').value;
+  const address = document.getElementById('addressInput').value;
+  const zip = document.getElementById('zipInput').value;
+
+  // Find all cart items
+  const cartItems = document.querySelectorAll('.cart-item');
+
+  // Initialize an array to store line items for the order
+  const lineItems = [];
+
+  // Iterate over each cart item
+  cartItems.forEach(cartItem => {
+    const sku = cartItem.getAttribute('data-sku');
+    const quantityElement = cartItem.querySelector('.quantity');
+
+    // Extract the quantity as an integer
+    const quantity = parseInt(quantityElement.innerText, 10);
+
+    // Add the line item to the array
+    lineItems.push({
+      "sku": sku,
+      "quantity": quantity
+    });
+  });
+
+  // Construct the order details
+  const orderDetails = {
+    "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
+    "label": "00012",
+    "line_items": lineItems,
+    "shipping_method": 1,
+    "send_shipping_notification": false,
+    "address_to": {
+      "first_name": firstName,
+      "last_name": lastName,
+      "email": email,
+      "phone": phone,
+      "country": country,
+      "province": province,
+      "city": city,
+      "address1": address,
+      "zip": zip,
+      // Include other user input in address_to
+    }
+  };
+
+  // Make a POST request to your server's order-processing endpoint
+  const fetchURLorder =
+    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:5000/order-processing'  // Replace with your actual server port
+      : 'https://tm-server-4a2a80557ba4.herokuapp.com/order-processing';
+
+  fetch(fetchURLorder, {
+    method: 'POST',
+    body: JSON.stringify(orderDetails),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Printify order response:', data);
+    })
+    .catch(error => {
+      console.error('Error placing order with Printify:', error);
+    });
+}
+
+
 
 function constructModalBody() {
   switch (currentStage) {
@@ -748,7 +736,7 @@ function constructModalBody() {
               </tr>
               <tr>
                   <td style="border: none; font-weight: bold;">Total:</td>
-                  <td style="border: none; text-align: left; font-weight: bold;">$${(subtotal + (subtotal * 0.13) + shipping).toFixed(2)}</td>
+                  <td style="border: none; text-align: left; font-weight: bold;">$${total}</td>
               </tr>
           </table>
               <button id="OrderDetailsButton" class="proceed-btn gen-btn mt-3">Order Details</button>
@@ -761,7 +749,7 @@ function constructModalBody() {
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Order Information</h5>
+              <h5 class="modal-title">Shipping Information</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -775,6 +763,8 @@ function constructModalBody() {
               <input type="phone" id="phoneInput" class="form-control" required value="${inputValues.phone}">
               <label for="countryinput">Country:</label>
               <input type="country" id="countryInput" class="form-control" required value="${inputValues.country}">
+              <label for="provinceinput">Province/State:</label>
+              <input type="province" id="provinceInput" class="form-control" required value="${inputValues.province}">
               <label for="cityinput">City:</label>
               <input type="city" id="cityInput" class="form-control" required value="${inputValues.city}">
               <label for="addressinput">Address:</label>
@@ -799,7 +789,6 @@ function constructModalBody() {
             <div id='paypal-parent'>
             </div>              
           <button id="backButton2" class="back-btn gen-btn mt-3">Back</button>
-            <button id="submitOrderButton" class="submit-btn gen-btn mt-3">Submit Order</button>
           </div>
         </div>
       </div>
@@ -818,9 +807,9 @@ orderModal.addEventListener('click', function (event) {
       break;
     case 'proceedpayment':
       saveInputValues();
+      submitOrder();
       currentStage=3;
       console.log(currentStage);
-        console.log("worked");
       orderModal.innerHTML = constructModalBody();
       initializePayPal();
       break;
@@ -836,8 +825,6 @@ orderModal.addEventListener('click', function (event) {
       console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       break;
-    case 'submitOrderButton':
-      break;
   }
 });
 
@@ -847,6 +834,7 @@ function saveInputValues() {
   const emailInput = document.getElementById('emailInput');
   const phoneInput = document.getElementById('phoneInput');
   const countryInput = document.getElementById('countryInput');
+  const provinceInput = document.getElementById('provinceInput');
   const cityInput = document.getElementById('cityInput');
   const addressInput = document.getElementById('addressInput');
   const zipInput = document.getElementById('zipInput');
@@ -856,24 +844,72 @@ function saveInputValues() {
   if (emailInput) inputValues.email = emailInput.value;
   if (phoneInput) inputValues.phone = phoneInput.value;
   if (countryInput) inputValues.country = countryInput.value;
+  if (provinceInput) inputValues.province = provinceInput.value;
   if (cityInput) inputValues.city = cityInput.value;
   if (addressInput) inputValues.address = addressInput.value;
   if (zipInput) inputValues.zip = zipInput.value;
 }
 
-function initializePayPal() {
+function initializePayPal(amount) {
   // Get the container for the PayPal button
   const paypalContainer = document.getElementById('paypal-parent');
 
-    // Create a new div for the PayPal button
-    const paypalButtonContainer = document.createElement('div');
-    paypalButtonContainer.id = 'paypal-button-container';
+  // Create a new div for the PayPal button
+  const paypalButtonContainer = document.createElement('div');
+  paypalButtonContainer.id = 'paypal-button-container';
 
-    // Append the PayPal button container to the parent container
-    paypalContainer.appendChild(paypalButtonContainer);
+  // Append the PayPal button container to the parent container
+  paypalContainer.appendChild(paypalButtonContainer);
 
-    // Initialize the PayPal SDK here
-    paypal.Buttons().render('#paypal-button-container');
+  // Initialize the PayPal SDK here
+  paypal.Buttons({
+    createOrder: function (_, actions) {
+      saveInputValues();
+      console.log('ah yo', inputValues.firstName);
+      console.log('Amount to be sent to PayPal:', total);
+  
+      return actions.order.create({
+        purchase_units: [
+          {
+            amount: {
+              value: total,
+            },
+            shipping: {
+              name: {
+                full_name: inputValues.firstName + ' ' + inputValues.lastName,
+                phone: inputValues.phone,
+                email: inputValues.email,
+              },
+              address: {
+                country_code: 'US',
+                address_line_1: inputValues.address,
+                address_line_2: '',
+                admin_area_2: inputValues.city,
+                admin_area_1: inputValues.province,
+                postal_code: 'xxxxx',
+              },
+
+            },
+          },
+        ],
+        application_context: {
+          shipping_preference: 'NO_SHIPPING',
+        },
+      });
+    },
+    onApprove: function (data, actions) {
+      // Capture the transaction details
+      return actions.order.capture().then(function (details) {
+        // details contains information about the transaction
+        console.log('Transaction details:', details);
+
+        // Now, trigger your submitOrder function with the necessary information
+        submitOrder();
+      });
+    },
+  }).render('#paypal-button-container');
+  
+  
 }
 
 
