@@ -685,17 +685,19 @@ async function submitOrder() {
     }
   };
 
-  // Make a POST request to your server's order-processing endpoint
+  // Make a POST request to your server's /orders endpoint
   const fetchURLorder =
     window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'http://localhost:5000/order-processing'  // Replace with your actual server port
-      : 'https://tm-server-4a2a80557ba4.herokuapp.com/order-processing';
+      ? 'http://localhost:5000/orders'  // Replace with your actual server port
+      : 'https://tm-server-4a2a80557ba4.herokuapp.com/orders';
 
   fetch(fetchURLorder, {
     method: 'POST',
     body: JSON.stringify(orderDetails),
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': 'Bearer bc4a449b76547409adcd6e3392bc6e',
+
     },
   })
     .then(response => response.json())
