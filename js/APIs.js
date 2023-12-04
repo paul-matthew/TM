@@ -170,8 +170,11 @@ fetch(fetchURL)
                   <div class="service-info">
                     <h5 class="card-title2" style='font-size:25px'>${product.title}</h5>
                   </div>
-                  <h5 style='font-size:12px;'>$${product.variants[0]?.price/100}</h5>
-                </div>
+                    <h5 style='font-size:12px;'>
+                      $${product.variants.filter(variant => variant.is_enabled).reduce(
+                      (maxPrice, variant) => (variant.price > maxPrice ? variant.price : maxPrice), 0) / 100}
+                    USD</h5>
+                  </div>
               </div>
             </div>
           </a>
@@ -252,7 +255,12 @@ fetch(fetchURL)
                   <input type="number" class="product-qty" name="quantity" min="1" max="50" value="1" style="display: inline; width: 40px;">
                   </div>
               </div>
-              <p style='font-weight:bold'>Price: <span style='font-weight:normal'>$${product.variants[0]?.price/100}</span></p>
+              <p style='font-weight:bold'>Price: 
+                <span style='font-weight:normal'>
+                  $${product.variants.filter(variant => variant.is_enabled).reduce(
+                  (maxPrice, variant) => (variant.price > maxPrice ? variant.price : maxPrice), 0) / 100}
+                USD</span>
+              </p>
               <button class="add-to-cart-btn" style='margin-right:10px'>Add to Cart</button>Items in Cart: <span class="item-count"></span>
               <p>${product.description}</p>
             </div>
@@ -426,7 +434,7 @@ fetch(fetchURL)
 //SHOPPING CART------
 let subtotal = 0;
 let total = 0;
-let shipping = 9.99;
+let shipping = 19.99;
 const skuToProductIdMap = {};
 if (window.location.pathname.includes('cart.html')) {
     document.addEventListener('DOMContentLoaded', () => {
@@ -507,7 +515,7 @@ if (window.location.pathname.includes('cart.html')) {
     
                                         <h5 style='font-family: IGLight;'>${product.title}</h5>
                                             <p style="margin: 0;"><span style="font-weight: bold;">Color & Size:</span> ${matchingVariant.title}</p>
-                                            <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${matchingVariant.price/100}</p>
+                                            <p style="margin: 0;"><span style="font-weight: bold;">Price:</span> $${matchingVariant.price/100} USD</p>
                                             <p style="margin: 0;"><span style="font-weight: bold;">Quantity:</span> <span class="quantity">1</span></p>
                                         `;
 
@@ -747,7 +755,7 @@ function constructModalBody() {
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Total Cost</h5>
+              <h5 class="modal-title">Total Cost</h5><span style="margin-left:5px">(USD)</span>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
