@@ -426,7 +426,7 @@ fetch(fetchURL)
 //SHOPPING CART------
 let subtotal = 0;
 let total = 0;
-let shipping = 0;
+let shipping = 9.99;
 const skuToProductIdMap = {};
 if (window.location.pathname.includes('cart.html')) {
     document.addEventListener('DOMContentLoaded', () => {
@@ -469,7 +469,6 @@ if (window.location.pathname.includes('cart.html')) {
                                 const matchingVariant = product.variants.find(variant => variant.sku === selectedSKU);
                                 if (matchingVariant) {
                                   skuToProductIdMap[matchingVariant.sku] = product.id;
-                                  console.log('check it', skuToProductIdMap[matchingVariant.sku]);
                               }
 
                                 if (matchingVariant) {
@@ -488,6 +487,8 @@ if (window.location.pathname.includes('cart.html')) {
                                         const cartItem = document.createElement('div');
                                         cartItem.classList.add('cart-item', 'row', 'mb-3');
                                         cartItem.setAttribute('data-sku', matchingSKU);
+                                        cartItem.setAttribute('data-product-id', product.id); // Add product ID attribute
+                                        cartItem.setAttribute('data-variant-id', matchingVariant.id); // Add variant ID attribute
 
                                         const matchingImage = product.images.find(image => image.variant_ids.includes(matchingVariant.id));
 
@@ -596,11 +597,17 @@ const inputValues = {
   email: '',
   phone: '',
   country: '',
-  province:'',
+  region:'',
   city: '',
   address: '',
   zip: ''
 };
+const random = generateRandom6DigitNumber();
+const randomlabel = generateRandom6DigitNumber();
+
+function generateRandom6DigitNumber() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
 
   // Create a modal element
   const orderModal = document.createElement('div');
@@ -631,45 +638,61 @@ function handleOrderButtonClick() {
   modal.show();
 
 }
+  // Initialize an array to store line items for the order
+  const lineItems = [];
 
 async function submitOrder() {
-  const firstName = document.getElementById('firstNameInput').value;
-  const lastName = document.getElementById('lastNameInput').value;
-  const email = document.getElementById('emailInput').value;
-  const phone = document.getElementById('phoneInput').value;
-  const country = document.getElementById('countryInput').value;
-  const province = document.getElementById('provinceInput').value;
-  const city = document.getElementById('cityInput').value;
-  const address = document.getElementById('addressInput').value;
-  const zip = document.getElementById('zipInput').value;
+  // const firstName = document.getElementById('firstNameInput').value;
+  // const lastName = document.getElementById('lastNameInput').value;
+  // const email = document.getElementById('emailInput').value;
+  // const phone = document.getElementById('phoneInput').value;
+  // const country = document.getElementById('countryInput').value;
+  // const region = document.getElementById('regionInput').value;
+  // const city = document.getElementById('cityInput').value;
+  // const address = document.getElementById('addressInput').value;
+  // const zip = document.getElementById('zipInput').value;
 
   // Find all cart items
   const cartItems = document.querySelectorAll('.cart-item');
 
-  // Initialize an array to store line items for the order
-  const lineItems = [];
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    country,
+    region,
+    city,
+    address,
+    zip,
+  } = inputValues;
 
   // Iterate over each cart item
   cartItems.forEach(cartItem => {
     const sku = cartItem.getAttribute('data-sku');
     const quantityElement = cartItem.querySelector('.quantity');
+    const productId = cartItem.getAttribute('data-product-id'); 
+    const variantId = cartItem.getAttribute('data-variant-id'); 
 
     // Extract the quantity as an integer
     const quantity = parseInt(quantityElement.innerText, 10);
 
     // Add the line item to the array
     lineItems.push({
-      "sku": sku,
+      // "sku": sku,
+      "product_id": productId,
+      "variant_id": variantId,
       "quantity": quantity
     });
   });
 
   // Construct the order details
   const orderDetails = {
-    "external_id": "2750e210-39bb-11e9-a503-452618153e6a",
-    "label": "00012",
+    "external_id": random.toString,
+    "label": randomlabel.toString,
     "line_items": lineItems,
     "shipping_method": 1,
+    "is_printify_express": false,
     "send_shipping_notification": false,
     "address_to": {
       "first_name": firstName,
@@ -677,26 +700,31 @@ async function submitOrder() {
       "email": email,
       "phone": phone,
       "country": country,
-      "province": province,
-      "city": city,
+      "region": region,
       "address1": address,
+      "address2": '',
+      "city": city,
       "zip": zip,
       // Include other user input in address_to
     }
   };
+  // console.log('ah yo this one:',lineItems);
 
   // Make a POST request to your server's /orders endpoint
-  const fetchURLorder =
-    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'http://localhost:5000/orders'  // Replace with your actual server port
-      : 'https://tm-server-4a2a80557ba4.herokuapp.com/orders';
+  let fetchURLorder = '';
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      fetchURLorder = 'http://localhost:5000/orders';
+  } else {
+      fetchURLorder = 'https://tm-server-4a2a80557ba4.herokuapp.com/orders';
+  }
 
+  if (window.location.pathname.includes('cart.html')) {
   fetch(fetchURLorder, {
     method: 'POST',
     body: JSON.stringify(orderDetails),
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer bc4a449b76547409adcd6e3392bc6e',
+      'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k',
 
     },
   })
@@ -707,6 +735,7 @@ async function submitOrder() {
     .catch(error => {
       console.error('Error placing order with Printify:', error);
     });
+}
 }
 
 
@@ -763,10 +792,14 @@ function constructModalBody() {
               <input type="email" id="emailInput" class="form-control" required value="${inputValues.email}">
               <label for="phoneInput">Phone:</label>
               <input type="phone" id="phoneInput" class="form-control" required value="${inputValues.phone}">
-              <label for="countryinput">Country:</label>
-              <input type="country" id="countryInput" class="form-control" required value="${inputValues.country}">
-              <label for="provinceinput">Province/State:</label>
-              <input type="province" id="provinceInput" class="form-control" required value="${inputValues.province}">
+              <label for="countrySelect">Country:</label>
+              <select id="countryInput" class="form-control" required>
+                <option value="CA" ${inputValues.country === 'CA' ? 'selected' : ''}>Canada</option>
+                <option value="TT" ${inputValues.country === 'TT' ? 'selected' : ''}>Trinidad and Tobago</option>
+                <option value="US" ${inputValues.country === 'US' ? 'selected' : ''}>United States</option>
+              </select>
+              <label for="regioninput">Province/State:</label>
+              <input type="region" id="regionInput" class="form-control" required value="${inputValues.region}">
               <label for="cityinput">City:</label>
               <input type="city" id="cityInput" class="form-control" required value="${inputValues.city}">
               <label for="addressinput">Address:</label>
@@ -809,7 +842,7 @@ orderModal.addEventListener('click', function (event) {
       break;
     case 'proceedpayment':
       saveInputValues();
-      submitOrder();
+      // submitOrder();
       currentStage=3;
       console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
@@ -836,7 +869,7 @@ function saveInputValues() {
   const emailInput = document.getElementById('emailInput');
   const phoneInput = document.getElementById('phoneInput');
   const countryInput = document.getElementById('countryInput');
-  const provinceInput = document.getElementById('provinceInput');
+  const regionInput = document.getElementById('regionInput');
   const cityInput = document.getElementById('cityInput');
   const addressInput = document.getElementById('addressInput');
   const zipInput = document.getElementById('zipInput');
@@ -846,7 +879,7 @@ function saveInputValues() {
   if (emailInput) inputValues.email = emailInput.value;
   if (phoneInput) inputValues.phone = phoneInput.value;
   if (countryInput) inputValues.country = countryInput.value;
-  if (provinceInput) inputValues.province = provinceInput.value;
+  if (regionInput) inputValues.region = regionInput.value;
   if (cityInput) inputValues.city = cityInput.value;
   if (addressInput) inputValues.address = addressInput.value;
   if (zipInput) inputValues.zip = zipInput.value;
@@ -867,7 +900,6 @@ function initializePayPal(amount) {
   paypal.Buttons({
     createOrder: function (_, actions) {
       saveInputValues();
-      console.log('ah yo', inputValues.firstName);
       console.log('Amount to be sent to PayPal:', total);
   
       return actions.order.create({
@@ -876,22 +908,22 @@ function initializePayPal(amount) {
             amount: {
               value: total,
             },
-            shipping: {
-              name: {
-                full_name: inputValues.firstName + ' ' + inputValues.lastName,
-                phone: inputValues.phone,
-                email: inputValues.email,
-              },
-              address: {
-                country_code: 'US',
-                address_line_1: inputValues.address,
-                address_line_2: '',
-                admin_area_2: inputValues.city,
-                admin_area_1: inputValues.province,
-                postal_code: 'xxxxx',
-              },
+            // shipping: {
+            //   name: {
+            //     full_name: inputValues.firstName + ' ' + inputValues.lastName,
+            //     phone: inputValues.phone,
+            //     email: inputValues.email,
+            //   },
+            //   address: {
+            //     country_code: 'US',
+            //     address_line_1: inputValues.address,
+            //     address_line_2: '',
+            //     admin_area_2: inputValues.city,
+            //     admin_area_1: inputValues.region,
+            //     postal_code: 'xxxxx',
+            //   },
 
-            },
+            // },
           },
         ],
         application_context: {

@@ -5,7 +5,6 @@ const fetch = require('node-fetch'); // Ensure you've installed the 'node-fetch'
 const app = express();
 const PORT = process.env.PORT || 5000; 
 
-// Replace this function with your own logic to publish a product using the received ID
 const publishProduct = async (productId) => {
     try {
       const publishResponse = await fetch(`https://api.printify.com/v1/shops/11876498/products/${productId}/publish.json`, {
@@ -33,7 +32,7 @@ const publishProduct = async (productId) => {
     } catch (error) {
       console.error('Error in publishing product:', error);
     }
-  };
+};
 
 // Error handling middleware
 const errorHandler = (err, req, res, next) => {
@@ -59,7 +58,7 @@ const orderProxy = createProxyMiddleware('/orders', {
     '^/orders': '/orders.json',
   },
   onProxyReq: function (proxyReq) {
-    proxyReq.setHeader('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k'); // Replace with your actual order API key
+    proxyReq.setHeader('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k');
   },
 });
 
@@ -107,7 +106,7 @@ app.get('/fetch-and-publish-products', async (req, res) => {
     console.error('Error processing order:', error);
   
     // Log additional details
-    console.error('Request body:', req.body);
+    console.error('Request body:');
   
     // Send a detailed error response
     res.status(500).json({ error: 'Failed to process order', details: error.message });
@@ -115,32 +114,21 @@ app.get('/fetch-and-publish-products', async (req, res) => {
 });
 
 
+app.use(express.json());
+
 //Order
 
 app.post('/orders', async (req, res) => {
   try {
-    console.log('Received POST request at /orders');
-    console.log('Received order details for processing:', req.body);
+    console.log('Request Body:', req.body);
 
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      country,
-      province,
-      city,
-      address,
-      zip,
-    } = req.body.address_to;
+    // const clientLineItems = req.body.lineItems || [];
 
-    const lineItems = req.body.line_items.map(item => ({
-      product_id: item.product_id,
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-    }));
-
-    const externalId = generateRandom6DigitNumber();
+    // const serverLineItems = clientLineItems.map(item => ({
+    //   product_id: item.product_id,
+    //   variant_id: item.variant_id,
+    //   quantity: item.quantity,
+    // }));
 
     const orderResponse = await fetch('https://api.printify.com/v1/shops/11876498/orders.json', {
       method: 'POST',
@@ -148,26 +136,10 @@ app.post('/orders', async (req, res) => {
         'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        external_id: externalId.toString(),
-        label: 'YOUR_ORDER_LABEL',
-        line_items: lineItems,
-        shipping_method: 1,
-        is_printify_express: false,
-        send_shipping_notification: false,
-        address_to: {
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-          phone: phone,
-          country: country,
-          province: province,
-          city: city,
-          address1: address,
-          zip: zip,
-        },
-      }),
+      body: JSON.stringify(req.body),
     });
+
+    console.log('Printify API Response:', orderResponse.status, orderResponse.statusText);
 
     if (orderResponse.ok) {
       console.log('Order placed successfully with Printify.');
