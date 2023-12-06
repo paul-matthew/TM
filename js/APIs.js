@@ -799,32 +799,35 @@ function constructModalBody() {
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <label for="firstNameInput">First Name:</label>
+              <label for="firstNameInput">First Name<span style='color:red'>*</span>:</label>
               <input type="text" id="firstNameInput" class="form-control" required value="${inputValues.firstName}">
-              <label for="lastNameInput">Last Name:</label>
+              <label for="lastNameInput">Last Name<span style='color:red'>*</span>:</label>
               <input type="text" id="lastNameInput" class="form-control" required value="${inputValues.lastName}">
-              <label for="emailInput">Email:</label>
+              <label for="emailInput">Email<span style='color:red'>*</span>:</label>
               <input type="email" id="emailInput" class="form-control" required value="${inputValues.email}">
-              <label for="phoneInput">Phone:</label>
+              <label for="phoneInput">Phone<span style='color:red'>*</span>:</label>
               <input type="text" id="phoneInput" class="form-control" required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please enter a valid phone number (e.g., 123-456-7890)" inputmode="numeric" oninput="formatPhoneNumber()" value="${inputValues.phone}">
-              <label for="countrySelect">Country:</label>
+              <label for="countrySelect">Country<span style='color:red'>*</span>:</label>
               <select id="countryInput" class="form-control" required>
                 <option value="CA" ${inputValues.country === 'CA' ? 'selected' : ''}>Canada</option>
                 <option value="TT" ${inputValues.country === 'TT' ? 'selected' : ''}>Trinidad and Tobago</option>
                 <option value="US" ${inputValues.country === 'US' ? 'selected' : ''}>United States</option>
               </select>
-              <label for="regioninput">Province/State:</label>
+              <label for="regioninput">Province/State<span style='color:red'>*</span>:</label>
               <input type="region" id="regionInput" class="form-control" required value="${inputValues.region}">
-              <label for="cityinput">City:</label>
+              <label for="cityinput">City<span style='color:red'>*</span>:</label>
               <input type="city" id="cityInput" class="form-control" required value="${inputValues.city}">
-              <label for="addressinput">Address:</label>
+              <label for="addressinput">Address<span style='color:red'>*</span>:</label>
               <input type="address" id="addressInput" class="form-control" required value="${inputValues.address}">
               <label for="address2input">Unit <span style='font-size:10px'>(if applicable):</span></label>
               <input type="address2" id="address2Input" class="form-control" required value="${inputValues.address2}">
-              <label for="zipinput">Postal Code/ZIP:</label>
+              <label for="zipinput">Postal Code/ZIP<span style='color:red'>*</span>:</label>
               <input type="zip" id="zipInput" class="form-control" required value="${inputValues.zip}">
               <button id="backButton" class="back-btn gen-btn mt-3">Back</button>
               <button id="proceedpayment" class="proceed-btn gen-btn mt-3">Proceed to Payment</button>
+              <div id='formincomplete' style='color:red; margin-top:5px;font-size:11px'></div>
+              <div id='formincomplete2' style='color:red; margin-top:5px;font-size:11px'></div>
+              <div style='font-size:10px; margin-top:15px'>By placing your order, you agree to Tropical Misfit's Terms and Conditions and Privacy Policy.</div>
           </div>
         </div>
       `;
@@ -926,38 +929,61 @@ function saveInputValues() {
   if (address2Input) inputValues.address2 = address2Input.value;
   if (zipInput) inputValues.zip = zipInput.value;
 
-  if ( currentStage === 2) {
+  if (currentStage === 2) {
     var formControls = document.getElementsByClassName('form-control');
     var proceedBtn = document.getElementById('proceedpayment');
-    
+    var modalBody = document.querySelector('.modal-body'); // Adjust the selector based on your modal structure
+  
     // Function to validate email format
     function validateEmailFormat(emailValue) {
       var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailPattern.test(emailValue);
     }
-    
+  
     // Function to validate zip code or Canadian postal code format
     function validateZipCodeFormat(zipValue) {
       // Allow for postal code with or without a space
       var zipPattern = /^(\d{5}(-\d{4})?|[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d|[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d)$/;
       return zipPattern.test(zipValue);
     }
-    
-    if (!initialSetupDone || Array.from(formControls).some(input => input.value.trim() === '' && input !== address2Input)) {
-      // Set initial state
-      proceedBtn.disabled = true;
-      proceedBtn.classList.add('btn-disabled');
+  
+    var validationMessage = document.getElementById('formincomplete');
+    if (!validationMessage) {
+      validationMessage = document.createElement('div');
+      validationMessage.id = 'validationMessage';
+      modalBody.appendChild(validationMessage);
+    }
+    var validationMessage2 = document.getElementById('formincomplete2');
+    if (!validationMessage2) {
+      validationMessage2 = document.createElement('div');
+      validationMessage2.id = 'validationMessage2';
+      modalBody.appendChild(validationMessage2);
+    }
+
+    var validationMessageText = '';
+
+    if (!initialSetupDone || 
+      Array.from(formControls).some(input => input.value.trim() === '' && input !== address2Input) ||
+      !validateEmailFormat(emailInput.value.trim()) ||
+      !validateZipCodeFormat(zipInput.value.trim()) ||
+      phoneInput.value.replace(/\D/g, '').length < 10) {
+    // Set initial state
+    proceedBtn.disabled = true;
+    proceedBtn.classList.add('btn-disabled');
+    validationMessageText = 'Please fill in all required fields to proceed to payment.';
   }
   
+    validationMessage.innerText = validationMessageText;
+    // var validationMessage2=document.createElement('div');
+    // validationMessage.appendChild(validationMessage2);
   
-    
     // Loop through each element with the 'form-control' class
     Array.from(formControls).forEach(function (formControl) {
       formControl.addEventListener('input', function () {
         var inputsToCheck = Array.from(formControls).filter(function (input) {
           return input !== address2Input;
         });
-
+  
         var allFieldsFilled = inputsToCheck.every(function (input) {
           return input.value.trim() !== '';
         });
@@ -967,21 +993,34 @@ function saveInputValues() {
         var phoneIsValid = phoneInput.value.replace(/\D/g, '').length >= 10;
   
         var allFilledAndValid = allFieldsFilled && emailIsValid && zipIsValid && phoneIsValid;
-          
+
+                
+        if (!emailIsValid && emailInput.value.trim() !== '') {
+          validationMessage2.innerHTML = 'Please provide a valid EMAIL';
+        } else if (!zipIsValid && zipInput.value.trim() !== '') {  // Fix here
+          validationMessage2.innerHTML = 'Please review POSTAL/ZIP CODE format';
+        } else if (!phoneIsValid && phoneInput.value.trim() !== '') {  // Fix here
+          validationMessage2.innerHTML = 'Please review PHONE NUMBER';
+        } 
+          else {
+          validationMessage2.innerHTML = '';
+        }
+        
+        if(allFieldsFilled){
+          validationMessageText = '';
+          validationMessage.innerText = validationMessageText;
+        }
+
         proceedBtn.disabled = !allFilledAndValid;
         proceedBtn.classList.toggle('btn-disabled', !allFilledAndValid);
+
       });
     });
   
     initialSetupDone = true;
   }
   
-  
-  
-  
-  
-  
-  
+    
 }
 
 function initializePayPal(amount) {
