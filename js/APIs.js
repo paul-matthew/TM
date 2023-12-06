@@ -608,6 +608,7 @@ const inputValues = {
   region:'',
   city: '',
   address: '',
+  address2: '',
   zip: ''
 };
 const random = generateRandom6DigitNumber();
@@ -650,15 +651,6 @@ function handleOrderButtonClick() {
   const lineItems = [];
 
 async function submitOrder() {
-  // const firstName = document.getElementById('firstNameInput').value;
-  // const lastName = document.getElementById('lastNameInput').value;
-  // const email = document.getElementById('emailInput').value;
-  // const phone = document.getElementById('phoneInput').value;
-  // const country = document.getElementById('countryInput').value;
-  // const region = document.getElementById('regionInput').value;
-  // const city = document.getElementById('cityInput').value;
-  // const address = document.getElementById('addressInput').value;
-  // const zip = document.getElementById('zipInput').value;
 
   // Find all cart items
   const cartItems = document.querySelectorAll('.cart-item');
@@ -672,6 +664,7 @@ async function submitOrder() {
     region,
     city,
     address,
+    address2,
     zip,
   } = inputValues;
 
@@ -710,7 +703,7 @@ async function submitOrder() {
       "country": country,
       "region": region,
       "address1": address,
-      "address2": '',
+      "address2": address2,
       "city": city,
       "zip": zip,
       // Include other user input in address_to
@@ -746,6 +739,20 @@ async function submitOrder() {
 }
 }
 
+function formatPhoneNumber() {
+  var phoneInput = document.getElementById('phoneInput');
+  
+  // Remove any non-numeric characters
+  var phoneNumber = phoneInput.value.replace(/\D/g, '');
+
+  // Format the phone number as needed
+  if (phoneNumber.length >= 10) {
+    phoneNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+  }
+
+  // Update the input value
+  phoneInput.value = phoneNumber;
+}
 
 
 function constructModalBody() {
@@ -799,7 +806,7 @@ function constructModalBody() {
               <label for="emailInput">Email:</label>
               <input type="email" id="emailInput" class="form-control" required value="${inputValues.email}">
               <label for="phoneInput">Phone:</label>
-              <input type="phone" id="phoneInput" class="form-control" required value="${inputValues.phone}">
+              <input type="text" id="phoneInput" class="form-control" required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please enter a valid phone number (e.g., 123-456-7890)" inputmode="numeric" oninput="formatPhoneNumber()" value="${inputValues.phone}">
               <label for="countrySelect">Country:</label>
               <select id="countryInput" class="form-control" required>
                 <option value="CA" ${inputValues.country === 'CA' ? 'selected' : ''}>Canada</option>
@@ -812,6 +819,8 @@ function constructModalBody() {
               <input type="city" id="cityInput" class="form-control" required value="${inputValues.city}">
               <label for="addressinput">Address:</label>
               <input type="address" id="addressInput" class="form-control" required value="${inputValues.address}">
+              <label for="address2input">Unit <span style='font-size:10px'>(if applicable):</span></label>
+              <input type="address2" id="address2Input" class="form-control" required value="${inputValues.address2}">
               <label for="zipinput">Postal Code/ZIP:</label>
               <input type="zip" id="zipInput" class="form-control" required value="${inputValues.zip}">
               <button id="backButton" class="back-btn gen-btn mt-3">Back</button>
@@ -836,6 +845,26 @@ function constructModalBody() {
         </div>
       </div>
       `;
+      case 4:
+        return `
+          <div class="modal-dialog modal-dialog-centered success-modal">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-black">Order Received!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <!-- Display a larger text indicating the order has been received and is being processed -->
+                <div class="success-message">
+                  <span class="checkmark larger-checkmark">&#10003;</span>
+                  <p class="larger-text">Thanks for placing your order! It has been received and is being processed. You will receive an email notification with more details.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      
+       
   }
 }
 
@@ -843,35 +872,38 @@ orderModal.addEventListener('click', function (event) {
   const targetId = event.target.id;
   switch (targetId) {
     case 'OrderDetailsButton':
-      saveInputValues();
       currentStage=2;
       console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
+      saveInputValues();
       break;
     case 'proceedpayment':
+      currentStage=3;
       saveInputValues();
       // submitOrder();
-      currentStage=3;
       console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       initializePayPal();
       break;
     case 'backButton':
-      saveInputValues();
       currentStage=1;
+      saveInputValues();
       console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       break;
     case 'backButton2':
-      saveInputValues();
       currentStage=2;
       console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
+      saveInputValues();
       break;
   }
 });
 
+var initialSetupDone = false;
+
 function saveInputValues() {
+  console.log('this is the', currentStage)
   const firstNameInput = document.getElementById('firstNameInput');
   const lastNameInput = document.getElementById('lastNameInput');
   const emailInput = document.getElementById('emailInput');
@@ -880,6 +912,7 @@ function saveInputValues() {
   const regionInput = document.getElementById('regionInput');
   const cityInput = document.getElementById('cityInput');
   const addressInput = document.getElementById('addressInput');
+  const address2Input = document.getElementById('address2Input');
   const zipInput = document.getElementById('zipInput');
 
   if (firstNameInput) inputValues.firstName = firstNameInput.value;
@@ -890,7 +923,63 @@ function saveInputValues() {
   if (regionInput) inputValues.region = regionInput.value;
   if (cityInput) inputValues.city = cityInput.value;
   if (addressInput) inputValues.address = addressInput.value;
+  if (address2Input) inputValues.address2 = address2Input.value;
   if (zipInput) inputValues.zip = zipInput.value;
+
+  if ( currentStage === 2) {
+    var formControls = document.getElementsByClassName('form-control');
+    var proceedBtn = document.getElementById('proceedpayment');
+    
+    // Function to validate email format
+    function validateEmailFormat(emailValue) {
+      var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailPattern.test(emailValue);
+    }
+    
+    // Function to validate zip code or Canadian postal code format
+    function validateZipCodeFormat(zipValue) {
+      // Allow for postal code with or without a space
+      var zipPattern = /^(\d{5}(-\d{4})?|[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d|[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d)$/;
+      return zipPattern.test(zipValue);
+    }
+    
+    if(!initialSetupDone){
+    // Set initial state
+    proceedBtn.disabled = true;
+    proceedBtn.classList.add('btn-disabled');
+    }
+    
+    // Loop through each element with the 'form-control' class
+    Array.from(formControls).forEach(function (formControl) {
+      formControl.addEventListener('input', function () {
+        var inputsToCheck = Array.from(formControls).filter(function (input) {
+          return input !== address2Input;
+        });
+
+        var allFieldsFilled = inputsToCheck.every(function (input) {
+          return input.value.trim() !== '';
+        });
+  
+        var emailIsValid = validateEmailFormat(emailInput.value.trim());
+        var zipIsValid = validateZipCodeFormat(zipInput.value.trim());
+        var phoneIsValid = phoneInput.value.replace(/\D/g, '').length >= 10;
+  
+        var allFilledAndValid = allFieldsFilled && emailIsValid && zipIsValid && phoneIsValid;
+          
+        proceedBtn.disabled = !allFilledAndValid;
+        proceedBtn.classList.toggle('btn-disabled', !allFilledAndValid);
+      });
+    });
+  
+    initialSetupDone = true;
+  }
+  
+  
+  
+  
+  
+  
+  
 }
 
 function initializePayPal(amount) {
@@ -947,6 +1036,8 @@ function initializePayPal(amount) {
 
         // Now, trigger your submitOrder function with the necessary information
         submitOrder();
+        currentStage=4;
+        orderModal.innerHTML = constructModalBody();  
       });
     },
   }).render('#paypal-button-container');
