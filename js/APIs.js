@@ -943,11 +943,13 @@ function saveInputValues() {
       return zipPattern.test(zipValue);
     }
     
-    if(!initialSetupDone){
-    // Set initial state
-    proceedBtn.disabled = true;
-    proceedBtn.classList.add('btn-disabled');
-    }
+    if (!initialSetupDone || Array.from(formControls).some(input => input.value.trim() === '' && input !== address2Input)) {
+      // Set initial state
+      proceedBtn.disabled = true;
+      proceedBtn.classList.add('btn-disabled');
+  }
+  
+  
     
     // Loop through each element with the 'form-control' class
     Array.from(formControls).forEach(function (formControl) {
