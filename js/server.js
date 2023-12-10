@@ -6,6 +6,7 @@ require('dotenv').config();
 const app = express();
 const printifyApiKey = process.env.PRINTIFY_API_KEY 
 const PORT = process.env.PORT || 5000; 
+const blogApiKey = process.env.DATOCMS_API 
 
 const publishProduct = async (productId) => {
     try {
@@ -64,6 +65,17 @@ const orderProxy = createProxyMiddleware('/orders', {
   },
 });
 
+const blogProxy = createProxyMiddleware('/blogs', {
+  target: 'https://graphql.datocms.com/',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/blogs': '/blogs.json',
+  },
+  onProxyReq: function (proxyReq) {
+    proxyReq.setHeader('Authorization', `Bearer ${blogApiKey}`);
+  },
+});
+
 app.use((req, res, next) => {
     let access = '';
   
@@ -118,6 +130,41 @@ app.get('/fetch-and-publish-products', async (req, res) => {
 
 app.use(express.json());
 
+app.get('/blogs', async (req, res) => {
+  try {
+    const datoCMSResponse = await fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${blogApiKey}`,
+      },
+      body: JSON.stringify({
+        query: `{
+          allBlogs {
+            id
+            blogTitle
+            dateField
+            blogDescription
+            blogImage { url }
+          }
+        }`
+      }),
+    });
+
+    if (datoCMSResponse.ok) {
+      const data = await datoCMSResponse.json();
+      res.json(data.data.allBlogs);
+    } else {
+      console.error('Failed to fetch blogs from DatoCMS.');
+      res.status(500).json({ error: 'Failed to fetch blogs from DatoCMS' });
+    }
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 //Order
 
 app.post('/orders', async (req, res) => {
@@ -158,6 +205,7 @@ app.post('/orders', async (req, res) => {
 
 app.use(apiProxy);
 app.use(orderProxy);
+app.use(blogProxy);
 app.use(errorHandler);
 
 app.listen(PORT, () => {

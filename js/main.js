@@ -411,4 +411,59 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 
+//SHIPPING - Countries - shipping info (REGION)
+
+function region() {
+	// Get the selected country
+	const selectedCountry = document.getElementById('countryInput').value;
+  
+	// Get the region select element
+	const regionSelect = document.getElementById('regionInput');
+  
+	// Clear existing options
+	regionSelect.innerHTML = '';
+  
+	// Add new options based on the selected country
+	switch (selectedCountry) {
+	  case 'CA':
+		addOptions(regionSelect, ['Alberta', 'British Columbia','Manitoba',' New Brunswick','Newfoundland and Labrador', 'Ontario','Prince Edward Island', 'Quebec','Saskatchewan']);
+		break;
+	  case 'TT':
+		addOptions(regionSelect, ['Couva-Tabaquite-Talparo', 'Diego Martin', 'Eastern Tobago', 'Mayaro-Rio Claro', 'Penal-Debe', 'Point Fortin', 'Port of Spain', 'Princes Town', 'San Juan-Laventille']);		
+		break;
+	  case 'US':
+		addOptions(regionSelect, [
+			'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
+			'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+			'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri',
+			'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
+			'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+			'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
+			'West Virginia', 'Wisconsin', 'Wyoming'
+		  ]);		
+		break;
+	  // Add more cases for other countries as needed
+	  default:
+		// Default case when no country is selected
+		break;
+	}
+  }
+  
+  function addOptions(regionSelect, optionsArray, selectedValue) {
+	// Add options to the select element
+	optionsArray.forEach(optionText => {
+	  const option = document.createElement('option');
+	  option.value = optionText;
+	  option.text = optionText;
+  
+	  // Add a data attribute to store the classification
+	  option.setAttribute('data-classification', 'region');
+  
+	  if (selectedValue === optionText) {
+		option.selected = true;
+	  }
+	  regionSelect.add(option);
+	});
+  }
+  
   

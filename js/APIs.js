@@ -1,75 +1,62 @@
 //BLOG HEADLESS CMS-----------------------------------------
+let fetchURLblog = '';
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  fetchURLblog = 'http://localhost:5000/blogs';
+} else {
+  fetchURLblog = 'https://tm-server-4a2a80557ba4.herokuapp.com/blogs';
+}
 
 document.addEventListener('DOMContentLoaded', function() {
-	if (location.pathname.endsWith('blog.html')) {
-	  // Assuming you want 10 post per page
-	  const postsPerPage = 10;
-  
-	  const urlParams = new URLSearchParams(window.location.search);
-	  const currentPageIndex = urlParams.get('index');
-	  const startIndex = (currentPageIndex - 1) * postsPerPage;
-	  const endIndex = startIndex + postsPerPage;
-  
-	  fetch('https://graphql.datocms.com/', {
-		method: 'POST',
-		headers: {
-		  'Content-Type': 'application/json',
-		  'Accept': 'application/json',
-		  'Authorization': 'Bearer bc4a449b76547409adcd6e3392bc6e',
-		},
-		body: JSON.stringify({
-		  query: `{
-			allBlogs {
-			  id
-			  blogTitle
-			  dateField
-			  blogDescription
-			  blogImage { url }
-			}
-		  }`
-		}),
-	  })
-		.then(response => response.json())
-		.then(data => {
-		  const allBlogs = data.data.allBlogs.slice(startIndex, endIndex);
-		  allBlogs.sort((a, b) => new Date(b.dateField) - new Date(a.dateField));
-		  const blogSection = document.getElementById('blogpost');
-	
-		  allBlogs.forEach(blog => {
-			console.log('Current Blog:', blog); 
-  
-			// Truncate the description to the first 15 words
-			const blogDescription = blog.blogDescription;
-			const isMobile = window.innerWidth <= 768; // Adjust the pixel value as needed for your mobile view
-			
-			const wordsCount = isMobile ? 8 : 15;
-			const truncatedDescription = blogDescription.split(' ').slice(0, wordsCount).join(' ');
-			const descriptionWithEllipsis = blogDescription.split(' ').length > wordsCount ? truncatedDescription + '...' : truncatedDescription;
+  if (location.pathname.endsWith('blog.html')) {
+    // Assuming you want 10 posts per page
+    const postsPerPage = 10;
 
-			const blogEntry = document.createElement('div');
-			blogEntry.className = 'col-md-12';
-			blogEntry.innerHTML = `
-			  <div class="blog-entry d-flex justify-content-end">
-				<a href="blog-single.html" class="block-20 img" style="background-image: url('${blog.blogImage.url}');">
-				</a>
-				<div class="text">
-				  <p class="meta"><span><i class="fa fa-calendar me-1"></i>${blog.dateField}</span> <span><a href="#"></a></span></p>
-				  <h3 class="heading mb-3"><a href="#">${blog.blogTitle}</a></h3>
-				  <p>${descriptionWithEllipsis}</p>
-				  <a href="blog-single.html?id=${blog.id}" class="btn read-more pb-4 px-1">Read more</a>
-				</div>
-			  </div>
-			`;
-	
-			blogSection.appendChild(blogEntry);
-		  });
-		})
-		.catch(error => console.error('Error:', error));
-	  }
-  });
-  
-  
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPageIndex = urlParams.get('index');
+    const startIndex = (currentPageIndex - 1) * postsPerPage;
+    const endIndex = startIndex + postsPerPage;
 
+
+    fetch(fetchURLblog)
+      .then(response => response.json())
+      .then(data => {
+        const allBlogs = data.slice(startIndex, endIndex);
+        allBlogs.sort((a, b) => new Date(b.dateField) - new Date(a.dateField));
+        const blogSection = document.getElementById('blogpost');
+
+        allBlogs.forEach(blog => {
+          console.log('Current Blog:', blog);
+
+          // Truncate the description to the first 15 words
+          const blogDescription = blog.blogDescription;
+          const isMobile = window.innerWidth <= 768; // Adjust the pixel value as needed for your mobile view
+
+          const wordsCount = isMobile ? 8 : 15;
+          const truncatedDescription = blogDescription.split(' ').slice(0, wordsCount).join(' ');
+          const descriptionWithEllipsis = blogDescription.split(' ').length > wordsCount ? truncatedDescription + '...' : truncatedDescription;
+
+          const blogEntry = document.createElement('div');
+          blogEntry.className = 'col-md-12';
+          blogEntry.innerHTML = `
+            <div class="blog-entry d-flex justify-content-end">
+              <a href="blog-single.html" class="block-20 img" style="background-image: url('${blog.blogImage.url}');">
+              </a>
+              <div class="text">
+                <p class="meta"><span><i class="fa fa-calendar me-1"></i>${blog.dateField}</span> <span><a href="#"></a></span></p>
+                <h3 class="heading mb-3"><a href="#">${blog.blogTitle}</a></h3>
+                <p>${descriptionWithEllipsis}</p>
+                <a href="blog-single.html?id=${blog.id}" class="btn read-more pb-4 px-1">Read more</a>
+              </div>
+            </div>
+          `;
+
+          blogSection.appendChild(blogEntry);
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  }
+});
+  
 //Blog Full Post-----------------------------------------------
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -77,28 +64,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	  const urlParams = new URLSearchParams(window.location.search);
 	  const blogID = urlParams.get('id'); // Replace 'blogID' with the actual parameter name
   
-	  fetch('https://graphql.datocms.com/', {
-		method: 'POST',
-		headers: {
-		  'Content-Type': 'application/json',
-		  'Accept': 'application/json',
-		  'Authorization': 'Bearer bc4a449b76547409adcd6e3392bc6e',
-		},
-		body: JSON.stringify({
-		  query: `{
-			allBlogs {
-			  id
-			  blogTitle
-			  dateField
-			  blogDescription
-			  blogImage { url }
-			}
-		  }`
-		}),
-	  })
+	  fetch(fetchURLblog)
 		.then(response => response.json())
 		.then(data => {
-		  const allBlogs = data.data.allBlogs;
+		  const allBlogs = data;
 		  const selectedBlog = allBlogs.find(blog => blog.id === blogID);
   
 		  const blogSection = document.getElementById('blogpost-full');
@@ -807,13 +776,27 @@ function constructModalBody() {
               <label for="phoneInput">Phone<span style='color:red'>*</span>:</label>
               <input type="text" id="phoneInput" class="form-control" required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please enter a valid phone number (e.g., 123-456-7890)" inputmode="numeric" oninput="formatPhoneNumber()" value="${inputValues.phone}">
               <label for="countrySelect">Country<span style='color:red'>*</span>:</label>
-              <select id="countryInput" class="form-control" required>
+              <select id="countryInput" class="form-control" required onchange="region()">
                 <option value="CA" ${inputValues.country === 'CA' ? 'selected' : ''}>Canada</option>
                 <option value="TT" ${inputValues.country === 'TT' ? 'selected' : ''}>Trinidad and Tobago</option>
                 <option value="US" ${inputValues.country === 'US' ? 'selected' : ''}>United States</option>
               </select>
-              <label for="regioninput">Province/State<span style='color:red'>*</span>:</label>
-              <input type="region" id="regionInput" class="form-control" required value="${inputValues.region}">
+                <label for="regionInput">Province/State/Region<span style='color:red'>*</span>:</label>
+                <select id="regionInput" class="form-control" required>
+                <option value="Ontario" ${inputValues.region === 'Ontario' ? 'selected' : ''}>Ontario</option>
+                <option value="Quebec" ${inputValues.region === 'Quebec' ? 'selected' : ''}>Quebec</option>
+                <option value="British Columbia" ${inputValues.region === 'British Columbia' ? 'selected' : ''}>British Columbia</option>
+                <option value="Alberta" ${inputValues.region === 'Alberta' ? 'selected' : ''}>Alberta</option>
+                <option value="Manitoba" ${inputValues.region === 'Manitoba' ? 'selected' : ''}>Manitoba</option>
+                <option value="Saskatchewan" ${inputValues.region === 'Saskatchewan' ? 'selected' : ''}>Saskatchewan</option>
+                <option value="Nova Scotia" ${inputValues.region === 'Nova Scotia' ? 'selected' : ''}>Nova Scotia</option>
+                <option value="New Brunswick" ${inputValues.region === 'New Brunswick' ? 'selected' : ''}>New Brunswick</option>
+                <option value="Newfoundland and Labrador" ${inputValues.region === 'Newfoundland and Labrador' ? 'selected' : ''}>Newfoundland and Labrador</option>
+                <option value="Prince Edward Island" ${inputValues.region === 'Prince Edward Island' ? 'selected' : ''}>Prince Edward Island</option>
+                <option value="Northwest Territories" ${inputValues.region === 'Northwest Territories' ? 'selected' : ''}>Northwest Territories</option>
+                <option value="Yukon" ${inputValues.region === 'Yukon' ? 'selected' : ''}>Yukon</option>
+                <option value="Nunavut" ${inputValues.region === 'Nunavut' ? 'selected' : ''}>Nunavut</option>
+              </select>
               <label for="cityinput">City<span style='color:red'>*</span>:</label>
               <input type="city" id="cityInput" class="form-control" required value="${inputValues.city}">
               <label for="addressinput">Address<span style='color:red'>*</span>:</label>
@@ -925,7 +908,7 @@ function saveInputValues() {
   if (regionInput) inputValues.region = regionInput.value;
   if (cityInput) inputValues.city = cityInput.value;
   if (addressInput) inputValues.address = addressInput.value;
-  if (address2Input) inputValues.address2 = address2Input.value;
+  if (address2Input) inputValues.address2 = "Unit #" + address2Input.value;
   if (zipInput) inputValues.zip = zipInput.value;
 
   if (currentStage === 2) {
@@ -941,9 +924,22 @@ function saveInputValues() {
   
     // Function to validate zip code or Canadian postal code format
     function validateZipCodeFormat(zipValue) {
+
+      if (countryInput.value === 'TT') {
+        // Trinidad and Tobago doesn't require a postal code
+        var zipPattern = /^(\d{6}(-\d{4})?)$/;
+        return zipPattern.test(zipValue);
+      }
+      else if (countryInput.value === 'US') {
+        // Allow for postal code with or without a space
+        var zipPattern = /^(\d{5}(-\d{4})?)$/;
+        return zipPattern.test(zipValue);
+      }
+      else if (countryInput.value === 'CA') {
       // Allow for postal code with or without a space
-      var zipPattern = /^(\d{5}(-\d{4})?|[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d|[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d)$/;
+      var zipPattern = /^([A-Za-z]\d[A-Za-z] \d[A-Za-z]\d|[A-Za-z]\d[A-Za-z]\d[A-Za-z]\d)$/;
       return zipPattern.test(zipValue);
+    }
     }
   
     var validationMessage = document.getElementById('formincomplete');
@@ -982,39 +978,38 @@ function saveInputValues() {
         var inputsToCheck = Array.from(formControls).filter(function (input) {
           return input !== address2Input;
         });
-  
+    
         var allFieldsFilled = inputsToCheck.every(function (input) {
           return input.value.trim() !== '';
         });
-  
+    
         var emailIsValid = validateEmailFormat(emailInput.value.trim());
+        
         var zipIsValid = validateZipCodeFormat(zipInput.value.trim());
+        
         var phoneIsValid = phoneInput.value.replace(/\D/g, '').length >= 10;
-  
+    
         var allFilledAndValid = allFieldsFilled && emailIsValid && zipIsValid && phoneIsValid;
-
-                
+    
         if (!emailIsValid && emailInput.value.trim() !== '') {
           validationMessage2.innerHTML = 'Please provide a valid EMAIL';
-        } else if (!zipIsValid && zipInput.value.trim() !== '') {  // Fix here
+        } else if ((!zipIsValid || zipInput.value.trim() === '')) {
           validationMessage2.innerHTML = 'Please review POSTAL/ZIP CODE format';
-        } else if (!phoneIsValid && phoneInput.value.trim() !== '') {  // Fix here
+        } else if (!phoneIsValid && phoneInput.value.trim() !== '') {
           validationMessage2.innerHTML = 'Please review PHONE NUMBER';
-        } 
-          else {
+        } else {
           validationMessage2.innerHTML = '';
-        }
-        
-        if(allFieldsFilled){
+        }        
+    
+        if (allFieldsFilled) {
           validationMessageText = '';
           validationMessage.innerText = validationMessageText;
         }
-
         proceedBtn.disabled = !allFilledAndValid;
         proceedBtn.classList.toggle('btn-disabled', !allFilledAndValid);
-
       });
     });
+    
   
     initialSetupDone = true;
   }
