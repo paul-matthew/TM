@@ -9038,7 +9038,7 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5,
   box-shadow: 0px 24px 36px -11px rgba(0, 0, 0, 0.09);
   font-size: 13px;
   font-weight: 600;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 1px; }
   .btn span {
     font-size: 16px;
@@ -10626,7 +10626,44 @@ textarea.form-control {
   opacity: 0;
 }
 
-/*IGNITE FONT*/
+/*DACING FONT*/
+
+@font-face {
+  font-family: 'Dacing'; 
+  src: url('./DancingScript-VariableFont_wght.ttf') format('truetype'); 
+  font-weight: normal; 
+  font-style: normal;
+}
+
+/*DACING FONT*/
+
+@font-face {
+  font-family: 'Dacing'; 
+  src: url('./DancingScript-VariableFont_wght.ttf') format('truetype'); 
+  font-weight: normal; 
+  font-style: normal;
+}
+
+
+/*SATISFY FONT*/
+
+@font-face {
+  font-family: 'SATISFY';
+  src: url('./Satisfy-Regular.ttf') format('truetype'); 
+  font-weight: normal; 
+  font-style: normal;
+}
+
+/*LOBSTER FONT*/
+
+@font-face {
+  font-family: 'LOBSTER';
+  src: url('./LobsterTwo-Regular.ttf') format('truetype'); 
+  font-weight: normal; 
+  font-style: normal;
+}
+
+/*IGLight FONT*/
 
 @font-face {
   font-family: 'IGLight'; /* The name you'll use to reference the font */
@@ -10656,7 +10693,8 @@ textarea.form-control {
 /* Common styles for both media queries */
 #intro, #intro2 {
   /* font-family: BEBAS; */
-  font-family: IGLight;
+  font-family: SATISFY;
+  /* text-transform:uppercase;    */
   color: black;
   width:100vw;
   text-align: center;
@@ -10664,12 +10702,25 @@ textarea.form-control {
   position:absolute;
   z-index:2;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Dark black box shadow */
-
 }
+
+#exploreshop-btn {
+  background-color: #C08BD2 !important;
+  border: solid black !important;
+  width: 170px !important;
+  height: 40px !important;
+  font-size: x-large !important;
+  font-family: Satisfy !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4); /* Add box-shadow with black/gray tint */
+}
+
 
 @media (min-width: 767px) {
   #intro {
-    font-size: 6vh;
+    font-size: 7vh;
     margin-top:100px;
     margin-bottom: 60px;
     /* -webkit-text-stroke: 1.5px black; */
@@ -10681,7 +10732,7 @@ textarea.form-control {
 @media (max-width: 767px) {
   #intro {
   /* display:none; */
-  font-size: 4vh;
+  font-size: 5vh;
   margin-top: 70px;
   margin-bottom: 50px;
   padding: 10px;

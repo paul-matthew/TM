@@ -887,6 +887,33 @@ orderModal.addEventListener('click', function (event) {
 
 var initialSetupDone = false;
 
+// Function to check if a city exists in a country
+function isCityValid(cityValue, countryInput, regionInput) {
+  var apiKey = "YOUR_API_KEY"; // Replace with your actual API key
+  var apiUrl = `https://api.countrystatecity.in/v1/countries/${countryInput.value}/states/${regionInput.value}/cities`;
+
+  var headers = new Headers();
+  headers.append("X-CSCAPI-KEY", apiKey);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: headers,
+    redirect: 'follow'
+  };
+
+  // Fetch city data for the specified country and region
+  return fetch(apiUrl, requestOptions)
+    .then(response => response.json())
+    .then(data => {
+      // Check if the provided city is in the list of cities for the country and region
+      return data.some(city => city.name.toLowerCase() === cityValue.toLowerCase());
+    })
+    .catch(error => {
+      console.log('Error fetching city data:', error);
+      return false; // Return false in case of an error
+    });
+}
+
 function saveInputValues() {
   console.log('this is the', currentStage)
   const firstNameInput = document.getElementById('firstNameInput');

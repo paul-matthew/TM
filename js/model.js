@@ -97,6 +97,7 @@ function init() {
     controls.screenSpacePanning = false; // Set to false for more intuitive panning
     controls.minDistance = 1;
     controls.maxDistance = 20;
+    controls.enableZoom = false; 
 
     // Increase the intensity of the ambient light
     const ambientLight = new THREE.AmbientLight('#D091DE', 400.0); // Higher intensity
