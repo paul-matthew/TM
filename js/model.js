@@ -29,6 +29,19 @@ import { GLTFLoader } from './GLTFLoader.js';
 let loadedModel = null;
 const ROTATION_SPEED = 0.003; // Adjust the value as needed
 
+document.addEventListener('DOMContentLoaded', function () {
+  var modelContainer = document.getElementById('model-container');
+
+  // Function to animate the fading upward effect
+  function animateFadingUp() {
+    modelContainer.style.opacity = 1;
+    modelContainer.style.transform = 'translateX(-50%) translateY(-100vh)';
+  }
+
+  // Set a timeout to delay the animation (adjust the duration if needed)
+  setTimeout(animateFadingUp, 2000);
+});
+
 function init() {
   let sceneRotation = -0.25; // Initialize scene rotation
   const test = new SceneInit('myThreeJsCanvas');
