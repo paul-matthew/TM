@@ -3,29 +3,6 @@ import SceneInit from './SceneInit.js';
 import { OrbitControls } from "./OrbitControls.js";
 import { GLTFLoader } from './GLTFLoader.js';
 
-
-// const CONFETTI_COUNT = 200; // Number of confetti particles
-// const CONFETTI_RADIUS = 0.5; // Confetti particle radius
-
-
-// function addConfetti(scene) {
-//   const confettiGroup = new THREE.Group();
-//   const confettiGeometry = new THREE.SphereGeometry(CONFETTI_RADIUS, 24, 24);
-//   const confettiColors = [0xFFFFFF, 0xFFFFDD, 0xF0FFFF, 0xFFFFF0]; // Define your own starry confetti colors
-//   // const confettiColors = [0x00ff00, 0x000000, 0xff00ff, 0x00ffff];
-
-
-//   for (let i = 0; i < CONFETTI_COUNT; i++) {
-//     const confettiMaterial = new THREE.MeshStandardMaterial({ color: confettiColors[i % confettiColors.length] });
-//     const confetti = new THREE.Mesh(confettiGeometry, confettiMaterial);
-//     const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
-//     confetti.position.set(x, y, z);
-//     confettiGroup.add(confetti);
-//   }
-
-//   scene.add(confettiGroup);
-// }
-
 let loadedModel = null;
 const ROTATION_SPEED = 0.003; // Adjust the value as needed
 
@@ -39,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Set a timeout to delay the animation (adjust the duration if needed)
-  setTimeout(animateFadingUp, 3000);
+  setTimeout(animateFadingUp, 2000);
 });
 
 function init() {
@@ -55,23 +32,20 @@ function init() {
 
   modelRenderer.render(test.scene, test.camera);
 
-  // Add colorful confetti particles to the scene
-  // addConfetti(test.scene); 
-
   const gltfLoader = new GLTFLoader();
   gltfLoader.load('./js/carnival/scene.gltf', (gltfScene) => {
     loadedModel = gltfScene;
 
-    if (window.innerWidth > 768) {
+    // if (window.innerWidth > 768) {
       gltfScene.scene.position.set(0, -0.5, 0); // For non-mobile screens
       test.camera.position.z = 4;
-    } else if(window.innerWidth>500 && window.innerHeight<500) {
-      gltfScene.scene.position.set(0, -0.05, 0); // For mobile screens
-      test.camera.position.z = 3;
-    } else {
-      gltfScene.scene.position.set(0, -0.35, 0); // For mobile screens
-      test.camera.position.z = 5;
-    }
+    // } else if(window.innerWidth>500 && window.innerHeight<500) {
+    //   gltfScene.scene.position.set(0, -0.05, 0); // For mobile screens
+    //   test.camera.position.z = 3;
+    // } else {
+    //   gltfScene.scene.position.set(0, -0.35, 0); // For mobile screens
+    //   test.camera.position.z = 5;
+    // }
 
     test.scene.add(gltfScene.scene);
 
