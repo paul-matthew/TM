@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Set a timeout to delay the animation (adjust the duration if needed)
-  setTimeout(animateFadingUp, 2000);
+  setTimeout(animateFadingUp, 3000);
 });
 
 function init() {
