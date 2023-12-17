@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function init() {
-  let sceneRotation = -0.25; // Initialize scene rotation
+  let sceneRotation = -0.35; // Initialize scene rotation
   const test = new SceneInit('myThreeJsCanvas');
   const modelRenderer = new THREE.WebGLRenderer({
     canvas: document.getElementById('myThreeJsCanvas'),
@@ -37,14 +37,14 @@ function init() {
     loadedModel = gltfScene;
 
     // if (window.innerWidth > 768) {
-      gltfScene.scene.position.set(0, -0.5, 0); // For non-mobile screens
-      test.camera.position.z = 4;
+      // gltfScene.scene.position.set(0, -0.5, 0); // For non-mobile screens
+      // test.camera.position.z = 4;
     // } else if(window.innerWidth>500 && window.innerHeight<500) {
     //   gltfScene.scene.position.set(0, -0.05, 0); // For mobile screens
     //   test.camera.position.z = 3;
     // } else {
-    //   gltfScene.scene.position.set(0, -0.35, 0); // For mobile screens
-    //   test.camera.position.z = 5;
+      gltfScene.scene.position.set(0, -0.35, 0); // For mobile screens
+      test.camera.position.z = 5;
     // }
 
     test.scene.add(gltfScene.scene);
