@@ -1134,3 +1134,26 @@ function handleClearButtonClick() {
         console.log('Clear operation canceled by the user.');
     }
 }
+
+// Paypal script
+const headers = new Headers();
+headers.append("Content-Type", "application/json");
+
+let fetchURLpay = '';
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  fetchURLpay = 'http://localhost:5000/config';
+} else {
+  fetchURLpay = 'https://tm-server-4a2a80557ba4.herokuapp.com/config';
+}
+
+const apiUrl = `${fetchURLpay}`;
+
+fetch(apiUrl)  // Use apiUrl here instead of hardcoded '/config'
+  .then(response => response.json())
+  .then(config => {
+    // Use the configuration variables, e.g., config.paypalClientId
+    const script = document.createElement('script');
+    script.src = `https://www.paypal.com/sdk/js?client-id=${config.paypalClientId}`;
+    document.head.appendChild(script);
+  })
+  .catch(error => console.error('Error fetching configuration:', error));

@@ -1,6 +1,6 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const fetch = require('node-fetch'); // Ensure you've installed the 'node-fetch' package
+const fetch = require('node-fetch'); 
 require('dotenv').config();
 
 const app = express();
@@ -96,6 +96,17 @@ const mapcitiesProxy = createProxyMiddleware('/maps/cities', {
   },
   onProxyReq: function (proxyReq) {
     proxyReq.setHeader('Authorization', `Bearer ${mapAPIkey}`);
+  },
+});
+
+const paypayProxy = createProxyMiddleware('/config', {
+  target: 'https://www.paypal.com/sdk/js?client-id=${config.paypalClientId}`',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/config': '/config.json',
+  },
+  onProxyReq: function (proxyReq) {
+    proxyReq.setHeader('Authorization', `Bearer ${PAYPAL_CLIENT_ID_SB}`);
   },
 });
 
@@ -297,11 +308,21 @@ app.get('/maps/cities', async (req, res) => {
   }
 });
 
+//Paypal
+
+app.get('/config', (req, res) => {
+  res.json({
+    paypalClientId: process.env.PAYPAL_CLIENT_ID_SB,
+    // Add other configuration variables as needed
+  });
+});
+
 app.use(apiProxy);
 app.use(orderProxy);
 app.use(blogProxy);
 app.use(mapProxy);
 app.use(mapcitiesProxy);
+app.use(paypayProxy);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
