@@ -360,40 +360,6 @@ document.addEventListener('DOMContentLoaded', function () {
 //     fetchAndDisplayProducts();
 // });
 
-//FITPRINT EMBED CODE
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     iFrameResize({
-//         log: false,
-//         checkOrigin: false,
-//         heightCalculationMethod: 'grow',
-//         autoResize: false,
-//         onMessage: function(messageData) {
-//             var jsonData = JSON.parse(messageData.message);
-//             if (jsonData.action == 'navigateTo') {
-//                 window.onbeforeunload = null;
-//                 window.parent.location.href = jsonData.data;
-//             }
-//             if (jsonData.action == 'scrollTo') {
-//                 setTimeout(function() {
-//                     document.getElementById('fitPrintAnchor').scrollIntoView({ behavior: 'smooth', block: 'center' });
-//                 }, 200);
-//             }
-//         },
-//         onInit: function(iframe) {
-//             window.addEventListener('scroll', function() {
-//                 const scrollFromTop = window.scrollY;
-//                 var fitPrintIframe = document.getElementById('fitPrintIframe');
-//                 var offset = fitPrintIframe.getBoundingClientRect();
-//                 if (scrollFromTop > offset.top + 10) {
-//                     iframe.iFrameResizer.sendMessage(scrollFromTop - (offset.top - 10));
-//                 }
-//             });
-//         }
-//     }, '#fitPrintIframe');
-// });
-
-
 //BlOG PAGE - PAGE BUTTONS
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -411,11 +377,47 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 
-//SHIPPING - Countries - shipping info (REGION)
+//ADDRESS OPTIONS AUTOMATION VIA API
 
-function region() {
+function populateCountryOptions() {
+	const countrySelect = document.getElementById('countryInput');
+	  countries = [
+		{ value: '', text: '' },
+		{ value: 'CA', text: 'Canada' },
+		{ value: 'TT', text: 'Trinidad and Tobago' },
+		{ value: 'US', text: 'United States' },
+		// Add more countries as needed
+	  ];
+	
+
+  
+	// Clear existing options
+	countrySelect.innerHTML = '';
+  
+	// Add new options based on the countries array
+	countries.forEach(country => {
+	  const option = document.createElement('option');
+	  option.value = country.value;
+	  option.text = country.text;
+  
+	  if (inputValues.country === country.value) {
+		option.selected = true;
+	  }
+  
+	  countrySelect.appendChild(option);
+	});
+	saveInputValues();
+}
+  
+function filterUSRegions(regions) {
+// Filter out regions with specific ISO codes
+return regions.filter(region => !region.iso2.startsWith('UM-') && !region.iso2.startsWith('VI') && !region.iso2.startsWith('GU'));
+}
+  
+async function region() {
 	// Get the selected country
 	const selectedCountry = document.getElementById('countryInput').value;
+	saveInputValues();console.log('Country saved:',selectedCountry)
   
 	// Get the region select element
 	const regionSelect = document.getElementById('regionInput');
@@ -423,47 +425,121 @@ function region() {
 	// Clear existing options
 	regionSelect.innerHTML = '';
   
-	// Add new options based on the selected country
+	// Fetch states or regions from the API
+	const apiUrl = `https://api.countrystatecity.in/v1/countries/${selectedCountry}/states`;
+	const headers = new Headers();
+	headers.append("X-CSCAPI-KEY", "MzZFMU1ZTGNKUUZRVjA1MG9ySXAzS1hoZEdUTlZpWEZDNjF5RXA2Qw==");
+  
+	const requestOptions = {
+	  method: 'GET',
+	  headers: headers,
+	  redirect: 'follow'
+	};
+  
+	try {
+	  const response = await fetch(apiUrl, requestOptions);
+	  const result = await response.json();
+  
 	switch (selectedCountry) {
-	  case 'CA':
-		addOptions(regionSelect, ['Alberta', 'British Columbia','Manitoba',' New Brunswick','Newfoundland and Labrador', 'Ontario','Prince Edward Island', 'Quebec','Saskatchewan']);
+		case 'CA':
+		// Sort the Canadian regions alphabetically by name
+		const sortedCARegions = result.sort((a, b) => a.name.localeCompare(b.name));
+		addOptions(regionSelect, sortedCARegions.map(state => ({ value: state.iso2, text: state.name })));
+		fetchCities();
 		break;
-	  case 'TT':
-		addOptions(regionSelect, ['Couva-Tabaquite-Talparo', 'Diego Martin', 'Eastern Tobago', 'Mayaro-Rio Claro', 'Penal-Debe', 'Point Fortin', 'Port of Spain', 'Princes Town', 'San Juan-Laventille']);		
+		case 'TT':
+		// Assuming 'TT' API response contains ISO and name properties
+		// Sort the Trinidad and Tobago regions alphabetically by name
+		const sortedTTRegions = result.sort((a, b) => a.name.localeCompare(b.name));
+		addOptions(regionSelect, sortedTTRegions.map(state => ({ value: state.iso2, text: state.name })));
+		fetchCities();
 		break;
-	  case 'US':
-		addOptions(regionSelect, [
-			'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
-			'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-			'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri',
-			'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-			'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
-			'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
-			'West Virginia', 'Wisconsin', 'Wyoming'
-		  ]);		
+		case 'US':
+		// For 'US', filter out regions with ISO codes starting with "UM-"
+		const filteredUSRegions = filterUSRegions(result);
+		// Sort the American regions alphabetically by name
+		const sortedUSRegions = filteredUSRegions.sort((a, b) => a.name.localeCompare(b.name));
+		addOptions(regionSelect, sortedUSRegions.map(state => ({ value: state.iso2, text: state.name })));
+		fetchCities();
 		break;
-	  // Add more cases for other countries as needed
-	  default:
+		// Add more cases for other countries as needed
+		default:
 		// Default case when no country is selected
 		break;
 	}
-  }
   
-  function addOptions(regionSelect, optionsArray, selectedValue) {
-	// Add options to the select element
-	optionsArray.forEach(optionText => {
+	} catch (error) {
+	  console.log('Error fetching states:', error);
+	}
+}
+  
+async function fetchCities() {
+// Get the selected country and region
+const selectedCountry = document.getElementById('countryInput').value;
+const selectedRegion = document.getElementById('regionInput').value;
+saveInputValues();console.log('Region saved:',selectedRegion)
+
+
+// Construct the URL with the selected country and region
+const apiUrl = `https://api.countrystatecity.in/v1/countries/${selectedCountry}/states/${encodeURIComponent(selectedRegion)}/cities`;
+
+// Set up headers for the API request
+const headers = new Headers();
+headers.append("X-CSCAPI-KEY", "MzZFMU1ZTGNKUUZRVjA1MG9ySXAzS1hoZEdUTlZpWEZDNjF5RXA2Qw==");
+
+// Set up request options
+const requestOptions = {
+	method: 'GET',
+	headers: headers,
+	redirect: 'follow'
+};
+
+try {
+	// Fetch cities data
+	const response = await fetch(apiUrl, requestOptions);
+	const result = await response.json();
+
+	// Log the result to the console (you can modify this part as needed)
+	// console.log(result);
+
+	// Update city dropdown options
+	updateCityDropdown(result);
+} catch (error) {
+	console.log('Error fetching cities:', error);
+}
+}
+
+function updateCityDropdown(cityData) {
+	const citySelect = document.getElementById('cityInput');
+  
+	// Clear existing options
+	citySelect.innerHTML = '';
+  
+	// Add new options based on the fetched city data
+	cityData.forEach(city => {
 	  const option = document.createElement('option');
-	  option.value = optionText;
-	  option.text = optionText;
-  
-	  // Add a data attribute to store the classification
-	  option.setAttribute('data-classification', 'region');
-  
-	  if (selectedValue === optionText) {
-		option.selected = true;
-	  }
-	  regionSelect.add(option);
+	  option.value = city.name; // Use the 'name' property for the value
+	  option.text = city.name; // Display the 'name' property in the dropdown
+	  citySelect.appendChild(option);
 	});
-  }
+	saveInputValues();console.log('City saved:',citySelect.value)
+}
+  
+function addOptions(regionSelect, optionsArray, selectedValue) {
+// Add options to the select element
+optionsArray.forEach(optionText => {
+	const option = document.createElement('option');
+	option.value = optionText.value;
+	option.text = optionText.text;
+
+	// Add a data attribute to store the classification
+	option.setAttribute('data-classification', 'region');
+
+	if (selectedValue === optionText) {
+	option.selected = true;
+	}
+	regionSelect.add(option);
+});
+}
   
   

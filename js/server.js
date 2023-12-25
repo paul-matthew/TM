@@ -212,6 +212,9 @@ app.listen(PORT, () => {
   console.log(`Proxy server running on PORT ${PORT}`);
 });
 
+//MAP API
+
+const mapAPI = process.env.MAP_API || "MzZFMU1ZTGNKUUZRVjA1MG9ySXAzS1hoZEdUTlZpWEZDNjF5RXA2Qw=="
 
 
 

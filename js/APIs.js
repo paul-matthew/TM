@@ -776,33 +776,21 @@ function constructModalBody() {
               <label for="phoneInput">Phone<span style='color:red'>*</span>:</label>
               <input type="text" id="phoneInput" class="form-control" required pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please enter a valid phone number (e.g., 123-456-7890)" inputmode="numeric" oninput="formatPhoneNumber()" value="${inputValues.phone}">
               <label for="countrySelect">Country<span style='color:red'>*</span>:</label>
-              <select id="countryInput" class="form-control" required onchange="region()">
-                <option value="CA" ${inputValues.country === 'CA' ? 'selected' : ''}>Canada</option>
-                <option value="TT" ${inputValues.country === 'TT' ? 'selected' : ''}>Trinidad and Tobago</option>
-                <option value="US" ${inputValues.country === 'US' ? 'selected' : ''}>United States</option>
-              </select>
-                <label for="regionInput">Province/State/Region<span style='color:red'>*</span>:</label>
-                <select id="regionInput" class="form-control" required>
-                <option value="Ontario" ${inputValues.region === 'Ontario' ? 'selected' : ''}>Ontario</option>
-                <option value="Quebec" ${inputValues.region === 'Quebec' ? 'selected' : ''}>Quebec</option>
-                <option value="British Columbia" ${inputValues.region === 'British Columbia' ? 'selected' : ''}>British Columbia</option>
-                <option value="Alberta" ${inputValues.region === 'Alberta' ? 'selected' : ''}>Alberta</option>
-                <option value="Manitoba" ${inputValues.region === 'Manitoba' ? 'selected' : ''}>Manitoba</option>
-                <option value="Saskatchewan" ${inputValues.region === 'Saskatchewan' ? 'selected' : ''}>Saskatchewan</option>
-                <option value="Nova Scotia" ${inputValues.region === 'Nova Scotia' ? 'selected' : ''}>Nova Scotia</option>
-                <option value="New Brunswick" ${inputValues.region === 'New Brunswick' ? 'selected' : ''}>New Brunswick</option>
-                <option value="Newfoundland and Labrador" ${inputValues.region === 'Newfoundland and Labrador' ? 'selected' : ''}>Newfoundland and Labrador</option>
-                <option value="Prince Edward Island" ${inputValues.region === 'Prince Edward Island' ? 'selected' : ''}>Prince Edward Island</option>
-                <option value="Northwest Territories" ${inputValues.region === 'Northwest Territories' ? 'selected' : ''}>Northwest Territories</option>
-                <option value="Yukon" ${inputValues.region === 'Yukon' ? 'selected' : ''}>Yukon</option>
-                <option value="Nunavut" ${inputValues.region === 'Nunavut' ? 'selected' : ''}>Nunavut</option>
+              <select id="countryInput" class="form-control" required onfocus="populateCountryOptions()" onchange="region()">
+              <option>${inputValues.country}</option>
+              </select>                       
+              <label for="regionInput">Province/State/Region<span style='color:red'>*</span>:</label>
+              <select id="regionInput" class="form-control" required onchange="fetchCities()">
+                <option>${inputValues.region}</option>
               </select>
               <label for="cityinput">City<span style='color:red'>*</span>:</label>
-              <input type="city" id="cityInput" class="form-control" required value="${inputValues.city}">
-              <label for="addressinput">Address<span style='color:red'>*</span>:</label>
+              <select id="cityInput" class="form-control" required>
+                <option>${inputValues.city}</option>
+              </select>              
+              <label for="addressinput">Address Line 1<span style='color:red'>*</span>:</label>
               <input type="address" id="addressInput" class="form-control" required value="${inputValues.address}">
-              <label for="address2input">Unit <span style='font-size:10px'>(if applicable):</span></label>
-              <input type="address2" id="address2Input" class="form-control" required value="${inputValues.address2}">
+              <label for="address2input">Address Line 2: <span style='font-size:10px'>(if applicable):</span></label>
+              <input type="address2" id="address2Input" class="form-control" required value="${inputValues.address2}" placeholder="Unit, Apartment, Suite, Floor, Building, Floor etc.">
               <label for="zipinput">Postal Code/ZIP<span style='color:red'>*</span>:</label>
               <input type="zip" id="zipInput" class="form-control" required value="${inputValues.zip}">
               <button id="backButton" class="back-btn gen-btn mt-3">Back</button>
@@ -858,7 +846,7 @@ orderModal.addEventListener('click', function (event) {
   switch (targetId) {
     case 'OrderDetailsButton':
       currentStage=2;
-      console.log(currentStage);
+      // console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       saveInputValues();
       break;
@@ -866,19 +854,19 @@ orderModal.addEventListener('click', function (event) {
       currentStage=3;
       saveInputValues();
       // submitOrder();
-      console.log(currentStage);
+      // console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       initializePayPal();
       break;
     case 'backButton':
       currentStage=1;
       saveInputValues();
-      console.log(currentStage);
+      // console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       break;
     case 'backButton2':
       currentStage=2;
-      console.log(currentStage);
+      // console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       saveInputValues();
       break;
@@ -887,35 +875,8 @@ orderModal.addEventListener('click', function (event) {
 
 var initialSetupDone = false;
 
-// Function to check if a city exists in a country
-function isCityValid(cityValue, countryInput, regionInput) {
-  var apiKey = "YOUR_API_KEY"; // Replace with your actual API key
-  var apiUrl = `https://api.countrystatecity.in/v1/countries/${countryInput.value}/states/${regionInput.value}/cities`;
-
-  var headers = new Headers();
-  headers.append("X-CSCAPI-KEY", apiKey);
-
-  var requestOptions = {
-    method: 'GET',
-    headers: headers,
-    redirect: 'follow'
-  };
-
-  // Fetch city data for the specified country and region
-  return fetch(apiUrl, requestOptions)
-    .then(response => response.json())
-    .then(data => {
-      // Check if the provided city is in the list of cities for the country and region
-      return data.some(city => city.name.toLowerCase() === cityValue.toLowerCase());
-    })
-    .catch(error => {
-      console.log('Error fetching city data:', error);
-      return false; // Return false in case of an error
-    });
-}
-
 function saveInputValues() {
-  console.log('this is the', currentStage)
+  // console.log('this is the', currentStage)
   const firstNameInput = document.getElementById('firstNameInput');
   const lastNameInput = document.getElementById('lastNameInput');
   const emailInput = document.getElementById('emailInput');
@@ -931,11 +892,13 @@ function saveInputValues() {
   if (lastNameInput) inputValues.lastName = lastNameInput.value;
   if (emailInput) inputValues.email = emailInput.value;
   if (phoneInput) inputValues.phone = phoneInput.value;
-  if (countryInput) inputValues.country = countryInput.value;
-  if (regionInput) inputValues.region = regionInput.value;
+  if (countryInput) {
+    inputValues.country = countryInput.value;
+    console.log('Saved Country:', inputValues.country);
+  }  if (regionInput) inputValues.region = regionInput.value;
   if (cityInput) inputValues.city = cityInput.value;
   if (addressInput) inputValues.address = addressInput.value;
-  if (address2Input) inputValues.address2 = "Unit #" + address2Input.value;
+  if (address2Input) inputValues.address2 = address2Input.value;
   if (zipInput) inputValues.zip = zipInput.value;
 
   if (currentStage === 2) {
