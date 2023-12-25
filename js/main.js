@@ -417,7 +417,8 @@ return regions.filter(region => !region.iso2.startsWith('UM-') && !region.iso2.s
 async function region() {
 	// Get the selected country
 	const selectedCountry = document.getElementById('countryInput').value;
-	saveInputValues();console.log('Country saved:',selectedCountry)
+	saveInputValues();
+	console.log('Country saved:', selectedCountry);
   
 	// Get the region select element
 	const regionSelect = document.getElementById('regionInput');
@@ -425,78 +426,76 @@ async function region() {
 	// Clear existing options
 	regionSelect.innerHTML = '';
   
-	// Fetch states or regions from the API
-	const apiUrl = `https://api.countrystatecity.in/v1/countries/${selectedCountry}/states`;
-	const headers = new Headers();
-	headers.append("X-CSCAPI-KEY", "MzZFMU1ZTGNKUUZRVjA1MG9ySXAzS1hoZEdUTlZpWEZDNjF5RXA2Qw==");
+	// Set the fetch URL based on the environment
+	let fetchURLmap = '';
+	if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+	  fetchURLmap = 'http://localhost:5000/maps/regions';
+	} else {
+	  fetchURLmap = 'https://tm-server-4a2a80557ba4.herokuapp.com/maps/regions';
+	}
   
-	const requestOptions = {
-	  method: 'GET',
-	  headers: headers,
-	  redirect: 'follow'
-	};
+	const apiUrl = `${fetchURLmap}?country=${selectedCountry}`;
   
 	try {
-	  const response = await fetch(apiUrl, requestOptions);
+	  const response = await fetch(apiUrl);
 	  const result = await response.json();
   
-	switch (selectedCountry) {
+	  switch (selectedCountry) {
 		case 'CA':
-		// Sort the Canadian regions alphabetically by name
-		const sortedCARegions = result.sort((a, b) => a.name.localeCompare(b.name));
-		addOptions(regionSelect, sortedCARegions.map(state => ({ value: state.iso2, text: state.name })));
-		fetchCities();
-		break;
+		  // Sort the Canadian regions alphabetically by name
+		  const sortedCARegions = result.sort((a, b) => a.name.localeCompare(b.name));
+		  addOptions(regionSelect, sortedCARegions.map(state => ({ value: state.iso2, text: state.name })));
+		  fetchCities();
+		  break;
 		case 'TT':
-		// Assuming 'TT' API response contains ISO and name properties
-		// Sort the Trinidad and Tobago regions alphabetically by name
-		const sortedTTRegions = result.sort((a, b) => a.name.localeCompare(b.name));
-		addOptions(regionSelect, sortedTTRegions.map(state => ({ value: state.iso2, text: state.name })));
-		fetchCities();
-		break;
+		  // Assuming 'TT' API response contains ISO and name properties
+		  // Sort the Trinidad and Tobago regions alphabetically by name
+		  const sortedTTRegions = result.sort((a, b) => a.name.localeCompare(b.name));
+		  addOptions(regionSelect, sortedTTRegions.map(state => ({ value: state.iso2, text: state.name })));
+		  fetchCities();
+		  break;
 		case 'US':
-		// For 'US', filter out regions with ISO codes starting with "UM-"
-		const filteredUSRegions = filterUSRegions(result);
-		// Sort the American regions alphabetically by name
-		const sortedUSRegions = filteredUSRegions.sort((a, b) => a.name.localeCompare(b.name));
-		addOptions(regionSelect, sortedUSRegions.map(state => ({ value: state.iso2, text: state.name })));
-		fetchCities();
-		break;
+		  // For 'US', filter out regions with ISO codes starting with "UM-"
+		  const filteredUSRegions = filterUSRegions(result);
+		  // Sort the American regions alphabetically by name
+		  const sortedUSRegions = filteredUSRegions.sort((a, b) => a.name.localeCompare(b.name));
+		  addOptions(regionSelect, sortedUSRegions.map(state => ({ value: state.iso2, text: state.name })));
+		  fetchCities();
+		  break;
 		// Add more cases for other countries as needed
 		default:
-		// Default case when no country is selected
-		break;
-	}
+		  // Default case when no country is selected
+		  break;
+	  }
   
 	} catch (error) {
 	  console.log('Error fetching states:', error);
 	}
-}
+  }
   
 async function fetchCities() {
 // Get the selected country and region
 const selectedCountry = document.getElementById('countryInput').value;
 const selectedRegion = document.getElementById('regionInput').value;
-saveInputValues();console.log('Region saved:',selectedRegion)
-
-
-// Construct the URL with the selected country and region
-const apiUrl = `https://api.countrystatecity.in/v1/countries/${selectedCountry}/states/${encodeURIComponent(selectedRegion)}/cities`;
+saveInputValues();
+console.log('Region saved:', selectedRegion);
 
 // Set up headers for the API request
 const headers = new Headers();
-headers.append("X-CSCAPI-KEY", "MzZFMU1ZTGNKUUZRVjA1MG9ySXAzS1hoZEdUTlZpWEZDNjF5RXA2Qw==");
+headers.append("Content-Type", "application/json");
 
-// Set up request options
-const requestOptions = {
-	method: 'GET',
-	headers: headers,
-	redirect: 'follow'
-};
+let fetchURLmap = '';
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+	fetchURLmap = 'http://localhost:5000/maps/cities';
+} else {
+	fetchURLmap = 'https://tm-server-4a2a80557ba4.herokuapp.com/maps/cities';
+}
+
+const apiUrl = `${fetchURLmap}?country=${selectedCountry}&region=${encodeURIComponent(selectedRegion)}`;
 
 try {
-	// Fetch cities data
-	const response = await fetch(apiUrl, requestOptions);
+	// Fetch cities data from the server
+	const response = await fetch(apiUrl);
 	const result = await response.json();
 
 	// Log the result to the console (you can modify this part as needed)

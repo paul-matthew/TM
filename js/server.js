@@ -4,9 +4,10 @@ const fetch = require('node-fetch'); // Ensure you've installed the 'node-fetch'
 require('dotenv').config();
 
 const app = express();
-const printifyApiKey = process.env.PRINTIFY_API_KEY || "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzN2Q0YmQzMDM1ZmUxMWU5YTgwM2FiN2VlYjNjY2M5NyIsImp0aSI6ImIxN2I1YzVlOWUyODNlOTU3ZmRjOGRjYjQyZDlhZmU0Y2E3NjdlN2I3ZDJlOTk4Y2JlMTZlNTljNWU3ZDgyNGYyOTY0OWYwMmIzOGNjZTk4IiwiaWF0IjoxNjk5MjExNDY5LjY4NzE1MSwibmJmIjoxNjk5MjExNDY5LjY4NzE1NSwiZXhwIjoxNzMwODMzODY5LjY4MDE5Niwic3ViIjoiMTUzMTA4ODgiLCJzY29wZXMiOlsic2hvcHMubWFuYWdlIiwic2hvcHMucmVhZCIsImNhdGFsb2cucmVhZCIsIm9yZGVycy5yZWFkIiwib3JkZXJzLndyaXRlIiwicHJvZHVjdHMucmVhZCIsInByb2R1Y3RzLndyaXRlIiwid2ViaG9va3MucmVhZCIsIndlYmhvb2tzLndyaXRlIiwidXBsb2Fkcy5yZWFkIiwidXBsb2Fkcy53cml0ZSIsInByaW50X3Byb3ZpZGVycy5yZWFkIl19.AR2sh86rYQVIjvW_wG8PbgH8PpEh_hntQEWs6K2R0Y4tcO7NpMoeIhL3qDb9j6s3yoJ8NClMdYk-zc4cK8k"
+const printifyApiKey = process.env.PRINTIFY_API_KEY
 const PORT = process.env.PORT || 5000; 
-const blogApiKey = process.env.DATOCMS_API || "bc4a449b76547409adcd6e3392bc6e"
+const blogApiKey = process.env.DATOCMS_API
+const mapAPIkey = process.env.MAP_API
 
 const publishProduct = async (productId) => {
     try {
@@ -76,6 +77,28 @@ const blogProxy = createProxyMiddleware('/blogs', {
   },
 });
 
+const mapProxy = createProxyMiddleware('/maps/regions', {
+  target: 'https://api.countrystatecity.in/v1/countries/${selectedCountry}/states`',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/maps/regions': '/maps/regions.json',
+  },
+  onProxyReq: function (proxyReq) {
+    proxyReq.setHeader('Authorization', `Bearer ${mapAPIkey}`);
+  },
+});
+
+const mapcitiesProxy = createProxyMiddleware('/maps/cities', {
+  target: 'https://api.countrystatecity.in/v1/countries/${selectedCountry}/states`',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/maps/cities': '/maps/cities.json',
+  },
+  onProxyReq: function (proxyReq) {
+    proxyReq.setHeader('Authorization', `Bearer ${mapAPIkey}`);
+  },
+});
+
 app.use((req, res, next) => {
     let access = '';
   
@@ -93,6 +116,7 @@ app.use((req, res, next) => {
     next();
   });
   
+//PRODUCTS
 
 app.get('/fetch-and-publish-products', async (req, res) => {
   try {
@@ -129,41 +153,6 @@ app.get('/fetch-and-publish-products', async (req, res) => {
 
 
 app.use(express.json());
-
-app.get('/blogs', async (req, res) => {
-  try {
-    const datoCMSResponse = await fetch('https://graphql.datocms.com/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${blogApiKey}`,
-      },
-      body: JSON.stringify({
-        query: `{
-          allBlogs {
-            id
-            blogTitle
-            dateField
-            blogDescription
-            blogImage { url }
-          }
-        }`
-      }),
-    });
-
-    if (datoCMSResponse.ok) {
-      const data = await datoCMSResponse.json();
-      res.json(data.data.allBlogs);
-    } else {
-      console.error('Failed to fetch blogs from DatoCMS.');
-      res.status(500).json({ error: 'Failed to fetch blogs from DatoCMS' });
-    }
-  } catch (error) {
-    console.error('Error fetching blogs:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 //Order
 
@@ -203,18 +192,121 @@ app.post('/orders', async (req, res) => {
   }
 });
 
+//BLOG
+
+app.get('/blogs', async (req, res) => {
+  try {
+    const datoCMSResponse = await fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${blogApiKey}`,
+      },
+      body: JSON.stringify({
+        query: `{
+          allBlogs {
+            id
+            blogTitle
+            dateField
+            blogDescription
+            blogImage { url }
+          }
+        }`
+      }),
+    });
+
+    if (datoCMSResponse.ok) {
+      const data = await datoCMSResponse.json();
+      res.json(data.data.allBlogs);
+    } else {
+      console.error('Failed to fetch blogs from DatoCMS.');
+      res.status(500).json({ error: 'Failed to fetch blogs from DatoCMS' });
+    }
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//MAP/REGIONS
+
+app.get('/maps/regions', async (req, res) => {
+  const selectedCountry = req.query.country;
+
+  const apiUrl = `https://api.countrystatecity.in/v1/countries/${selectedCountry}/states`;
+  const headers = new Headers();
+  headers.append("X-CSCAPI-KEY", mapAPIkey);
+
+  const requestOptions = {
+    method: 'GET',
+    headers: headers,
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch(apiUrl, requestOptions);
+    const result = await response.json();
+
+    // Process the result based on the selected country
+    switch (selectedCountry) {
+
+
+
+      default:
+        res.json(result);
+        break;
+    }
+  } catch (error) {
+    console.log('Error fetching states:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//MAP/CITIES
+
+app.get('/maps/cities', async (req, res) => {
+  const selectedCountry = req.query.country;
+  const selectedRegion = req.query.region;
+
+  const apiUrl = `https://api.countrystatecity.in/v1/countries/${selectedCountry}/states/${encodeURIComponent(selectedRegion)}/cities`;
+  const headers = new Headers();
+  headers.append("X-CSCAPI-KEY", mapAPIkey);
+
+  const requestOptions = {
+    method: 'GET',
+    headers: headers,
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch(apiUrl, requestOptions);
+    const result = await response.json();
+
+    // Process the result based on the selected country
+    switch (selectedCountry) {
+      // Add cases for specific countries if needed
+
+      default:
+        res.json(result);
+        break;
+    }
+  } catch (error) {
+    console.log('Error fetching cities:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.use(apiProxy);
 app.use(orderProxy);
 app.use(blogProxy);
+app.use(mapProxy);
+app.use(mapcitiesProxy);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Proxy server running on PORT ${PORT}`);
 });
-
-//MAP API
-
-const mapAPI = process.env.MAP_API || "MzZFMU1ZTGNKUUZRVjA1MG9ySXAzS1hoZEdUTlZpWEZDNjF5RXA2Qw=="
 
 
 
