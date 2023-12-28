@@ -700,6 +700,14 @@ async function submitOrder() {
     .then(response => response.json())
     .then(data => {
       console.log('Printify order response:', data);
+
+      if (data.success && data.orderStatus === 'OK') {
+        currentStage = 4;
+      } else {
+        currentStage = 5;
+      }
+
+      orderModal.innerHTML = constructModalBody();
     })
     .catch(error => {
       console.error('Error placing order with Printify:', error);
@@ -836,6 +844,24 @@ function constructModalBody() {
             </div>
           </div>
         `;
+        case 5:
+          return `
+            <div class="modal-dialog modal-dialog-centered error-modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-black">Error!</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="error-message">
+                    <span class="checkmark larger-error">&#10008;</span>
+                    <p class="larger-text">Please go back and check your provided information.  The order cannot be placed at this time.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+  
       
        
   }
@@ -853,7 +879,6 @@ orderModal.addEventListener('click', function (event) {
     case 'proceedpayment':
       currentStage=3;
       saveInputValues();
-      // submitOrder();
       // console.log(currentStage);
       orderModal.innerHTML = constructModalBody();
       initializePayPal();
@@ -1018,6 +1043,13 @@ function initializePayPal(amount) {
   // Append the PayPal button container to the parent container
   paypalContainer.appendChild(paypalButtonContainer);
 
+  let fetchURLpayvalidate = '';
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    fetchURLpayvalidate = 'http://localhost:5000/validate';
+  } else {
+    fetchURLpayvalidate = 'https://tm-server-4a2a80557ba4.herokuapp.com/validate';
+  }
+
   // Initialize the PayPal SDK here
   paypal.Buttons({
     createOrder: function (_, actions) {
@@ -1054,28 +1086,49 @@ function initializePayPal(amount) {
       });
     },
     onApprove: function (data, actions) {
-      // Capture the transaction details
       return actions.order.capture().then(function (details) {
-        // details contains information about the transaction
         console.log('Transaction details:', details);
-
-        // Now, trigger your submitOrder function with the necessary information
-        submitOrder();
-        currentStage=4;
-        orderModal.innerHTML = constructModalBody();  
+        // console.log('Transaction Customer details', details.payer);
+        // console.log('Transaction value:', details.purchase_units[0].amount.value);
+    
+        // Send payment details to the server for further validation
+        fetch(fetchURLpayvalidate, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            order: data,
+            paymentDetails: details,
+          }),
+        })
+          .then(response => response.json())
+          .then(responseData => {
+            // console.log("Response Data is:",responseData);
+            if (responseData.success) {
+              // If the server validates the payment, proceed with your logic
+              submitOrder();
+            } else {
+              console.error('Error processing payment on the server:', responseData.error);
+              currentStage = 5;      
+              orderModal.innerHTML = constructModalBody();
+      
+              // Display an error message to the user
+              alert('Error processing payment: ' + responseData.error);
+            }
+          })
+          .catch(error => {
+            console.error('Error communicating with the server:', error);
+            // Display an error message to the user
+            alert('Error communicating with the server');
+          });
       });
     },
+    
   }).render('#paypal-button-container');
   
   
 }
-
-
-// Handle PAYPAL Checkout
-// const paypalScript = document.createElement('script');
-// paypalScript.src = 'https://www.paypal.com/sdk/js?client-id=AZiLd6zqQUwa01x2PvxtcQw9hQY4p99xS61WRn2yDHBZxWdCVS4aLQbCA1CcUGj9HuF9AC9QwQ9qxfNC';
-// document.head.appendChild(paypalScript);
-
 
 //Shipping
 
@@ -1135,7 +1188,7 @@ function handleClearButtonClick() {
     }
 }
 
-// Paypal script
+// PAYPAL CONNECTION
 const headers = new Headers();
 headers.append("Content-Type", "application/json");
 

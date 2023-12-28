@@ -8,6 +8,8 @@ const printifyApiKey = process.env.PRINTIFY_API_KEY
 const PORT = process.env.PORT || 5000; 
 const blogApiKey = process.env.DATOCMS_API
 const mapAPIkey = process.env.MAP_API
+const paypalkey = process.env.PAYPAL_CLIENT_ID_SB
+const paypal = require('paypal-rest-sdk');
 
 const publishProduct = async (productId) => {
     try {
@@ -100,13 +102,24 @@ const mapcitiesProxy = createProxyMiddleware('/maps/cities', {
 });
 
 const paypayProxy = createProxyMiddleware('/config', {
-  target: 'https://www.paypal.com/sdk/js?client-id=${config.paypalClientId}`',
+  target: `https://www.sandbox.paypal.com/sdk/js?client-id=${paypalkey}`,
   changeOrigin: true,
   pathRewrite: {
     '^/config': '/config.json',
   },
+  // onProxyReq: function (proxyReq) {
+  //   proxyReq.setHeader('Authorization', `Bearer ${paypalkey}`);
+  // },
+});
+
+const paypayProxy2 = createProxyMiddleware('/validate', {
+  target: `https://www.sandbox.paypal.com/sdk/js?client-id=${paypalkey}`,
+  changeOrigin: true,
+  pathRewrite: {
+    '^/validate': '/validate.json',
+  },
   onProxyReq: function (proxyReq) {
-    proxyReq.setHeader('Authorization', `Bearer ${PAYPAL_CLIENT_ID_SB}`);
+    proxyReq.setHeader('Authorization', `Bearer ${paypalkey}`);
   },
 });
 
@@ -168,6 +181,20 @@ app.use(express.json());
 //Order
 
 app.post('/orders', async (req, res) => {
+  const {address_to } = req.body;
+
+  if (!address_to) {
+    console.log("this is the address that was given:", address_to);
+    return res.status(400).json({ error: 'Invalid address data' });
+  }
+
+  const {line_items} = req.body;
+
+  if (!line_items) {
+    console.log("This is the product info for the order", line_items)
+    return res.status(400).json({ error: 'Invalid order/shipping data' });
+  }
+
   try {
     console.log('Request Body:', req.body);
 
@@ -192,10 +219,18 @@ app.post('/orders', async (req, res) => {
 
     if (orderResponse.ok) {
       console.log('Order placed successfully with Printify.');
-      res.status(200).json({ message: 'Order placed successfully with Printify' });
+      res.status(200).json({   
+        success: true,
+        orderStatus: orderResponse.statusText,
+        message: 'Order placed successfully with Printify', 
+      });
     } else {
       console.error('Failed to place order with Printify.');
-      res.status(500).json({ error: 'Failed to place order with Printify' });
+      res.status(500).json({   
+        success: false,
+        orderStatus: orderResponse.statusText,
+        error: 'Failed to place order with Printify', 
+      });
     }
   } catch (error) {
     console.error('Error processing order:', error);
@@ -310,6 +345,13 @@ app.get('/maps/cities', async (req, res) => {
 
 //Paypal
 
+paypal.configure({
+  mode: 'sandbox', // Change to 'live' for production
+  client_id: process.env.PAYPAL_CLIENT_ID_SB,
+  client_secret: process.env.PAYPAL_CLIENT_SECRET_SB,
+  // Add other configuration options as needed
+});
+
 app.get('/config', (req, res) => {
   res.json({
     paypalClientId: process.env.PAYPAL_CLIENT_ID_SB,
@@ -317,12 +359,63 @@ app.get('/config', (req, res) => {
   });
 });
 
+// New route for validating a PayPal payment
+app.post('/validate', async (req, res) => {
+  const {paymentDetails } = req.body;
+
+  if (!paymentDetails) {
+    return res.status(400).json({ error: 'Invalid request data' });
+  }
+
+  try {
+
+    // Check if the payment details match the order details
+    const isPaymentValid = validatePaymentDetails(paymentDetails);
+    // const isPaymentValid = 1;
+
+
+    if (isPaymentValid) {
+      // If the payment is valid, send a success response to the client
+      res.json({ success: true });
+    } else {
+      // If the payment is not valid, send an error response to the client
+      res.status(400).json({ success: false, error: 'Invalid payment' });
+    }
+  } catch (error) {
+    console.error('Error processing PayPal order:', error);
+    res.status(500).json({ success: false, error: 'Failed to process PayPal order' });
+  }
+});
+
+
+
+// Function to validate payment details
+function validatePaymentDetails(paymentDetails) {
+  const isValid =
+    paymentDetails &&
+    paymentDetails.status === 'COMPLETED' &&
+    paymentDetails.purchase_units &&
+    paymentDetails.purchase_units[0] &&
+    paymentDetails.purchase_units[0].amount;
+
+    if (isValid) {
+      console.log('Server validation complete');
+    } else {
+      console.log('Server validation error');
+      console.log('paymentDetails:', paymentDetails);
+    }
+
+  return isValid;
+}
+
+
 app.use(apiProxy);
 app.use(orderProxy);
 app.use(blogProxy);
 app.use(mapProxy);
 app.use(mapcitiesProxy);
 app.use(paypayProxy);
+app.use(paypayProxy2);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
