@@ -540,5 +540,3 @@ optionsArray.forEach(optionText => {
 	regionSelect.add(option);
 });
 }
-  
-  

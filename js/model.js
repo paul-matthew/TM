@@ -6,6 +6,38 @@ import { GLTFLoader } from './GLTFLoader.js';
 let loadedModel = null;
 const ROTATION_SPEED = 0.003; // Adjust the value as needed
 
+var modelContainer = document.getElementById('model-container');
+function animateAndNavigate() {
+  animateFadingDown();
+  navigateToShop();
+}
+
+function animateFadingDown() {
+  modelContainer.style.opacity = 0;
+  // modelContainer.style.transform = 'translateX(-50%) translateY(-100vh)';
+  modelContainer.style.transition = 'opacity 0.5s';
+  // modelContainer.style.transition = 'opacity 1s, transform 2s';
+}
+
+function navigateToShop() {
+  // Adjust this timeout value based on how long your animation takes
+  setTimeout(() => {
+    window.location.href = "shop.html";
+  }, 500); 
+}
+
+// Wait for the DOM content to be loaded
+document.addEventListener('DOMContentLoaded', function () {
+  // Find the button element by its ID
+  const exploreShopBtn = document.getElementById('exploreshop-btn');
+
+  // Add a click event listener to the button
+  exploreShopBtn.addEventListener('click', function () {
+    // Call the animateAndNavigate function when the button is clicked
+    animateAndNavigate();
+  });
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   var modelContainer = document.getElementById('model-container');
 
