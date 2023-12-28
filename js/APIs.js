@@ -1100,6 +1100,7 @@ function initializePayPal(amount) {
           body: JSON.stringify({
             order: data,
             paymentDetails: details,
+            total:total,
           }),
         })
           .then(response => response.json())

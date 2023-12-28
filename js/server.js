@@ -355,13 +355,13 @@ paypal.configure({
 app.get('/config', (req, res) => {
   res.json({
     paypalClientId: process.env.PAYPAL_CLIENT_ID_SB,
-    // Add other configuration variables as needed
+    silversurfer:"In the fresh",
   });
 });
 
 // New route for validating a PayPal payment
 app.post('/validate', async (req, res) => {
-  const {paymentDetails } = req.body;
+  const {paymentDetails,total } = req.body;
 
   if (!paymentDetails) {
     return res.status(400).json({ error: 'Invalid request data' });
@@ -370,7 +370,7 @@ app.post('/validate', async (req, res) => {
   try {
 
     // Check if the payment details match the order details
-    const isPaymentValid = validatePaymentDetails(paymentDetails);
+    const isPaymentValid = validatePaymentDetails(paymentDetails, total);
     // const isPaymentValid = 1;
 
 
@@ -390,13 +390,16 @@ app.post('/validate', async (req, res) => {
 
 
 // Function to validate payment details
-function validatePaymentDetails(paymentDetails) {
+function validatePaymentDetails(paymentDetails,total) {
   const isValid =
     paymentDetails &&
     paymentDetails.status === 'COMPLETED' &&
     paymentDetails.purchase_units &&
     paymentDetails.purchase_units[0] &&
-    paymentDetails.purchase_units[0].amount;
+    paymentDetails.purchase_units[0].amount &&
+    paymentDetails.purchase_units[0].amount.value === total.toString();
+    console.log("Paypal platform total",paymentDetails.purchase_units[0].amount.value)
+    console.log("client side total",total.toString());
 
     if (isValid) {
       console.log('Server validation complete');
