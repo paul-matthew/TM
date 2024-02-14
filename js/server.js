@@ -131,9 +131,9 @@ app.use((req, res, next) => {
     if (req.headers.origin === 'http://127.0.0.1:5500') {
       access = 'http://127.0.0.1:5500';
     } 
-    else if (req.headers.origin === 'https://paul-matthew.github.io') {
-      access = 'https://paul-matthew.github.io';
-    }
+    // else if (req.headers.origin === 'https://paul-matthew.github.io') {
+    //   access = 'https://paul-matthew.github.io';
+    // }
     else if (req.headers.origin === 'http://www.tropicalmisfit.com') {
       access = 'http://www.tropicalmisfit.com';
     }
