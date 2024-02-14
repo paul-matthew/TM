@@ -805,7 +805,7 @@ function constructModalBody() {
               <button id="proceedpayment" class="proceed-btn gen-btn mt-3">Proceed to Payment</button>
               <div id='formincomplete' style='color:red; margin-top:5px;font-size:11px'></div>
               <div id='formincomplete2' style='color:red; margin-top:5px;font-size:11px'></div>
-              <div style='font-size:10px; margin-top:15px'>By placing your order, you agree to Tropical Misfit's <a href="./terms-privacy.html">Terms of Use and Privacy Policy</a>.</div>
+              <div style='font-size:10px; margin-top:15px'>By placing your order, you agree to Tropical Misfit's <a href="./terms-privacy.html">Terms of Use, Privacy, and Refund Policies</a>.</div>
           </div>
         </div>
       `;
@@ -1131,7 +1131,7 @@ function initializePayPal(amount) {
   
 }
 
-//Shipping
+//Shipping - FUNCTION CURRENTLY NOT BEING USED
 
 function calculateShippingCost() {
   // Fetch the order details, such as selectedSKUs and any other relevant information

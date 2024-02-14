@@ -4,7 +4,8 @@ const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
-const printifyApiKey = process.env.PRINTIFY_API_KEY
+const printifyApiKey = process.env.JOY_PRINTIFY_API_KEY
+const printifyShopID = process.env.JOY_PRINTIFY_SHOPID
 const PORT = process.env.PORT || 5000; 
 const blogApiKey = process.env.DATOCMS_API
 const mapAPIkey = process.env.MAP_API
@@ -13,7 +14,7 @@ const paypal = require('paypal-rest-sdk');
 
 const publishProduct = async (productId) => {
     try {
-        const publishResponse = await fetch(`https://api.printify.com/v1/shops/11876498/products/${productId}/publish.json`, {
+        const publishResponse = await fetch(`https://api.printify.com/v1/shops/${printifyShopID}/products/${productId}/publish.json`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${printifyApiKey}`, 
@@ -47,7 +48,7 @@ const errorHandler = (err, req, res, next) => {
 };
 
 const apiProxy = createProxyMiddleware('/products', {
-  target: 'https://api.printify.com/v1/shops/11876498',
+  target: `https://api.printify.com/v1/shops/${printifyShopID}`,
   changeOrigin: true,
   pathRewrite: {
     '^/products': '/products.json',
@@ -58,7 +59,7 @@ const apiProxy = createProxyMiddleware('/products', {
 });
 
 const orderProxy = createProxyMiddleware('/orders', {
-  target: 'https://api.printify.com/v1/shops/11876498',
+  target: `https://api.printify.com/v1/shops/${printifyShopID}`,
   changeOrigin: true,
   pathRewrite: {
     '^/orders': '/orders.json',
@@ -132,6 +133,9 @@ app.use((req, res, next) => {
     } else if (req.headers.origin === 'https://paul-matthew.github.io') {
       access = 'https://paul-matthew.github.io';
     }
+    else if (req.headers.origin === 'http://www.tropicalmisfit.com/') {
+      access = 'http://www.tropicalmisfit.com/';
+    }
     
     // Set the appropriate Access-Control-Allow-Origin header
     res.header('Access-Control-Allow-Origin', access);
@@ -144,7 +148,7 @@ app.use((req, res, next) => {
 
 app.get('/fetch-and-publish-products', async (req, res) => {
   try {
-    const printifyResponse = await fetch('https://api.printify.com/v1/shops/11876498/products.json', {
+    const printifyResponse = await fetch(`https://api.printify.com/v1/shops/${printifyShopID}/products.json`, {
       headers: {
         Authorization: `Bearer ${printifyApiKey}`,
       }
@@ -206,7 +210,7 @@ app.post('/orders', async (req, res) => {
     //   quantity: item.quantity,
     // }));
 
-    const orderResponse = await fetch('https://api.printify.com/v1/shops/11876498/orders.json', {
+    const orderResponse = await fetch(`https://api.printify.com/v1/shops/${printifyShopID}/orders.json`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${printifyApiKey}`,
