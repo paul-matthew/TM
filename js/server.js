@@ -134,7 +134,7 @@ app.use((req, res, next) => {
       access = 'https://paul-matthew.github.io';
     }
     else if (req.headers.origin === 'http://www.tropicalmisfit.com/') {
-      access = 'http://www.tropicalmisfit.com/';
+      access = 'http://www.tropicalmisfit.com';
     }
     
     // Set the appropriate Access-Control-Allow-Origin header
