@@ -144,7 +144,35 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
   });
-  
+
+//Code to prevent clickjacking - recommendation from penetration testing
+app.use((req, res, next) => {
+  res.header('X-Frame-Options', 'DENY');
+  next();
+});
+
+// Set Content Security Policy header to allow scripts only from the same origin - recommendation from penetration testing
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "script-src 'self'");
+  next();
+});
+
+// Set HSTS header with a max-age of 1 year - recommendation from penetration testing
+app.use((req, res, next) => {
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  next();
+});
+
+// Set X-Frame-Options header to deny framing - recommendation from penetration testing
+app.use((req, res, next) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  next();
+});
+
+
+
+
+
 //PRODUCTS
 
 app.get('/fetch-and-publish-products', async (req, res) => {

@@ -12,6 +12,12 @@ function init() {
 
   const cloudSection = document.querySelector('.cloud-section');
 
+  addLights();
+  setupBackgroundRenderer(cloudSection);
+  loadTextures();
+}
+
+function addLights() {
   let ambient = new THREE.AmbientLight(0x555555);
   scene.add(ambient);
 
@@ -22,75 +28,86 @@ function init() {
   let orangeLight = new THREE.PointLight(0x00B5B8, 50, 450, 1.7);
   orangeLight.position.set(200, 300, 100);
   scene.add(orangeLight);
+
   let redLight = new THREE.PointLight(0x9AEB5C, 50, 450, 1.7);
   redLight.position.set(100, 300, 100);
   scene.add(redLight);
+
   let blueLight = new THREE.PointLight(0xD091DE, 50, 450, 1.7);
   blueLight.position.set(300, 300, 200);
   scene.add(blueLight);
-  
+}
+
+function setupBackgroundRenderer(cloudSection) {
   backgroundRenderer = new THREE.WebGLRenderer();
   backgroundRenderer.setSize(window.innerWidth, window.innerHeight);
   scene.fog = new THREE.FogExp2(0x03544e, 0.001);
   backgroundRenderer.setClearColor(scene.fog.color);
   cloudSection.appendChild(backgroundRenderer.domElement);
+}
 
+function loadTextures() {
   let loader = new THREE.TextureLoader();
   loader.load("./images/smoke.png", function (texture) {
-    const cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
-    const cloudMaterial = new THREE.MeshLambertMaterial({
-      map: texture,
-      transparent: true,
-    });
-
-    for (let p = 0; p < 20; p++) {
-      let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
-      cloud.position.set(
-        Math.random() * 800 - 400,
-        500,
-        Math.random() * 500 - 500
-      );
-      cloud.rotation.x = 1.16;
-      cloud.rotation.y = -0.12;
-      cloud.rotation.z = Math.random() * 2 * Math.PI;
-      cloud.material.opacity = 0.55;
-      cloudParticles.push(cloud);
-      scene.add(cloud);
-    }
+    createCloudParticles(texture);
   });
   loader.load("./images/stars.jpg", function(texture){
-
-    const textureEffect = new POSTPROCESSING.TextureEffect({
-      blendFunction: POSTPROCESSING.BlendFunction.COLOR_DODGE,
-      texture: texture
-    });
-    textureEffect.blendMode.opacity.value = 0.2;
-
-    const bloomEffect = new POSTPROCESSING.BloomEffect({
-      blendFunction: POSTPROCESSING.BlendFunction.COLOR_DODGE,
-      kernelSize: POSTPROCESSING.KernelSize.SMALL,
-      useLuminanceFilter: true,
-      luminanceThreshold: 0.3,
-      luminanceSmoothing: 0.75
-    });
-    bloomEffect.blendMode.opacity.value = 1.5;
-
-    let effectPass = new POSTPROCESSING.EffectPass(
-      camera,
-      bloomEffect,
-      textureEffect
-    );
-    effectPass.renderToScreen = true;
-
-    composer = new POSTPROCESSING.EffectComposer(backgroundRenderer);
-    composer.addPass(new POSTPROCESSING.RenderPass(scene, camera));
-    composer.addPass(effectPass);
-
-    window.addEventListener("resize", onWindowResize, false);
-    composerInitialized = true;
-    render();
+    setupEffects(texture);
   });
+}
+
+function createCloudParticles(texture) {
+  const cloudGeo = new THREE.PlaneBufferGeometry(500, 500);
+  const cloudMaterial = new THREE.MeshLambertMaterial({
+    map: texture,
+    transparent: true,
+  });
+
+  for (let p = 0; p < 20; p++) {
+    let cloud = new THREE.Mesh(cloudGeo, cloudMaterial);
+    cloud.position.set(
+      Math.random() * 800 - 400,
+      500,
+      Math.random() * 500 - 500
+    );
+    cloud.rotation.x = 1.16;
+    cloud.rotation.y = -0.12;
+    cloud.rotation.z = Math.random() * 2 * Math.PI;
+    cloud.material.opacity = 0.55;
+    cloudParticles.push(cloud);
+    scene.add(cloud);
+  }
+}
+
+function setupEffects(texture) {
+  const textureEffect = new POSTPROCESSING.TextureEffect({
+    blendFunction: POSTPROCESSING.BlendFunction.COLOR_DODGE,
+    texture: texture
+  });
+  textureEffect.blendMode.opacity.value = 0.2;
+
+  const bloomEffect = new POSTPROCESSING.BloomEffect({
+    blendFunction: POSTPROCESSING.BlendFunction.COLOR_DODGE,
+    kernelSize: POSTPROCESSING.KernelSize.SMALL,
+    useLuminanceFilter: true,
+    luminanceThreshold: 0.3,
+    luminanceSmoothing: 0.75
+  });
+  bloomEffect.blendMode.opacity.value = 1.5;
+
+  let effectPass = new POSTPROCESSING.EffectPass(
+    camera,
+    bloomEffect,
+    textureEffect
+  );
+  effectPass.renderToScreen = true;
+
+  composer = new POSTPROCESSING.EffectComposer(backgroundRenderer);
+  composer.addPass(new POSTPROCESSING.RenderPass(scene, camera));
+  composer.addPass(effectPass);
+
   window.addEventListener("resize", onWindowResize, false);
+  composerInitialized = true;
   render();
 }
 
@@ -121,3 +138,4 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('resize', onWindowResize);
   render();
 });
+
