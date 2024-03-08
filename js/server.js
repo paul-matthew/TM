@@ -4,8 +4,8 @@ const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
-const printifyApiKey = process.env.JOY_PRINTIFY_API_KEY
-const printifyShopID = process.env.JOY_PRINTIFY_SHOPID
+const printifyApiKey = process.env.PRINTIFY_API_KEY
+const printifyShopID = process.env.PRINTIFY_SHOPID
 const PORT = process.env.PORT || 5000; 
 const blogApiKey = process.env.DATOCMS_API
 const mapAPIkey = process.env.MAP_API
